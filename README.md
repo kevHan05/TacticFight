@@ -2,13 +2,21 @@
 
 A turn-based 1v1 arcade fighter. Pick one of six fighters and take on a CPU opponent.
 
+## Modes
+
+- **Campaign:** each fighter has a story. Beat the other five fighters, in order, on their home stages, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
+- **Endless:** fight until you are defeated. Every fight is against a new opponent and both fighters start at full health. Your best streak is saved.
+- **Quick Fight:** pick a fighter and take on a random opponent.
+
+Every fight starts with some pre-fight trash talk. Each fighter has a home stage, and you always fight on your opponent's turf.
+
 ## Run
 
 Open `index.html` in a browser. No install or build step is required.
 
 ## Combat
 
-Both fighters pick a move at the same time and the round resolves at once.
+Both fighters pick a move at the same time. The round then plays out one fighter at a time: set-up moves such as guards go first, then strikes, and the player goes first on a tie. Hover over a move to read what it does.
 
 - If both fighters strike, both take damage.
 - Block stops an incoming strike and charges a 1.5x boost for your next regular strike.
@@ -19,7 +27,7 @@ Both fighters pick a move at the same time and the round resolves at once.
 
 ## Fighters
 
-The roster and every move's rules live in `characters.js`. The new fighters are based on `characterspec.md`.
+The roster and every move's rules live in `characters.js`. The new fighters are based on `characterspec.md`. Backstories, banter and campaign scripts live in `story.js`, the stages in `stages.js`, and the move icons in `icons.js`.
 
 | Fighter | HP | Moves |
 |---|---|---|
@@ -44,4 +52,4 @@ The arena is rendered by `graphics.js` at 320x140 and scaled 3x with hard pixel 
 
 ## Sound
 
-All sound effects are synthesized live with the Web Audio API in `sound.js`, so there are no audio files. Press `M` or use the speaker button to toggle sound. The setting is remembered between visits.
+All sound effects (`sound.js`) and the 16-bit soundtrack (`music.js`) are synthesized live with the Web Audio API, so there are no audio files. Press `M` or use the speaker button to toggle sound. The setting is remembered between visits.

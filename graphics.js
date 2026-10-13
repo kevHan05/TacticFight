@@ -21,8 +21,6 @@ const Arena = (() => {
   const sg = sprite.getContext("2d", { willReadFrequently: true });
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const wideLayout = window.matchMedia("(min-width: 621px)");
-  let background = null;
-  let crowd = null;
 
   function makeCanvas(width, height) {
     const canvas = document.createElement("canvas");
@@ -101,191 +99,6 @@ const Arena = (() => {
         });
       });
     });
-  }
-
-  // ---------------------------------------------------------------------------
-  // Stage: a dusk street in the neon district, cached once.
-  const NEAR_TOWERS = [[-2, 24, 58], [30, 20, 40], [54, 26, 48], [80, 34, 76], [124, 22, 34], [150, 28, 62], [236, 30, 70], [270, 22, 46], [294, 28, 60]];
-
-  function buildBackground() {
-    const canvas = makeCanvas(WIDTH, HEIGHT);
-    const b = canvas.getContext("2d");
-    const rand = seeded(7);
-
-    // Sky in hard colour bands, checkerboard-dithered at each seam.
-    const bands = [[0, "#1b1f3d"], [12, "#29295a"], [23, "#423468"], [33, "#653d6f"], [42, "#8f466c"], [50, "#bd5866"], [57, "#e0745e"], [63, "#f39a62"], [69, "#ffc27c"]];
-    for (let y = 0; y < 90; y += 1) {
-      let index = 0;
-      while (index + 1 < bands.length && y >= bands[index + 1][0]) index += 1;
-      rect(b, 0, y, WIDTH, 1, bands[index][1]);
-      const next = bands[index + 1];
-      if (next && next[0] - y <= 2) {
-        const step = next[0] - y === 1 ? 2 : 4;
-        for (let x = y % 2; x < WIDTH; x += step) rect(b, x, y, 1, 1, next[1]);
-      }
-    }
-
-    // Setting sun with retro scanline gaps.
-    for (let dy = -24; dy <= 24; dy += 1) {
-      const y = 60 + dy;
-      if ([63, 67, 70, 73, 75].includes(y)) continue;
-      const half = Math.floor(Math.sqrt(24 * 24 - dy * dy));
-      rect(b, 196 - half, y, half * 2 + 1, 1, dy < -8 ? "#fff1b8" : dy < 6 ? "#ffd98a" : "#ffb870");
-    }
-
-    [[18, 30, 44, "#56396a"], [140, 37, 76, "#a9536b"], [226, 45, 54, "#d86d66"], [92, 52, 40, "#e48563"], [250, 26, 34, "#4d3567"]].forEach(([x, y, width, color]) => {
-      rect(b, x, y, width, 1, color);
-      rect(b, x + 5, y + 1, Math.max(4, width - 12), 1, color);
-      rect(b, x + 12, y - 1, Math.max(4, width - 26), 1, color);
-    });
-
-    // Far skyline.
-    for (let x = -4; x < WIDTH;) {
-      const width = 10 + Math.floor(rand() * 14);
-      const height = 18 + Math.floor(rand() * 26);
-      rect(b, x, 80 - height, width, height, "#3c2b52");
-      for (let wy = 80 - height + 3; wy < 76; wy += 4) {
-        for (let wx = x + 2; wx < x + width - 2; wx += 3) {
-          if (rand() < 0.22) rect(b, wx, wy, 1, 1, "#c77a6a");
-        }
-      }
-      x += width + 1;
-    }
-
-    // Near towers with window grids and rooftop details.
-    NEAR_TOWERS.forEach(([x, width, height]) => {
-      const top = 80 - height;
-      rect(b, x, top, width, height, "#221a33");
-      rect(b, x, top, 2, height, "#30254a");
-      rect(b, x - 1, top, width + 2, 2, "#30254a");
-      for (let wy = top + 5; wy < 74; wy += 5) {
-        for (let wx = x + 4; wx < x + width - 3; wx += 5) {
-          const roll = rand();
-          const color = roll < 0.24 ? "#f4b56a" : roll < 0.3 ? "#86d4d9" : "#3a2c48";
-          rect(b, wx, wy, 2, 3, color);
-          if (color === "#f4b56a") rect(b, wx, wy, 2, 1, "#ffe0a0");
-        }
-      }
-    });
-    // Water tower on a roof.
-    rect(b, 58, 25, 14, 7, "#2a2036");
-    rect(b, 58, 25, 14, 1, "#46375c");
-    rect(b, 57, 24, 16, 1, "#1a1426");
-    [59, 64, 70].forEach(x => rect(b, x, 32, 1, 4, "#1a1426"));
-    // Antenna mast.
-    rect(b, 164, 4, 1, 14, "#1a1426");
-    rect(b, 162, 9, 5, 1, "#1a1426");
-
-    // Storefronts at street level.
-    rect(b, 0, 58, WIDTH, 26, "#2a1f35");
-    for (let x = 0; x < WIDTH; x += 40) {
-      for (let stripe = 0; stripe < 34; stripe += 4) rect(b, x + 3 + stripe, 56, 2, 3, stripe % 8 ? "#e8d6c0" : "#c8443a");
-      rect(b, x + 3, 59, 34, 1, "#14101c");
-      rect(b, x + 6, 61, 28, 16, "#4a2f3a");
-      rect(b, x + 7, 62, 26, 14, (x / 40) % 3 === 1 ? "#ffcf87" : "#e58a5c");
-      rect(b, x + 7, 62, 26, 2, "#fff0c8");
-      rect(b, x + 19, 62, 2, 14, "#4a2f3a");
-    }
-
-    // Street floor: alternating bands and seams converging on a vanishing point.
-    for (let y = 84; y < HEIGHT; y += 1) {
-      rect(b, 0, y, WIDTH, 1, Math.floor(Math.sqrt(y - 84) * 2) % 2 ? "#2a2c3b" : "#24253a");
-    }
-    for (let i = -12; i <= 12; i += 1) {
-      const bottomX = 160 + i * 34;
-      for (let y = 87; y < HEIGHT; y += 1) {
-        const t = (y - 40) / (HEIGHT - 40);
-        rect(b, 160 + (bottomX - 160) * t, y, 1, 1, "#34364b");
-      }
-    }
-    rect(b, 0, 84, WIDTH, 2, "#6c6f86");
-    rect(b, 0, 84, WIDTH, 1, "#9a9db3");
-    rect(b, 0, 86, WIDTH, 1, "#17161f");
-    return canvas;
-  }
-
-  function buildCrowd() {
-    const rand = seeded(42);
-    const pick = list => list[Math.floor(rand() * list.length)];
-    const people = [];
-    [0, 1].forEach(row => {
-      for (let x = 2 + row * 5; x < WIDTH; x += 9 + Math.floor(rand() * 5)) {
-        people.push({
-          x,
-          row,
-          height: 13 + Math.floor(rand() * 5),
-          shirt: pick(row ? ["#5b3a5e", "#3d4a6b", "#6b4a3a", "#2f5a55", "#7a3a48", "#4f4a62"] : ["#3a2a46", "#2c3350", "#4a3433", "#24403f"]),
-          skin: pick(["#a8735a", "#7a4e3c", "#c48d6c", "#5c3a2e"]),
-          hair: pick(["#1a1214", "#3a2420", "#5a4a40", "#1c1a2a"]),
-          phase: rand() * Math.PI * 2,
-          cheers: rand() < 0.65
-        });
-      }
-    });
-    return people;
-  }
-
-  function drawCrowd(now, excitement) {
-    crowd.forEach(person => {
-      const wobble = Math.sin(now / 95 + person.phase);
-      const jump = excitement > 0.05 ? Math.round(Math.abs(wobble) * 3 * excitement) : Math.sin(now / 700 + person.phase) > 0.7 ? 1 : 0;
-      const top = 84 - (person.row ? 0 : 3) - person.height - jump;
-      const { x, shirt, skin, hair } = person;
-      if (excitement > 0.25 && person.cheers) {
-        const wave = Math.round(wobble);
-        rect(g, x - 4, top - 2 + wave, 1, 8, shirt);
-        rect(g, x + 4, top - 2 - wave, 1, 8, shirt);
-        rect(g, x - 4, top - 3 + wave, 1, 1, skin);
-        rect(g, x + 4, top - 3 - wave, 1, 1, skin);
-      }
-      rect(g, x - 3, top + 5, 7, person.height - 5, shirt);
-      rect(g, x - 2, top + 4, 5, 1, shirt);
-      rect(g, x + 3, top + 5, 1, 4, "#c2768a");
-      rect(g, x - 2, top, 4, 4, skin);
-      rect(g, x - 2, top, 4, 1, hair);
-      rect(g, x - 2, top + 1, 1, 1, hair);
-    });
-  }
-
-  function drawRailing() {
-    for (let x = 4; x < WIDTH; x += 20) rect(g, x, 76, 2, 8, "#4c4e63");
-    rect(g, 0, 76, WIDTH, 2, "#7c7f98");
-    rect(g, 0, 76, WIDTH, 1, "#a7aac0");
-    rect(g, 0, 80, WIDTH, 1, "#55576d");
-  }
-
-  // Neon signs flicker now and then; their glow reflects off the wet street.
-  function neonOn(now, seed) {
-    return Math.sin(now * 0.0021 + seed * 7) + Math.sin(now * 0.0137 + seed * 3) > -1.75;
-  }
-
-  function drawNeon(now) {
-    const signs = [
-      { x: 86, y: 11, w: 7, h: 33, label: "FIGHT", vertical: true, color: "#ff4f9a", glow: "#ffd6ec", seed: 1 },
-      { x: 241, y: 30, w: 15, h: 9, label: "BAR", vertical: false, color: "#3fd8ff", glow: "#d8faff", seed: 2 },
-      { x: 300, y: 32, w: 15, h: 9, label: "24H", vertical: false, color: "#ffb43a", glow: "#fff0c0", seed: 3 }
-    ];
-    signs.forEach(sign => {
-      const on = neonOn(now, sign.seed);
-      rect(g, sign.x, sign.y, sign.w, sign.h, "#140e1c");
-      const color = on ? sign.color : "#4a2c44";
-      rect(g, sign.x, sign.y, sign.w, 1, color);
-      rect(g, sign.x, sign.y + sign.h - 1, sign.w, 1, color);
-      rect(g, sign.x, sign.y, 1, sign.h, color);
-      rect(g, sign.x + sign.w - 1, sign.y, 1, sign.h, color);
-      text(g, sign.label, sign.x + 2, sign.y + 2, () => (on ? sign.glow : "#5a3a50"), 1, sign.vertical);
-      if (on) {
-        g.globalAlpha = 0.18;
-        rect(g, sign.x - 2, sign.y - 2, sign.w + 4, sign.h + 4, sign.color);
-        g.globalAlpha = 0.22;
-        for (let y = 90; y < 126; y += 3) {
-          const shimmer = Math.round(Math.sin(now / 160 + y) * 1.5);
-          rect(g, sign.x + 1 + shimmer, y, sign.w - 2, 1, sign.color);
-        }
-        g.globalAlpha = 1;
-      }
-    });
-    if (Math.floor(now / 600) % 2) rect(g, 164, 3, 1, 1, "#ff5a4f");
   }
 
   // ---------------------------------------------------------------------------
@@ -925,43 +738,51 @@ const Arena = (() => {
   };
   const SIDES = ["player", "bot"];
   const LANDED = ["hit", "broke", "chipped", "armored"];
+  // Rounds play out one fighter at a time, slowed down so each move reads clearly.
+  const SLOW = 1.8;
 
   function opposite(side) {
     return side === "player" ? "bot" : "player";
   }
 
-  // Shared timing for a round: when strikes land and how far melee attackers lunge.
-  function timing(report, ids) {
-    const lead = {};
-    SIDES.forEach(side => { lead[side] = ANIMS[report[side].move.anim].lead || 0; });
-    const hitAt = Math.max(150, lead.player + 10, lead.bot + 10);
-    const gap = BOT_X - PLAYER_X;
-    const reach = {};
-    SIDES.forEach(side => { reach[side] = (ANIMS[report[side].move.anim].reach || 0) * (SCALES[ids[side]] || 1); });
-    const bothMelee = SIDES.every(side => ANIMS[report[side].move.anim].melee);
-    const lunge = {};
-    SIDES.forEach(side => {
-      lunge[side] = bothMelee ? (gap - 9 - Math.max(reach.player, reach.bot)) / 2 : gap - 10 - reach[side];
-    });
-    return { hitAt, lead, lunge, gap };
+  function isStrikeMove(move) {
+    return (move.damage || 0) > 0;
   }
 
-  function fighterFrame(side, state, animation, plan, elapsed, now) {
-    const fighter = state[side];
-    const id = fighter.id;
-    const dir = side === "player" ? 1 : -1;
-    const baseX = side === "player" ? PLAYER_X : BOT_X;
-    const scale = SCALES[id] || 1;
-    const idle = idlePose(id, now, side);
-    const frame = { side, id, dir, x: baseX, lift: 0, pose: idle, flash: false, alpha: 1, ghosts: 0, scale };
-    if (!animation) return frame;
+  // The round's script: set-up moves (guards, senses) go first, then strikes;
+  // ties go to the player. Times are in ms from the start of the round.
+  function timing(report, ids) {
+    const order = SIDES.slice().sort((a, b) => Number(isStrikeMove(report[a].move)) - Number(isStrikeMove(report[b].move)));
+    const phases = [];
+    let cursor = 0;
+    order.forEach(actor => {
+      const move = report[actor].move;
+      const strike = isStrikeMove(move);
+      const lead = strike ? Math.max(150, ANIMS[move.anim].lead + 10) : 320;
+      const hold = strike ? (move.anim === "stampede" ? 900 : 720) : 620;
+      const start = cursor;
+      const hit = start + lead * SLOW;
+      cursor = hit + hold * SLOW;
+      phases.push({ actor, start, hit, end: cursor, lead, strike });
+    });
+    const gap = BOT_X - PLAYER_X;
+    const lunge = {};
+    SIDES.forEach(side => { lunge[side] = gap - 10 - (ANIMS[report[side].move.anim].reach || 0) * (SCALES[ids[side]] || 1); });
+    return { phases, end: cursor, lunge, gap, koAt: phases[1].hit + 300 * SLOW };
+  }
 
-    const mine = animation.report[side];
-    const theirs = animation.report[opposite(side)];
+  // A phase's local clock: `e` runs in unslowed animation time and `H` is when its move connects.
+  function clockFor(plan, side, elapsed) {
+    const p = plan.phases.find(candidate => candidate.actor === side);
+    return { e: (elapsed - p.start) / SLOW, H: p.lead, active: elapsed >= p.start && elapsed < p.end, phase: p };
+  }
+
+  // The fighter performing its own move.
+  function actMotion(frame, mine, plan, c, idle) {
     const anim = ANIMS[mine.move.anim];
-    const H = plan.hitAt;
+    const { e, H } = c;
     const start = H - (anim.lead || 0);
-    const e = elapsed;
+    const scale = frame.scale;
     let pose = idle;
     let offset = 0;
 
@@ -971,7 +792,7 @@ const Arena = (() => {
       const t = phase(e, H - 130, H - 10) * (1 - phase(e, H + hold, H + hold + 280));
       pose = blend(pose, POSES[anim.melee], t);
       if (anim.flurry && e >= H && e < H + 260) pose = blend(pose, Math.floor((e - H) / 100) % 2 ? POSES.jab : POSES.attack, t);
-      offset = plan.lunge[side] * t;
+      offset = plan.lunge[frame.side] * t;
       if (anim.jerky && e < H) offset += Math.round(Math.sin(e / 35) * 3) * t;
     } else if (anim.projectile === "stampede") {
       pose = blend(idle, POSES.roar, phase(e, start, start + 200) * (1 - phase(e, H + 250, H + 500)));
@@ -988,63 +809,107 @@ const Arena = (() => {
       const hidden = (e >= start + 280 && e < H - 120) || (e >= H + 220 && e < H + 330);
       if (hidden) frame.alpha = mine.spotted ? (Math.floor(e / 60) % 2 ? 0.75 : 0.35) : 0;
       if (e >= H - 120 && e < H + 220) {
-        const strike = phase(e, H - 120, H - 10);
-        pose = blend(idle, POSES.attack, strike);
+        pose = blend(idle, POSES.attack, phase(e, H - 120, H - 10));
         offset = plan.gap - (anim.reach * scale + 12);
       }
-    } else if (mine.move.guard === "block") {
-      const t = phase(e, H - 150, H - 50) * (1 - phase(e, H + 280, H + 480));
-      pose = blend(idle, POSES.block, t);
-      if (theirs.result === "blocked" || theirs.result === "chipped") offset = -4 * phase(e, H, H + 40) * (1 - phase(e, H + 120, H + 400));
-    } else if (mine.move.anim === "dash") {
+    } else {
+      ({ pose, offset } = guardMotion(frame, mine.move, c, idle));
+    }
+
+    // Shadow Step's counter-slash catches the attacker in its own phase.
+    if (mine.counter > 0) {
+      const recoil = phase(e, H + 150, H + 200) * (1 - phase(e, H + 350, H + 550));
+      pose = blend(pose, POSES.hurt, recoil);
+      offset -= 6 * recoil;
+      if (e >= H + 150 && e < H + 200) frame.flash = true;
+    }
+    return { pose, offset };
+  }
+
+  // Guard poses, used both to set a guard up and to answer a strike.
+  function guardMotion(frame, move, c, idle) {
+    const { e, H } = c;
+    let pose = idle;
+    let offset = 0;
+    if (move.guard === "block") {
+      pose = blend(idle, POSES.block, phase(e, H - 150, H - 50) * (1 - phase(e, H + 280, H + 480)));
+    } else if (move.anim === "dash") {
       const t = phase(e, H - 130, H - 40) * (1 - phase(e, H + 180, H + 420));
       pose = blend(idle, POSES.dodge, t);
       offset = -24 * t;
       frame.lift = Math.round(Math.sin(clamp01((e - (H - 130)) / 260) * Math.PI) * 6);
       if (t > 0.1 && t < 0.95 && e < H + 100) frame.ghosts = 2;
-      if (mine.move.counter && theirs.result === "evaded") {
-        const counter = phase(e, H + 60, H + 140) * (1 - phase(e, H + 260, H + 450));
-        pose = blend(pose, POSES.attack, counter);
-        offset += (plan.gap - 31 * scale - 12 + 24) * counter;
-      }
-    } else if (mine.move.anim === "fortress") {
+    } else if (move.anim === "fortress") {
       pose = blend(idle, POSES.fortress, phase(e, H - 220, H - 90) * (1 - phase(e, H + 420, H + 640)));
-    } else if (mine.move.anim === "smoke") {
+    } else if (move.anim === "smoke") {
       pose = blend(idle, POSES.smoke, phase(e, H - 240, H - 150) * (1 - phase(e, H + 300, H + 500)));
       if (e >= H - 150 && e < H + 300) frame.alpha = Math.floor(e / 70) % 2 ? 0.45 : 0.2;
       offset = -10 * phase(e, H - 150, H) * (1 - phase(e, H + 300, H + 500));
-    } else if (mine.move.anim === "senses") {
+    } else if (move.anim === "senses") {
       pose = blend(idle, POSES.senses, phase(e, H - 220, H - 120) * (1 - phase(e, H + 320, H + 520)));
     }
+    return { pose, offset };
+  }
 
-    // Shuffle's lurch out of the way when it pays off.
-    if (mine.move.guard === "shuffle" && theirs.result === "evaded") offset -= 12 * phase(e, H - 60, H) * (1 - phase(e, H + 200, H + 400));
+  // The fighter on the receiving end of the opponent's strike.
+  function reactMotion(frame, mine, theirs, plan, c, idle, dead) {
+    const { e, H } = c;
+    let pose = idle;
+    let offset = 0;
+    const guard = mine.move.guard;
+    if (guard && guard !== "shuffle" && guard !== "vanish") ({ pose, offset } = guardMotion(frame, mine.move, c, idle));
+    if (guard === "vanish" && theirs.result === "evaded" && e >= H - 70 && e < H + 200) frame.alpha = 0;
+    if (guard === "shuffle" && theirs.result === "evaded") offset -= 12 * phase(e, H - 60, H) * (1 - phase(e, H + 200, H + 400));
+    if (mine.move.anim === "dash" && theirs.result === "evaded" && theirs.counter > 0) {
+      const counter = phase(e, H + 60, H + 140) * (1 - phase(e, H + 260, H + 450));
+      pose = blend(pose, POSES.attack, counter);
+      offset += (plan.gap - 31 * frame.scale - 12 + 24) * counter;
+    }
+    if (mine.move.guard === "block" && (theirs.result === "blocked" || theirs.result === "chipped")) {
+      offset -= 4 * phase(e, H, H + 40) * (1 - phase(e, H + 120, H + 400));
+    }
 
-    const dead = state.finished && fighter.hp <= 0;
     if (LANDED.includes(theirs.result) && theirs.damage > 0) {
       const weight = theirs.result === "armored" ? 0.35 : 1;
       const recoil = phase(e, H, H + 50) * (dead ? 1 : 1 - phase(e, H + 260, H + 480)) * weight;
       pose = blend(pose, POSES.hurt, recoil);
       offset -= 7 * recoil;
-      const hits = theirs.landed || 1;
       const spacing = theirs.move.anim === "stampede" ? 70 : 100;
-      for (let k = 0; k < hits; k += 1) if (e >= H + k * spacing && e < H + k * spacing + 50) frame.flash = true;
+      for (let k = 0; k < (theirs.landed || 1); k += 1) if (e >= H + k * spacing && e < H + k * spacing + 50) frame.flash = true;
       if (theirs.move.anim === "uppercut") frame.lift += Math.round(18 * Math.sin(clamp01((e - H) / 460) * Math.PI));
     }
-    if (mine.counter > 0) {
-      const recoil = phase(e, H + 150, H + 200) * (dead ? 1 : 1 - phase(e, H + 350, H + 550));
-      pose = blend(pose, POSES.hurt, recoil);
-      offset -= 6 * recoil;
-      if (e >= H + 150 && e < H + 200) frame.flash = true;
-    }
+    return { pose, offset };
+  }
+
+  function fighterFrame(side, state, animation, plan, elapsed, now) {
+    const fighter = state[side];
+    const id = fighter.id;
+    const dir = side === "player" ? 1 : -1;
+    const baseX = side === "player" ? PLAYER_X : BOT_X;
+    const scale = SCALES[id] || 1;
+    const idle = idlePose(id, now, side);
+    const frame = { side, id, dir, x: baseX, lift: 0, pose: idle, flash: false, alpha: 1, ghosts: 0, scale };
+    if (!animation) return frame;
+
+    const mine = animation.report[side];
+    const theirs = animation.report[opposite(side)];
+    const own = clockFor(plan, side, elapsed);
+    const other = clockFor(plan, opposite(side), elapsed);
+    const dead = state.finished && fighter.hp <= 0;
+    let motion = { pose: idle, offset: 0 };
+    if (own.active) motion = actMotion(frame, mine, plan, own, idle);
+    else if (other.active) motion = reactMotion(frame, mine, theirs, plan, other, idle, dead);
+    else if (dead && elapsed >= plan.end) motion = { pose: POSES.hurt, offset: -7 };
+    let { pose, offset } = motion;
+
     if (dead) {
-      const fall = phase(e, H + 300, H + 600);
+      const fall = phase(elapsed, plan.koAt, plan.koAt + 300 * SLOW);
       pose = blend(pose, POSES.ko, fall);
       offset -= 16 * fall;
       frame.alpha = Math.max(frame.alpha, fall);
       frame.down = fall > 0.5;
     } else if (state.finished) {
-      const win = phase(e, H + 900, H + 1150);
+      const win = phase(elapsed, plan.koAt + 700 * SLOW, plan.koAt + 950 * SLOW);
       pose = blend(pose, victoryPose(id, now), win);
       if (win > 0) frame.alpha = Math.max(frame.alpha, win);
     }
@@ -1161,16 +1026,53 @@ const Arena = (() => {
   const HIT_COLORS = ["#ff7a2a", "#ffe36a", "#ffffff"];
   const GUARD_COLORS = ["#3a8cff", "#9fe8ff", "#ffffff"];
 
-  function drawMoveEffects(side, frames, animation, plan, elapsed, now, floorY) {
+  // Effects for `side`'s move. In "act" mode the move is being performed in its
+  // own phase; in "react" mode a guard is answering the opponent's strike.
+  function drawMoveEffects(side, frames, animation, clock, now, floorY, mode) {
     const mine = animation.report[side];
     const theirs = animation.report[opposite(side)];
+    const me = frames[side];
+    const anim = ANIMS[mine.move.anim];
+    const dir = me.dir;
+    const H = clock.H;
+    const e = clock.e;
+
+    if (mode === "act") drawStrikeEffects(side, frames, animation, clock, now, floorY);
+    if (mode === "react" && mine.move.guard === "vanish" && theirs.result === "evaded") {
+      const age = e - (H - 70);
+      if (age >= 0 && age < 220) {
+        for (let k = 0; k < 5; k += 1) puff(me.x + Math.cos(k * 1.3) * (4 + age / 25), floorY - 26 - Math.sin(k * 1.3) * (6 + age / 30), 3, 0.7 - age / 320);
+      }
+    }
+
+    // Guards, shown when set up and again when they answer a strike.
+    if (mine.move.anim === "smoke" && e >= H - 160 && e < H + 420) {
+      const age = e - (H - 160);
+      for (let k = 0; k < 9; k += 1) {
+        const angle = k * 0.7;
+        const radius = 4 + Math.min(14, age / 18) + (k % 3) * 2;
+        puff(me.x + Math.cos(angle) * radius, floorY - 26 + Math.sin(angle) * radius * 0.8 - age / 60, 4 + (k % 3), Math.min(0.9, 1.1 - age / 520));
+      }
+    }
+    if (mine.move.anim === "fortress" && e >= H - 90 && e < H + 420) {
+      const x = me.x + dir * 17;
+      const top = floorY - 62 * me.scale;
+      g.globalAlpha = 0.35 + (Math.floor(e / 80) % 2) * 0.2;
+      for (let y = top; y < floorY - 4; y += 2) rect(g, x + Math.round(Math.sin(y / 5) * 1.5), y, 2, 1, "#3fc0ff");
+      rect(g, x - 1, top, 4, 1, "#c8f4ff");
+      g.globalAlpha = 1;
+    }
+  }
+
+  function drawStrikeEffects(side, frames, animation, clock, now, floorY) {
+    const mine = animation.report[side];
     const me = frames[side];
     const target = frames[opposite(side)];
     const anim = ANIMS[mine.move.anim];
     const dir = me.dir;
-    const H = plan.hitAt;
+    const H = clock.H;
     const start = H - (anim.lead || 0);
-    const e = elapsed;
+    const e = clock.e;
     const fromX = side === "player" ? PLAYER_X : BOT_X;
     const toX = side === "player" ? BOT_X : PLAYER_X;
     const chestY = floorY - 38 * me.scale;
@@ -1244,23 +1146,6 @@ const Arena = (() => {
       });
     }
 
-    // Guards.
-    if (mine.move.anim === "smoke" && e >= H - 160 && e < H + 420) {
-      const age = e - (H - 160);
-      for (let k = 0; k < 9; k += 1) {
-        const angle = k * 0.7;
-        const radius = 4 + Math.min(14, age / 18) + (k % 3) * 2;
-        puff(me.x + Math.cos(angle) * radius, floorY - 26 + Math.sin(angle) * radius * 0.8 - age / 60, 4 + (k % 3), Math.min(0.9, 1.1 - age / 520));
-      }
-    }
-    if (mine.move.anim === "fortress" && e >= H - 90 && e < H + 420) {
-      const x = me.x + dir * 17;
-      const top = floorY - 62 * me.scale;
-      g.globalAlpha = 0.35 + (Math.floor(e / 80) % 2) * 0.2;
-      for (let y = top; y < floorY - 4; y += 2) rect(g, x + Math.round(Math.sin(y / 5) * 1.5), y, 2, 1, "#3fc0ff");
-      rect(g, x - 1, top, 4, 1, "#c8f4ff");
-      g.globalAlpha = 1;
-    }
     if (mine.move.anim === "senses" && e >= H - 160 && e < H + 500) {
       const eyeX = me.x + dir * 8;
       const eyeY = floorY - 56 * me.scale;
@@ -1316,55 +1201,88 @@ const Arena = (() => {
     }
   }
 
+  // The acting fighter's move name, large across the top, then the result over the target.
   function drawCallouts(frames, animation, plan, elapsed, floorY) {
-    const H = plan.hitAt;
-    SIDES.forEach(side => {
+    plan.phases.forEach(p => {
+      const side = p.actor;
       const mine = animation.report[side];
-      const me = frames[side];
-      const target = frames[opposite(side)];
-      const start = H - (ANIMS[mine.move.anim].lead || 0);
-      const baseX = side === "player" ? PLAYER_X : BOT_X;
-      const shown = elapsed - Math.min(start, H - 150);
-      const nameY = 24;
-      if (shown >= 0 && shown < 1100) outlinedText(mine.move.name.toUpperCase(), baseX, nameY, mine.move.ultimate ? "#ffe36a" : "#ffffff");
-      if (mine.spotted && elapsed > start + 280 && elapsed < start + 1100) outlinedText("SPOTTED!", baseX, nameY + 8, "#ff9a4a");
+      const c = clockFor(plan, side, elapsed);
+      const shown = elapsed - p.start;
+      const color = Rules.character(frames[side].id).color;
+      if (shown >= 0 && shown < Math.min(p.end - p.start, 1500)) outlinedText(mine.move.name.toUpperCase(), 160, 24, color, 2);
+      if (mine.spotted && c.e > c.H - 280 && c.e < c.H + 600) outlinedText("SPOTTED!", side === "player" ? PLAYER_X : BOT_X, 36, "#ff9a4a");
 
       const label = resultLabel(mine);
-      const age = elapsed - H;
-      if (label && age >= 0 && age < 1000) {
+      const age = elapsed - p.hit;
+      if (label && age >= 0 && age < 1200) {
+        const target = frames[opposite(side)];
         const targetX = side === "player" ? BOT_X : PLAYER_X;
-        outlinedText(label[0], targetX, floorY - 46 * target.scale - age / 40, label[1]);
+        outlinedText(label[0], targetX, floorY - 40 * target.scale - age / 90, label[1], 2);
       }
-      if (mine.counter > 0 && age >= 150 && age < 1150) outlinedText(`COUNTER -${mine.counter}`, me.x, floorY - 46 * me.scale - (age - 150) / 40, "#c8d0ff");
+      const counterAge = age - 150 * SLOW;
+      if (mine.counter > 0 && counterAge >= 0 && counterAge < 1200) {
+        outlinedText(`COUNTER -${mine.counter}`, frames[side].x, floorY - 40 * frames[side].scale - counterAge / 90, "#c8d0ff");
+      }
     });
   }
 
-  function drawKO(elapsed, hitAt) {
-    const shown = elapsed - hitAt - 500;
+  // Safari Senses: the CPU's next move hangs over its head in rotten, dripping letters.
+  function drawReveal(state, frames, now, floorY) {
+    const move = Rules.move(state.bot, state.revealed);
+    const label = move.name.toUpperCase();
+    const scale = 2;
+    const width = label.length * 4 * scale - scale;
+    const left = Math.round(Math.max(4 + width / 2, Math.min(WIDTH - 4 - width / 2, frames.bot.x)) - width / 2);
+    const top = Math.max(30, Math.round(floorY - 92 * frames.bot.scale));
+    const wobble = Math.round(Math.sin(now / 260));
+    outlinedText("NEXT MOVE", left + width / 2, top - 9, "#c8e85a");
+    const rot = row => (row < 1 ? "#d8f07a" : row < 3 ? "#8ab83a" : "#4a6a22");
+    [[-1, 0], [1, 0], [0, -1], [0, 1], [1, 1]].forEach(([dx, dy]) => text(g, label, left + dx, top + wobble + dy, () => "#140e16", scale));
+    text(g, label, left, top + wobble, rot, scale);
+    for (let i = 0; i < label.length; i += 1) {
+      if (label[i] === " " || (i * 7) % 3 === 0) continue;
+      const x = left + i * 4 * scale + ((i * 5) % 3) * scale;
+      const length = Math.floor(((now / 420 + i * 0.37) % 1) * 6);
+      rect(g, x, top + wobble + 5 * scale, 1, length, "#6a9a2a");
+      rect(g, x, top + wobble + 5 * scale + length, 1, 1, "#a8d040");
+    }
+  }
+
+  function drawKO(elapsed, koAt) {
+    const shown = elapsed - koAt;
     if (shown < 0 || (shown < 1200 && Math.floor(shown / 160) % 2)) return;
     const shade = row => (row < 2 ? "#fff3a0" : row < 4 ? "#ffb43a" : "#e8402a");
-    [[-1, 0], [1, 0], [0, -1], [0, 1], [2, 2]].forEach(([dx, dy]) => text(g, "K.O.", 136 + dx, 30 + dy, () => "#140e16", 3));
-    text(g, "K.O.", 136, 30, shade, 3);
+    [[-1, 0], [1, 0], [0, -1], [0, 1], [2, 2]].forEach(([dx, dy]) => text(g, "K.O.", 136 + dx, 40 + dy, () => "#140e16", 3));
+    text(g, "K.O.", 136, 40, shade, 3);
   }
 
   // ---------------------------------------------------------------------------
-  function draw(context, state, animation, now) {
-    if (!background) {
-      background = buildBackground();
-      crowd = buildCrowd();
+  const STAGE_KIT = { rect, disc, text, seeded, WIDTH, HEIGHT };
+  const stageCache = {};
+
+  function drawStage(stageId, now, excitement) {
+    const stage = Stages[stageId] || Stages.rook;
+    if (!stageCache[stageId]) {
+      const canvas = makeCanvas(WIDTH, HEIGHT);
+      stage.build(canvas.getContext("2d"), STAGE_KIT);
+      stageCache[stageId] = canvas;
     }
+    g.drawImage(stageCache[stageId], 0, 0);
+    stage.animate(g, STAGE_KIT, now, excitement);
+    g.globalAlpha = 1;
+  }
+
+  function draw(context, state, animation, now) {
     const floorY = wideLayout.matches ? 92 : 126;
     const ids = { player: state.player.id, bot: state.bot.id };
     const plan = animation ? timing(animation.report, ids) : null;
     const elapsed = animation ? now - animation.start : 0;
-    const sinceHit = plan ? elapsed - plan.hitAt : Infinity;
-    let excitement = sinceHit >= 0 ? Math.max(0, 1 - sinceHit / 1400) : 0;
-    if (state.finished && sinceHit >= 0) excitement = Math.max(excitement, 0.7);
+    const hits = plan ? plan.phases.filter(p => p.strike && elapsed >= p.hit).map(p => p.hit) : [];
+    const sinceHit = hits.length ? elapsed - Math.max(...hits) : Infinity;
+    let excitement = Math.max(0, 1 - sinceHit / 1400);
+    if (state.finished && plan && elapsed >= plan.koAt) excitement = Math.max(excitement, 0.7);
 
-    g.drawImage(background, 0, 0);
-    drawNeon(now);
-    drawCrowd(now, excitement);
-    drawRailing();
+    drawStage(state.stage || state.bot.id, now, excitement);
 
     const frames = {
       player: fighterFrame("player", state, animation, plan, elapsed, now),
@@ -1378,21 +1296,33 @@ const Arena = (() => {
       if (state[side].boost && frames[side].alpha > 0.3) drawBoost(frames[side], now, floorY);
     });
     if (animation) {
-      SIDES.forEach(side => drawMoveEffects(side, frames, animation, plan, elapsed, now, floorY));
+      plan.phases.forEach(p => {
+        const side = p.actor;
+        const other = opposite(side);
+        drawMoveEffects(side, frames, animation, clockFor(plan, side, elapsed), now, floorY, "act");
+        if (p.strike && animation.report[other].move.guard) drawMoveEffects(other, frames, animation, clockFor(plan, side, elapsed), now, floorY, "react");
+      });
       drawCallouts(frames, animation, plan, elapsed, floorY);
-      if (state.finished) drawKO(elapsed, plan.hitAt);
+      if (state.finished) drawKO(elapsed, plan.koAt);
     }
+    if (state.revealed && !state.finished && (!plan || elapsed >= plan.end)) drawReveal(state, frames, now, floorY);
 
     const calm = reducedMotion.matches;
-    const report = animation ? animation.report : null;
-    const bigHit = report && SIDES.some(side => report[side].move.ultimate && LANDED.includes(report[side].result) && report[side].damage > 0);
-    const shocked = bigHit || (state.finished && report);
-    if (shocked && !calm && sinceHit >= 0 && sinceHit < 50) {
+    let shockAt = null;
+    if (plan) {
+      plan.phases.forEach(p => {
+        const outcome = animation.report[p.actor];
+        if (outcome.move.ultimate && LANDED.includes(outcome.result) && outcome.damage > 0) shockAt = p.hit;
+      });
+      if (state.finished) shockAt = plan.koAt;
+    }
+    const sinceShock = shockAt === null ? Infinity : elapsed - shockAt;
+    if (!calm && sinceShock >= 0 && sinceShock < 60) {
       g.globalAlpha = 0.3;
       rect(g, 0, 0, WIDTH, HEIGHT, "#fffae6");
       g.globalAlpha = 1;
     }
-    const shaking = shocked && !calm && sinceHit >= 0 && sinceHit < 260;
+    const shaking = !calm && sinceShock >= 0 && sinceShock < 300;
     const shakeX = shaking ? Math.round(Math.sin(elapsed * 0.9) * 4) : 0;
     const shakeY = shaking ? Math.round(Math.cos(elapsed * 1.3) * 3) : 0;
 
@@ -1402,8 +1332,8 @@ const Arena = (() => {
     context.drawImage(screen, shakeX, shakeY, WIDTH * SCALE, HEIGHT * SCALE);
   }
 
-  // Idle sprite for the character select screen, drawn at 2x on a dark card.
-  function portrait(canvas, id, now = 0) {
+  // Idle sprite for menus, scaled up on a transparent canvas.
+  function portrait(canvas, id, now = 0, mirrored = false) {
     const ctx = canvas.getContext("2d");
     renderSprite(id, idlePose(id, now, "player"), now, false);
     ctx.imageSmoothingEnabled = false;
@@ -1411,8 +1341,14 @@ const Arena = (() => {
     const zoom = Math.floor(Math.min(canvas.width / 70, canvas.height / 78));
     const x = Math.round(canvas.width / 2 - FOOT_X * zoom);
     const y = Math.round(canvas.height - 4 * zoom - FOOT_Y * zoom);
+    ctx.save();
+    if (mirrored) {
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+    }
     ctx.drawImage(sprite, x, y, SPRITE_W * zoom, SPRITE_H * zoom);
+    ctx.restore();
   }
 
-  return { draw, portrait, timing };
+  return { draw, portrait, timing, SLOW };
 })();

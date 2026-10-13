@@ -23,6 +23,7 @@
 //   track                 Reveals the CPU's next move; the user's next strike cannot be evaded.
 //   cooldown              Rounds before the move can be used again.
 //   anim                  Animation key used by graphics.js and the sound cues.
+//   detail, info          Short label and full description shown in the UI.
 const ULTIMATE_CHARGE = 3;
 
 const ROSTER = [
@@ -31,12 +32,13 @@ const ROSTER = [
     name: "ROOK",
     title: "Vanguard",
     role: "All-rounder",
+    color: "#ec5139",
     hp: 100,
     voice: "rookHurt",
     moves: [
-      { id: "attack", name: "Attack", damage: 15, anim: "punch", detail: "15 DAMAGE" },
-      { id: "block", name: "Block", guard: "block", anim: "block", detail: "GUARD + COUNTER" },
-      { id: "blaze", name: "Blaze Ball", ultimate: true, damage: 30, anim: "fireball", detail: "30 DAMAGE" }
+      { id: "attack", name: "Attack", damage: 15, anim: "punch", detail: "15 DAMAGE", info: "A straight punch for 15 damage. If both fighters strike, both get hit." },
+      { id: "block", name: "Block", guard: "block", anim: "block", detail: "GUARD + COUNTER", info: "Raise your guard. Stops a strike and powers up your next strike to 1.5x." },
+      { id: "blaze", name: "Blaze Ball", ultimate: true, damage: 30, anim: "fireball", detail: "30 DAMAGE", info: "Hurl a blazing fireball for 30 damage. Unlocks after 3 rounds, then recharges for 3." }
     ]
   },
   {
@@ -44,12 +46,13 @@ const ROSTER = [
     name: "BYTE",
     title: "Combat Unit",
     role: "All-rounder",
+    color: "#4fd8b0",
     hp: 100,
     voice: "byteHurt",
     moves: [
-      { id: "attack", name: "Attack", damage: 15, anim: "punch", detail: "15 DAMAGE" },
-      { id: "block", name: "Block", guard: "block", anim: "block", detail: "GUARD + COUNTER" },
-      { id: "plasma", name: "Plasma Bolt", ultimate: true, damage: 30, anim: "plasma", detail: "30 DAMAGE" }
+      { id: "attack", name: "Attack", damage: 15, anim: "punch", detail: "15 DAMAGE", info: "A calibrated jab for 15 damage. If both fighters strike, both get hit." },
+      { id: "block", name: "Block", guard: "block", anim: "block", detail: "GUARD + COUNTER", info: "Deploy guard protocol. Stops a strike and powers up your next strike to 1.5x." },
+      { id: "plasma", name: "Plasma Bolt", ultimate: true, damage: 30, anim: "plasma", detail: "30 DAMAGE", info: "Fire a plasma bolt for 30 damage. Unlocks after 3 rounds, then recharges for 3." }
     ]
   },
   {
@@ -57,13 +60,14 @@ const ROSTER = [
     name: "BOBBIE",
     title: "The Street Champ",
     role: "Boxer",
+    color: "#f1c95a",
     hp: 100,
     voice: "rookHurt",
     moves: [
-      { id: "punch", name: "Macalanger Punch", damage: 17, anim: "punch", detail: "17 DAMAGE" },
-      { id: "dash", name: "Sneaker Dash", guard: "dodge", momentum: true, anim: "dash", detail: "DODGE + POWER UP" },
-      { id: "combo", name: "Three-Piece Combo", damage: 6, hits: 3, stagger: true, risky: true, anim: "combo", detail: "3x6 + STAGGER, RISKY" },
-      { id: "uppercut", name: "Championship Uppercut", ultimate: true, damage: 34, risky: true, anim: "uppercut", detail: "34 DAMAGE, RISKY" }
+      { id: "punch", name: "Macalanger Punch", damage: 17, anim: "punch", detail: "17 DAMAGE", info: "A heavy straight right for 17 damage." },
+      { id: "dash", name: "Sneaker Dash", guard: "dodge", momentum: true, anim: "dash", detail: "DODGE + POWER UP", info: "Dodge a single-target strike with fancy footwork. If it works, your next strike is powered up to 1.5x. Area attacks still hit." },
+      { id: "combo", name: "Three-Piece Combo", damage: 6, hits: 3, stagger: true, risky: true, anim: "combo", detail: "3x6 + STAGGER, RISKY", info: "Three quick punches for 6 each. If all three land the opponent is staggered: their next strike deals half damage. Risky: if it misses or is blocked, you take 1.5x damage next round." },
+      { id: "uppercut", name: "Championship Uppercut", ultimate: true, damage: 34, risky: true, anim: "uppercut", detail: "34 DAMAGE, RISKY", info: "A charged uppercut for 34 damage that launches the opponent. Risky: if it misses or is blocked, you take 1.5x damage next round." }
     ]
   },
   {
@@ -71,13 +75,14 @@ const ROSTER = [
     name: "R.O.C.K.Y",
     title: "The Iron Bull",
     role: "Tank",
+    color: "#3fc0ff",
     hp: 110,
     voice: "byteHurt",
     moves: [
-      { id: "rush", name: "Bull Rush", damage: 12, breaksGuard: true, anim: "rush", detail: "12, BREAKS GUARD" },
-      { id: "fist", name: "Steel Fist", damage: 14, interrupt: true, anim: "punch", detail: "14, INTERRUPTS" },
-      { id: "fortress", name: "Fortress Mode", guard: "armor", fortify: true, cooldown: 3, anim: "fortress", detail: "-60% DMG, 2 ROUNDS" },
-      { id: "overdrive", name: "Full Charge Overdrive", ultimate: true, damage: 26, breaksGuard: true, area: true, anim: "overdrive", detail: "26, UNSTOPPABLE" }
+      { id: "rush", name: "Bull Rush", damage: 12, breaksGuard: true, anim: "rush", detail: "12, BREAKS GUARD", info: "Lower the horns and charge for 12 damage. Smashes straight through a block." },
+      { id: "fist", name: "Steel Fist", damage: 14, interrupt: true, anim: "punch", detail: "14, INTERRUPTS", info: "A heavy punch for 14 damage. If both fighters strike, the opponent's hit is weakened by 30%." },
+      { id: "fortress", name: "Fortress Mode", guard: "armor", fortify: true, cooldown: 3, anim: "fortress", detail: "-60% DMG, 2 ROUNDS", info: "Lock into the ground: take only 40% damage this round and half damage next round. Recharges for 3 rounds." },
+      { id: "overdrive", name: "Full Charge Overdrive", ultimate: true, damage: 26, breaksGuard: true, area: true, anim: "overdrive", detail: "26, UNSTOPPABLE", info: "Overload the core and charge for 26 damage. Can't be blocked or dodged." }
     ]
   },
   {
@@ -85,13 +90,14 @@ const ROSTER = [
     name: "NINJA MAIN",
     title: "Beginner Assassin",
     role: "Agile fighter",
+    color: "#a678e0",
     hp: 80,
     voice: "ninjaHurt",
     moves: [
-      { id: "step", name: "Shadow Step", guard: "dodge", counter: 8, anim: "dash", detail: "DODGE + 8 COUNTER" },
-      { id: "shuriken", name: "Rookie Shuriken", damage: 7, hits: 3, chance: 0.65, anim: "shuriken", detail: "3x7, 65% EACH" },
-      { id: "smoke", name: "Smoke Panic", guard: "smoke", blind: true, cooldown: 2, anim: "smoke", detail: "EVADE ALL + BLIND" },
-      { id: "vanish", name: "Almost Invisible", ultimate: true, damage: 28, guard: "vanish", breaksGuard: true, anim: "vanish", detail: "EVADE + 28 SURPRISE" }
+      { id: "step", name: "Shadow Step", guard: "dodge", counter: 8, anim: "dash", detail: "DODGE + 8 COUNTER", info: "Dodge a single-target strike and slash back for 8 damage. Area attacks still hit." },
+      { id: "shuriken", name: "Rookie Shuriken", damage: 7, hits: 3, chance: 0.65, anim: "shuriken", detail: "3x7, 65% EACH", info: "Throw three practice stars for 7 damage each. Each one has a 65% chance to hit." },
+      { id: "smoke", name: "Smoke Panic", guard: "smoke", blind: true, cooldown: 2, anim: "smoke", detail: "EVADE ALL + BLIND", info: "Vanish in smoke: evade every strike this round, and the opponent's next strike may miss (50%). Recharges for 2 rounds." },
+      { id: "vanish", name: "Almost Invisible", ultimate: true, damage: 28, guard: "vanish", breaksGuard: true, anim: "vanish", detail: "EVADE + 28 SURPRISE", info: "Strike a dramatic pose, vanish and surprise-attack for 28 damage that ignores blocks, while evading strikes. 20% chance you get spotted." }
     ]
   },
   {
@@ -99,13 +105,14 @@ const ROSTER = [
     name: "ZOO-MBIE",
     title: "Undead Safari Guide",
     role: "Bruiser",
+    color: "#a8c83a",
     hp: 115,
     voice: "zombieHurt",
     moves: [
-      { id: "swing", name: "Rotten Swing", damage: 16, area: true, anim: "swing", detail: "16, CAN'T BE DODGED" },
-      { id: "shuffle", name: "Undead Shuffle", damage: 10, guard: "shuffle", anim: "shuffle", detail: "10 + 50% EVADE" },
-      { id: "senses", name: "Safari Senses", track: true, cooldown: 2, anim: "senses", detail: "READ NEXT MOVE" },
-      { id: "stampede", name: "Zombie Stampede", ultimate: true, damage: 7, hits: 4, area: true, anim: "stampede", detail: "4x7, CAN'T BE DODGED" }
+      { id: "swing", name: "Rotten Swing", damage: 16, area: true, anim: "swing", detail: "16, CAN'T BE DODGED", info: "Swing those long rotten arms for 16 damage. Can't be dodged, and a block only halves it." },
+      { id: "shuffle", name: "Undead Shuffle", damage: 10, guard: "shuffle", anim: "shuffle", detail: "10 + 50% EVADE", info: "Lurch forward for 10 damage. The awkward gait has a 50% chance to evade the opponent's strike." },
+      { id: "senses", name: "Safari Senses", track: true, cooldown: 2, anim: "senses", detail: "READ NEXT MOVE", info: "Use old tracking skills: see the opponent's next move, and your next strike can't be evaded. Recharges for 2 rounds." },
+      { id: "stampede", name: "Zombie Stampede", ultimate: true, damage: 7, hits: 4, area: true, anim: "stampede", detail: "4x7, CAN'T BE DODGED", info: "Roar for an infected wildlife stampede: 4 hits of 7 damage. Can't be dodged, and a block only halves it." }
     ]
   }
 ];
