@@ -1,1 +1,15 @@
-"# TacticFight" 
+# Tactic Fight
+
+A turn-based 1v1 arcade fighter. Play as Rook against the CPU-controlled Byte.
+
+## Run
+
+Open `index.html` in a browser. No install or build step is required.
+
+## Combat
+
+- Attack deals 15 damage. If both fighters attack, both take damage.
+- Block stops an incoming attack or ultimate and charges a 1.5x boost for your next regular attack.
+- Ultimate deals 30 damage and becomes available after three completed rounds. It recharges three rounds after use.
+- Reduce the opponent to 0 HP to win. If your HP reaches 0, the match is lost.
+- Use the buttons or press `1`, `2`, and `3` for Attack, Block, and Ultimate.

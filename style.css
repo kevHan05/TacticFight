@@ -1,0 +1,221 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  color-scheme: light;
+  --paper: #f3ead5;
+  --ink: #1d2422;
+  --muted: #68736a;
+  --line: #cfc8b6;
+  --red: #ec5139;
+  --red-dark: #a52d2e;
+  --mint: #83d8a3;
+  --lime: #c8e263;
+  --night: #172b30;
+  --mono: "Space Mono", "Courier New", monospace;
+  --display: "Barlow Condensed", Impact, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(#29353018 0.8px, transparent 0.8px), linear-gradient(125deg, #f7f1e3, #e9e3d2 75%);
+  background-size: 7px 7px, auto;
+  font-family: var(--mono);
+}
+
+button, a { font: inherit; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+
+.game-shell { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
+.topbar { height: 78px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.brand { display: inline-flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font: 800 21px/1 var(--display); letter-spacing: 0; }
+.brand-mark { display: grid; width: 34px; height: 34px; place-items: center; color: var(--paper); background: var(--red); box-shadow: 4px 4px 0 var(--ink); font: 700 12px var(--mono); }
+.brand-accent { color: var(--red); }
+.round-readout { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border: 1px solid var(--line); background: #f7f2e7; }
+.readout-label, .top-status, .side-label, .fighter-meta, .arena-topline, .arena-caption, .combat-tip, .page-footer { font-size: 10px; font-weight: 700; letter-spacing: 0; }
+.readout-label { color: var(--muted); }
+.round-readout strong { font: 700 17px var(--mono); }
+.top-status { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.status-light { width: 8px; height: 8px; border-radius: 50%; background: #63b976; box-shadow: 0 0 0 3px #63b97625; }
+
+.matchup { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 26px; padding: 26px 4px 22px; }
+.fighter-status { min-width: 0; }
+.fighter-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 10px; }
+.side-label { color: var(--muted); }
+.fighter-heading h1 { margin: 1px 0 0; font: 900 34px/.95 var(--display); }
+.bot-status { text-align: right; }
+.hp-number { font: 700 19px var(--mono); }
+.health-track { height: 13px; padding: 2px; border: 1px solid var(--ink); background: #dbd4c4; }
+.health-fill { height: 100%; width: 100%; background: var(--mint); transition: width 280ms ease; }
+.bot-status .health-fill { margin-left: auto; background: var(--red); }
+.fighter-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 7px; color: var(--muted); }
+.boost-tag { padding: 3px 6px; color: var(--ink); background: var(--lime); font-size: 9px; }
+.versus { color: var(--red); font: 900 21px var(--display); transform: rotate(-7deg); }
+
+.arena-wrap { overflow: hidden; border: 2px solid var(--ink); background: var(--night); box-shadow: 7px 7px 0 #1d242224; }
+.arena-topline { height: 32px; display: flex; justify-content: space-between; align-items: center; padding: 0 14px; color: #d8dbc6; background: #20363a; }
+.arena-live { display: flex; align-items: center; gap: 6px; color: #83d8a3; }
+.arena-live i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+#arena { display: block; width: 100%; height: auto; aspect-ratio: 960 / 420; image-rendering: pixelated; }
+.arena-caption { min-height: 35px; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; color: #d8dbc6; background: #20363a; }
+.arena-caption b { margin-left: 7px; color: #94a29a; font-size: 9px; }
+.floor-mark { color: #899b8b; font: 700 9px var(--mono); }
+
+.fight-console { margin-top: 24px; border-top: 2px solid var(--ink); }
+.console-heading { display: flex; align-items: end; justify-content: space-between; padding: 16px 0 13px; }
+.console-heading h2 { margin: 3px 0 0; font: 800 26px/.95 var(--display); }
+.console-heading p { margin: 0 0 2px; color: var(--muted); font-size: 10px; }
+.action-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.action-button { min-height: 72px; display: flex; align-items: center; gap: 13px; padding: 10px 14px; border: 1px solid var(--ink); color: var(--ink); background: #f8f3e8; text-align: left; cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease; }
+.action-button:hover:not(:disabled) { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+.action-button:active:not(:disabled) { transform: translate(0, 0); box-shadow: none; }
+.action-button:disabled { color: #89908a; background: #e6e0d2; cursor: not-allowed; }
+.action-key { width: 31px; height: 31px; flex: 0 0 31px; display: grid; place-items: center; border: 1px solid currentColor; font-size: 10px; }
+.action-copy { display: grid; gap: 4px; }
+.action-copy strong { font: 700 18px/1 var(--display); }
+.action-copy small { color: var(--muted); font-size: 9px; font-weight: 700; }
+.button-arrow { margin-left: auto; font-weight: 700; }
+.attack-button:hover:not(:disabled) { background: #fff0e8; }
+.block-button:hover:not(:disabled) { background: #e9f4e8; }
+.ultimate-button { color: #f8f3e8; background: var(--ink); }
+.ultimate-button .action-copy small { color: #b6c1b8; }
+.ultimate-button:disabled { color: #b8bcb3; background: #343e3a; }
+.ultimate-button:disabled .action-copy small { color: #a0aaa1; }
+.ultimate-button:hover:not(:disabled) { color: var(--ink); background: var(--lime); }
+.ultimate-button:hover:not(:disabled) .action-copy small { color: var(--ink); }
+.console-bottom { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); }
+.combat-message { margin: 0; font-size: 11px; font-weight: 700; }
+.combat-tip { color: var(--muted); text-align: right; }
+.restart-button { padding: 8px 12px; border: 0; color: white; background: var(--red); font: 700 10px var(--mono); cursor: pointer; }
+.restart-button:hover { background: var(--red-dark); }
+.page-footer { display: flex; justify-content: space-between; padding: 15px 0 22px; color: var(--muted); }
+.page-footer b { color: var(--red); }
+
+@media (max-width: 620px) {
+  .game-shell { width: min(100% - 28px, 480px); }
+  .topbar { height: 65px; }
+  .brand { font-size: 18px; }
+  .brand-mark { width: 30px; height: 30px; }
+  .round-readout { padding: 7px 9px; gap: 6px; }
+  .top-status { font-size: 8px; }
+  .matchup { gap: 10px; padding: 21px 0 16px; }
+  .fighter-heading h1 { font-size: 28px; }
+  .fighter-heading { margin-bottom: 8px; }
+  .side-label { font-size: 9px; }
+  .hp-number { font-size: 15px; }
+  .health-track { height: 11px; }
+  .fighter-meta { font-size: 8px; }
+  .boost-tag { font-size: 7px; padding: 3px; }
+  .versus { font-size: 17px; }
+  .arena-topline { height: 28px; padding: 0 9px; font-size: 8px; }
+  .arena-caption { min-height: 30px; padding: 0 9px; font-size: 8px; }
+  .arena-caption b { margin-left: 3px; font-size: 7px; }
+  .fight-console { margin-top: 20px; }
+  .console-heading { padding-top: 14px; }
+  .console-heading h2 { font-size: 23px; }
+  .console-heading p { max-width: 145px; font-size: 9px; text-align: right; }
+  .action-row { gap: 6px; }
+  .action-button { min-height: 76px; align-items: flex-start; gap: 7px; padding: 9px 7px; }
+  .action-key { width: 25px; height: 25px; flex-basis: 25px; font-size: 8px; }
+  .action-copy { padding-top: 2px; gap: 5px; }
+  .action-copy strong { font-size: 16px; }
+  .action-copy small { font-size: 7px; line-height: 1.3; }
+  .button-arrow { display: none; }
+  .console-bottom { min-height: 58px; flex-wrap: wrap; padding: 10px 0; gap: 7px; }
+  .combat-message { max-width: 100%; font-size: 10px; }
+  .combat-tip { width: 100%; text-align: left; font-size: 8px; }
+  .page-footer { padding-bottom: 16px; font-size: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+}
+
+@media (max-width: 380px) {
+  .game-shell { width: calc(100% - 24px); }
+  .brand { gap: 7px; font-size: 15px; }
+  .brand-mark { width: 27px; height: 27px; font-size: 10px; }
+  .top-status { display: none; }
+  .matchup { grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr); gap: 8px; }
+  .fighter-heading { gap: 3px; }
+  .fighter-heading h1 { font-size: 20px; }
+  .hp-number { font-size: 12px; }
+  .fighter-meta { gap: 2px; font-size: 7px; }
+  .versus { position: static; transform: rotate(-7deg); }
+  .action-row { grid-template-columns: 1fr; }
+  .action-button { min-height: 56px; align-items: center; padding: 8px 10px; }
+  .action-copy strong { font-size: 17px; }
+  .action-copy small { font-size: 8px; }
+  .console-heading p { max-width: 105px; }
+}
+
+@media (min-width: 621px) {
+  body { height: 100svh; overflow: hidden; }
+  .game-shell {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 100%;
+    height: 100svh;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 14px 22px;
+    border: 1px solid var(--line);
+  }
+  .topbar {
+    position: relative;
+    z-index: 1;
+    height: 48px;
+    flex: 0 0 48px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    background: #f3ead5ed;
+  }
+  .matchup {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    margin-top: 4px;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    background: #f3ead5ed;
+  }
+  .fighter-heading { margin-bottom: 8px; }
+  .fighter-heading h1 { font-size: 30px; }
+  .fighter-meta { margin-top: 4px; }
+  .arena-wrap {
+    position: fixed;
+    z-index: 0;
+    inset: 8px;
+    border: 1px solid var(--ink);
+    box-shadow: none;
+    pointer-events: none;
+  }
+  .arena-topline, .arena-caption { display: none; }
+  #arena {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: cover;
+  }
+  .fight-console {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    margin-top: auto;
+    padding: 12px 14px 8px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .console-heading { padding: 0 0 10px; }
+  .action-button { min-height: 58px; }
+  .console-bottom { min-height: 38px; border-bottom: 0; }
+  .page-footer { display: none; }
+}
