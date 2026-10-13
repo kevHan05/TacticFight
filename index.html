@@ -68,11 +68,13 @@
         </button>
       </div>
       <div class="console-bottom">
-        <p id="combat-message" class="combat-message" aria-live="polite"></p>
         <button class="restart-button" id="restart-button" type="button" hidden>PLAY AGAIN</button>
       </div>
     </section>
   </main>
+  <div class="screen-announcement" id="screen-announcement" aria-live="assertive" aria-atomic="true" hidden>
+    <p id="announcement-text"></p>
+  </div>
   <script src="sound.js"></script>
   <script src="game.js"></script>
 </body>

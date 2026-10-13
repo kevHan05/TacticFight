@@ -12,7 +12,9 @@ const ui = {
   botBoost: document.querySelector("#bot-boost"),
   ultimate: document.querySelector("#ultimate-button"),
   ultimateDetail: document.querySelector("#ultimate-detail"),
-  message: document.querySelector("#combat-message"),
+  announcement: document.querySelector("#screen-announcement"),
+  announcementText: document.querySelector("#announcement-text"),
+  restartArea: document.querySelector(".console-bottom"),
   restart: document.querySelector("#restart-button"),
   sound: document.querySelector("#sound-toggle"),
   actions: [...document.querySelectorAll(".action-button")]
@@ -37,8 +39,14 @@ function freshState() {
   };
 }
 
-function setMessage(text) {
-  ui.message.textContent = text;
+function announce(text, type) {
+  ui.announcement.dataset.state = type;
+  ui.announcementText.textContent = text;
+  ui.announcement.hidden = false;
+}
+
+function clearAnnouncement() {
+  ui.announcement.hidden = true;
 }
 
 function clampHealth(value) {
@@ -65,6 +73,7 @@ function updateUI() {
   ui.actions[0].disabled = state.finished;
   ui.actions[1].disabled = state.finished;
   ui.restart.hidden = !state.finished;
+  ui.restartArea.hidden = !state.finished;
   drawArena();
 }
 
@@ -133,27 +142,21 @@ function attackDamage(boosted) {
 
 function resolveRound(playerAction) {
   if (state.finished) return;
+  clearAnnouncement();
 
   const botAction = chooseBotAction();
   const playerStartsBoosted = state.playerBoost;
   const botStartsBoosted = state.botBoost;
   const ultimateWasReady = playerUltimateReady();
-  const messages = [];
-
   if (playerAction === "attack") state.playerBoost = false;
   if (botAction === "attack") state.botBoost = false;
 
   if (playerAction === "block" && botAction === "block") {
-    messages.push("Both fighters guarded. Nobody gives ground.");
   } else if (playerAction === "block" || botAction === "block") {
     if (playerAction === "block") {
-      const blockedName = botAction === "ultimate" ? "ultimate" : "attack";
       state.playerBoost = true;
-      messages.push(`Rook blocked Byte's ${blockedName}. Rook's next attack is powered up.`);
     } else {
-      const blockedName = playerAction === "ultimate" ? "ultimate" : "attack";
       state.botBoost = true;
-      messages.push(`Byte blocked Rook's ${blockedName}. Byte's next attack is powered up.`);
     }
   } else {
     const playerDamage = playerAction === "ultimate" ? ultimateDamage : attackDamage(playerStartsBoosted);
@@ -161,9 +164,6 @@ function resolveRound(playerAction) {
     state.botHealth = clampHealth(state.botHealth - playerDamage);
     state.playerHealth = clampHealth(state.playerHealth - botDamage);
 
-    const playerLabel = playerAction === "ultimate" ? "ULTIMATE" : `${playerDamage} damage`;
-    const botLabel = botAction === "ultimate" ? "ULTIMATE" : `${botDamage} damage`;
-    messages.push(`Rook dealt ${playerLabel}. Byte dealt ${botLabel}.`);
   }
 
   state.previousPlayerActions.push(playerAction);
@@ -175,12 +175,10 @@ function resolveRound(playerAction) {
 
   if (state.playerHealth <= 0) {
     state.finished = true;
-    setMessage("YOU LOSE! Byte takes the match.");
+    announce("YOU LOSE!", "lose");
   } else if (state.botHealth <= 0) {
     state.finished = true;
-    setMessage("YOU WIN! Byte is down. The district is yours.");
-  } else {
-    setMessage(messages.join(" "));
+    announce("Winner! Winner! Chicken Dinner!", "win");
   }
   playRoundSounds(playerAction, botAction, playerStartsBoosted, botStartsBoosted, ultimateWasReady);
   updateUI();
@@ -312,8 +310,6 @@ function drawFighter(side, action, boosted, now) {
     pixel(centerX - 42, y + 4, 84, 4, "#fff2bc");
   }
 
-  context.save();
-  context.restore();
 }
 
 function drawArena(now = performance.now()) {
@@ -331,9 +327,10 @@ ui.ultimate.addEventListener("click", () => resolveRound("ultimate"));
 ui.restart.addEventListener("click", () => {
   state = freshState();
   animation = null;
-  setMessage("");
+  clearAnnouncement();
   Sound.play("bell");
   updateUI();
+  announce("Start Fight!", "start");
 });
 ui.actions.forEach(button => {
   button.addEventListener("mouseenter", () => {
@@ -359,3 +356,4 @@ document.addEventListener("keydown", event => {
 state = freshState();
 updateSoundToggle();
 updateUI();
+announce("Start Fight!", "start");

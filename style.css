@@ -87,11 +87,37 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
 .block-button:hover:not(:disabled) { color: var(--lime); }
 .ultimate-button:hover:not(:disabled) { color: #fff2bc; }
 .console-bottom { min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 16px; }
-.combat-message { margin: 0; color: var(--paper); font-size: 11px; font-weight: 700; text-align: center; text-shadow: 1px 2px 2px #132427; }
-.combat-message:empty { display: none; }
+.console-bottom[hidden] { display: none; }
 .combat-tip { display: none; }
 .restart-button { padding: 8px; border: 0; color: var(--lime); background: transparent; font: 700 10px var(--mono); text-shadow: 1px 2px 2px #132427; cursor: pointer; }
 .restart-button:hover { color: white; }
+.screen-announcement {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #1023269c;
+  pointer-events: none;
+  animation: announcement-appear 240ms ease-out both;
+}
+.screen-announcement[hidden] { display: none; }
+.screen-announcement p {
+  max-width: 18ch;
+  margin: 0;
+  color: var(--lime);
+  font: 900 78px/.9 var(--display);
+  text-align: center;
+  text-shadow: 5px 5px 0 var(--red-dark), 0 0 32px #142729;
+}
+.screen-announcement[data-state="start"] { background: #10232652; }
+.screen-announcement[data-state="start"] p { color: #fff2bc; }
+.screen-announcement[data-state="lose"] p { color: #ff9971; }
+@keyframes announcement-appear {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
 .page-footer { display: flex; justify-content: space-between; padding: 15px 0 22px; color: var(--muted); }
 .page-footer b { color: var(--red); }
 
@@ -126,7 +152,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
   .action-copy small { font-size: 7px; line-height: 1.3; }
   .button-arrow { display: none; }
   .console-bottom { min-height: 58px; flex-wrap: wrap; padding: 10px 0; gap: 7px; }
-  .combat-message { max-width: 100%; font-size: 10px; }
+  .screen-announcement p { font-size: 48px; }
   .combat-tip { width: 100%; text-align: left; font-size: 8px; }
   .page-footer { padding-bottom: 16px; font-size: 8px; }
 }
