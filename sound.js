@@ -237,6 +237,101 @@ const Sound = (() => {
       vibrato(last, t + 1.46, 1, 5, 9);
     },
 
+    // Ninja Main's yelp: higher and squeakier than Rook's grunt.
+    ninjaHurt(t) {
+      tone({ type: "triangle", freq: vary(560), to: 300, start: t, duration: 0.16, volume: 0.2, attack: 0.01 });
+      tone({ type: "sawtooth", freq: vary(420), to: 230, start: t, duration: 0.12, volume: 0.05, attack: 0.01 });
+    },
+
+    // ZOO-mbie's groan: a slow, wobbling sawtooth through rotten air.
+    zombieHurt(t) {
+      const groan = tone({ type: "sawtooth", freq: vary(120), to: 70, start: t, duration: 0.4, volume: 0.12, attack: 0.04 });
+      vibrato(groan, t, 0.4, 7, 6);
+      noise({ start: t, duration: 0.3, volume: 0.07, freq: 500, q: 1.5, attack: 0.04 });
+    },
+
+    // Quick sidestep: a bright, short whoosh.
+    dodge(t) {
+      noise({ start: t, duration: 0.12, volume: 0.18, freq: vary(2000), to: 5200, q: 3, attack: 0.03 });
+      tone({ type: "triangle", freq: 600, to: 1300, start: t, duration: 0.08, volume: 0.05 });
+    },
+
+    // Three thrown stars zinging out in a ragged spread.
+    shuriken(t) {
+      for (let i = 0; i < 3; i += 1) {
+        const at = t + i * 0.06 + Math.random() * 0.02;
+        tone({ freq: vary(3200), to: 1700, start: at, duration: 0.1, volume: 0.05 });
+        noise({ start: at, duration: 0.03, volume: 0.08, filter: "highpass", freq: 6000 });
+      }
+    },
+
+    // Smoke bomb: a pop followed by a long hiss.
+    smoke(t) {
+      tone({ freq: 220, to: 60, start: t, duration: 0.09, volume: 0.4 });
+      noise({ start: t, duration: 0.6, volume: 0.2, freq: 1800, to: 700, q: 0.7, attack: 0.04 });
+    },
+
+    // Fortress Mode: armour plates slam shut and the hydraulics vent.
+    armor(t) {
+      effects.clang(t, 0.5);
+      tone({ type: "square", freq: 55, start: t, duration: 0.25, volume: 0.12 });
+      noise({ start: t + 0.08, duration: 0.35, volume: 0.12, filter: "highpass", freq: 3500, attack: 0.02 });
+    },
+
+    // Bull Rush: an engine revving up under heavy footsteps.
+    rush(t) {
+      tone({ type: "sawtooth", freq: 55, to: 170, start: t, duration: 0.3, volume: 0.1, attack: 0.05 });
+      tone({ type: "square", freq: 40, to: 90, start: t, duration: 0.3, volume: 0.06, attack: 0.05 });
+      [0, 0.09, 0.18].forEach(offset => tone({ freq: 90, to: 40, start: t + offset, duration: 0.08, volume: 0.4 }));
+    },
+
+    // Full Charge Overdrive: the power core surges with crackling arcs.
+    overdrive(t) {
+      tone({ type: "sawtooth", freq: 70, to: 1500, start: t, duration: 0.45, volume: 0.09, attack: 0.35, out: echoBus });
+      tone({ type: "square", freq: 72, to: 1520, start: t, duration: 0.45, volume: 0.04, attack: 0.35, detune: 25 });
+      effects.crackle(t + 0.15);
+      effects.crackle(t + 0.32);
+    },
+
+    // Uppercut: a rising whoosh that ends on a heavy blow.
+    uppercut(t) {
+      noise({ start: t, duration: 0.32, volume: 0.2, freq: 300, to: 4200, q: 2, attack: 0.2 });
+      tone({ type: "triangle", freq: 180, to: 900, start: t, duration: 0.32, volume: 0.08, attack: 0.2 });
+    },
+
+    // Safari Senses: two sonar pings echoing out.
+    senses(t) {
+      [0, 0.22].forEach(offset => tone({ freq: 1400, start: t + offset, duration: 0.35, volume: 0.1, attack: 0.002, out: echoBus }));
+    },
+
+    // Almost Invisible: a dramatic ta-da, then a poof.
+    vanish(t) {
+      tone({ type: "square", freq: 784, start: t, duration: 0.1, volume: 0.07 });
+      tone({ type: "square", freq: 1047, start: t + 0.11, duration: 0.18, volume: 0.07 });
+      noise({ start: t + 0.25, duration: 0.25, volume: 0.25, filter: "highpass", freq: 2500, to: 600 });
+    },
+
+    // The ninja is spotted mid-pose: a comic boing.
+    boing(t) {
+      const spring = tone({ freq: 220, to: 440, start: t, duration: 0.35, volume: 0.15 });
+      vibrato(spring, t, 0.35, 14, 40);
+    },
+
+    // ZOO-mbie's roar calls the swarm.
+    roar(t) {
+      const roar = tone({ type: "sawtooth", freq: 170, to: 85, start: t, duration: 0.7, volume: 0.14, attack: 0.05 });
+      vibrato(roar, t, 0.7, 9, 12);
+      noise({ start: t, duration: 0.6, volume: 0.15, freq: 450, q: 1.2, attack: 0.05 });
+    },
+
+    // Infected wildlife thundering across the street.
+    stampede(t) {
+      noise({ start: t, duration: 1, volume: 0.3, filter: "lowpass", freq: 260, attack: 0.2 });
+      for (let i = 0; i < 12; i += 1) {
+        tone({ freq: vary(95), to: 40, start: t + i * 0.07 + Math.random() * 0.03, duration: 0.07, volume: 0.3 });
+      }
+    },
+
     // Tiny UI tick when hovering a move.
     hover(t) {
       tone({ type: "triangle", freq: 1800, start: t, duration: 0.03, volume: 0.04 });
