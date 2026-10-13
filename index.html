@@ -30,24 +30,24 @@
     <section class="matchup" aria-label="Fighter status">
       <div class="fighter-status player-status">
         <div class="fighter-heading">
-          <h1>ROOK</h1>
+          <h1 id="player-name">ROOK</h1>
           <span id="player-hp-text" class="hp-number">100</span>
         </div>
         <div class="health-track" role="meter" aria-label="Player health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
           <div id="player-health" class="health-fill"></div>
         </div>
-        <div class="fighter-meta"><span id="player-boost" class="boost-tag" hidden>POWER UP +50%</span></div>
+        <div class="fighter-meta"><span id="player-tags" class="boost-tag"></span></div>
       </div>
 
       <div class="fighter-status bot-status">
         <div class="fighter-heading">
-          <h1>BYTE</h1>
+          <h1 id="bot-name">BYTE</h1>
           <span id="bot-hp-text" class="hp-number">100</span>
         </div>
         <div class="health-track" role="meter" aria-label="CPU health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
           <div id="bot-health" class="health-fill"></div>
         </div>
-        <div class="fighter-meta"><span id="bot-boost" class="boost-tag" hidden>POWER UP +50%</span></div>
+        <div class="fighter-meta"><span id="bot-tags" class="boost-tag"></span></div>
       </div>
     </section>
 
@@ -56,26 +56,26 @@
     </section>
 
     <section class="fight-console" aria-label="Combat controls">
-      <div class="action-row">
-        <button class="action-button attack-button" id="attack-button" type="button">
-          <span class="action-copy"><strong>Attack</strong><small>15 DAMAGE</small></span>
-        </button>
-        <button class="action-button block-button" id="block-button" type="button">
-          <span class="action-copy"><strong>Block</strong><small>GUARD + COUNTER</small></span>
-        </button>
-        <button class="action-button ultimate-button" id="ultimate-button" type="button" disabled>
-          <span class="action-copy"><strong>Ultimate</strong><small id="ultimate-detail">CHARGES IN 3</small></span>
-        </button>
-      </div>
+      <div class="action-row" id="action-row"></div>
       <div class="console-bottom">
         <button class="restart-button" id="restart-button" type="button" hidden>PLAY AGAIN</button>
+        <button class="restart-button" id="change-button" type="button">NEW FIGHTER</button>
       </div>
     </section>
   </main>
   <div class="screen-announcement" id="screen-announcement" aria-live="assertive" aria-atomic="true" hidden>
     <p id="announcement-text"></p>
   </div>
+  <section class="character-select" id="character-select" aria-labelledby="select-title" hidden>
+    <div class="select-panel">
+      <p class="select-kicker">TACTIC FIGHT</p>
+      <h2 id="select-title">Choose your fighter</h2>
+      <div class="select-grid" id="select-grid"></div>
+      <p class="select-hint">Press 1-6 to pick. The CPU takes one of the others.</p>
+    </div>
+  </section>
   <script src="sound.js"></script>
+  <script src="characters.js"></script>
   <script src="graphics.js"></script>
   <script src="game.js"></script>
 </body>
