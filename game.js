@@ -56,6 +56,8 @@ function updateUI() {
   ui.botMeter.setAttribute("aria-valuenow", state.botHealth);
   ui.playerBoost.hidden = !state.playerBoost;
   ui.botBoost.hidden = !state.botBoost;
+  ui.playerBoost.parentElement.hidden = !state.playerBoost;
+  ui.botBoost.parentElement.hidden = !state.botBoost;
 
   const ultimateReady = playerUltimateReady();
   ui.ultimate.disabled = !ultimateReady || state.finished;
@@ -73,7 +75,9 @@ function playerUltimateReady() {
 function updateSoundToggle() {
   const muted = Sound.isMuted();
   ui.sound.setAttribute("aria-pressed", String(!muted));
-  ui.sound.textContent = muted ? "SOUND OFF" : "SOUND ON";
+  const label = muted ? "Turn sound on" : "Mute sound";
+  ui.sound.setAttribute("aria-label", label);
+  ui.sound.title = `${label} (M)`;
 }
 
 function playRoundSounds(playerAction, botAction, playerStartsBoosted, botStartsBoosted, ultimateWasReady) {
@@ -309,10 +313,6 @@ function drawFighter(side, action, boosted, now) {
   }
 
   context.save();
-  context.textAlign = "center";
-  context.font = "bold 10px 'Space Mono', monospace";
-  context.fillStyle = "#f3ead5";
-  context.fillText(isPlayer ? "ROOK" : "BYTE", centerX, floorY + 17);
   context.restore();
 }
 
@@ -331,7 +331,7 @@ ui.ultimate.addEventListener("click", () => resolveRound("ultimate"));
 ui.restart.addEventListener("click", () => {
   state = freshState();
   animation = null;
-  setMessage("The bell is yours. Make the first move.");
+  setMessage("");
   Sound.play("bell");
   updateUI();
 });
