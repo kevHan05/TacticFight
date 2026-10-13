@@ -14,6 +14,7 @@ const ui = {
   ultimateDetail: document.querySelector("#ultimate-detail"),
   message: document.querySelector("#combat-message"),
   restart: document.querySelector("#restart-button"),
+  sound: document.querySelector("#sound-toggle"),
   actions: [...document.querySelectorAll(".action-button")]
 };
 
@@ -56,13 +57,55 @@ function updateUI() {
   ui.playerBoost.hidden = !state.playerBoost;
   ui.botBoost.hidden = !state.botBoost;
 
-  const ultimateReady = state.completedRounds >= 3 && state.playerCooldown === 0;
+  const ultimateReady = playerUltimateReady();
   ui.ultimate.disabled = !ultimateReady || state.finished;
   ui.ultimateDetail.textContent = ultimateReady ? "30 DAMAGE" : `CHARGES IN ${state.playerCooldown}`;
   ui.actions[0].disabled = state.finished;
   ui.actions[1].disabled = state.finished;
   ui.restart.hidden = !state.finished;
   drawArena();
+}
+
+function playerUltimateReady() {
+  return state.completedRounds >= 3 && state.playerCooldown === 0;
+}
+
+function updateSoundToggle() {
+  const muted = Sound.isMuted();
+  ui.sound.setAttribute("aria-pressed", String(!muted));
+  ui.sound.textContent = muted ? "SOUND OFF" : "SOUND ON";
+}
+
+function playRoundSounds(playerAction, botAction, playerStartsBoosted, botStartsBoosted, ultimateWasReady) {
+  const ultimateInPlay = playerAction === "ultimate" || botAction === "ultimate";
+  // Hits land on the ultimate's blast when one is thrown, otherwise right after the swing.
+  const hit = ultimateInPlay ? 0.38 : 0.14;
+
+  if (playerAction === "ultimate") Sound.play("ultimate", 0, "player");
+  if (botAction === "ultimate") Sound.play("ultimate", 0.02, "bot");
+  if (playerAction === "attack") Sound.play("swing", hit - 0.14);
+  if (botAction === "attack") Sound.play("swing", hit - 0.1);
+
+  if (playerAction === "block" && botAction === "block") {
+    Sound.play("standoff");
+  } else if (playerAction === "block" || botAction === "block") {
+    const blocker = playerAction === "block" ? "player" : "bot";
+    Sound.play("clang", hit, blocker === "player" ? 1 : 0.8);
+    Sound.play("powerUp", hit + 0.3, blocker);
+  } else {
+    const boostedHit = (playerAction === "attack" && playerStartsBoosted) || (botAction === "attack" && botStartsBoosted);
+    Sound.play("impact", hit, boostedHit || ultimateInPlay);
+    if (boostedHit) Sound.play("crackle", hit);
+    Sound.play("rookHurt", hit + 0.05);
+    Sound.play("byteHurt", hit + 0.08);
+  }
+
+  if (state.finished) {
+    Sound.play("ko", hit + 0.15);
+    Sound.play(state.playerHealth <= 0 ? "lose" : "win", hit + 0.9);
+  } else if (!ultimateWasReady && playerUltimateReady()) {
+    Sound.play("ultimateReady", hit + 0.6);
+  }
 }
 
 function chooseBotAction() {
@@ -90,6 +133,7 @@ function resolveRound(playerAction) {
   const botAction = chooseBotAction();
   const playerStartsBoosted = state.playerBoost;
   const botStartsBoosted = state.botBoost;
+  const ultimateWasReady = playerUltimateReady();
   const messages = [];
 
   if (playerAction === "attack") state.playerBoost = false;
@@ -134,6 +178,7 @@ function resolveRound(playerAction) {
   } else {
     setMessage(messages.join(" "));
   }
+  playRoundSounds(playerAction, botAction, playerStartsBoosted, botStartsBoosted, ultimateWasReady);
   updateUI();
 }
 
@@ -287,15 +332,30 @@ ui.restart.addEventListener("click", () => {
   state = freshState();
   animation = null;
   setMessage("The bell is yours. Make the first move.");
+  Sound.play("bell");
   updateUI();
+});
+ui.actions.forEach(button => {
+  button.addEventListener("mouseenter", () => {
+    if (!button.disabled) Sound.playIfUnlocked("hover");
+  });
+});
+ui.sound.addEventListener("click", () => {
+  Sound.toggleMuted();
+  updateSoundToggle();
 });
 
 document.addEventListener("keydown", event => {
   if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
   if (event.key === "1" && !ui.actions[0].disabled) resolveRound("attack");
   if (event.key === "2" && !ui.actions[1].disabled) resolveRound("block");
-  if (event.key === "3" && !ui.ultimate.disabled) resolveRound("ultimate");
+  if (event.key === "3") {
+    if (!ui.ultimate.disabled) resolveRound("ultimate");
+    else if (!state.finished) Sound.play("denied");
+  }
+  if (event.key === "m" || event.key === "M") ui.sound.click();
 });
 
 state = freshState();
+updateSoundToggle();
 updateUI();

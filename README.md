@@ -13,3 +13,7 @@ Open `index.html` in a browser. No install or build step is required.
 - Ultimate deals 30 damage and becomes available after three completed rounds. It recharges three rounds after use.
 - Reduce the opponent to 0 HP to win. If your HP reaches 0, the match is lost.
 - Use the buttons or press `1`, `2`, and `3` for Attack, Block, and Ultimate.
+
+## Sound
+
+All sound effects are synthesized live with the Web Audio API in `sound.js`, so there are no audio files. Press `M` or use the SOUND button to mute. The setting is remembered between visits.
