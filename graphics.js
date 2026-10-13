@@ -781,14 +781,6 @@ const Arena = (() => {
     context.fillStyle = "#120d16";
     context.fillRect(0, 0, WIDTH * SCALE, HEIGHT * SCALE);
     context.drawImage(screen, shakeX, shakeY, WIDTH * SCALE, HEIGHT * SCALE);
-
-    context.save();
-    context.textAlign = "center";
-    context.font = "bold 10px 'Space Mono', monospace";
-    context.fillStyle = "#f3ead5";
-    context.fillText("ROOK", PLAYER_X * SCALE, floorY * SCALE + 17);
-    context.fillText("BYTE", BOT_X * SCALE, floorY * SCALE + 17);
-    context.restore();
   }
 
   return { draw };

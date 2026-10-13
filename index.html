@@ -18,66 +18,63 @@
         <span class="readout-label">ROUND</span>
         <strong id="round-number">01</strong>
       </div>
-      <div class="top-status"><span class="status-light"></span><span>ARCADE MATCH</span><button class="sound-toggle" id="sound-toggle" type="button" aria-pressed="true" title="Toggle sound (M)">SOUND ON</button></div>
+      <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Mute sound" aria-pressed="true" title="Mute sound (M)">
+        <svg class="speaker-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path class="speaker-shape" d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+          <path class="sound-waves" d="M16 9a5 5 0 0 1 0 6M18.5 6.5a8.5 8.5 0 0 1 0 11"></path>
+          <path class="mute-slash" d="m15 9 6 6m0-6-6 6"></path>
+        </svg>
+      </button>
     </header>
 
     <section class="matchup" aria-label="Fighter status">
       <div class="fighter-status player-status">
         <div class="fighter-heading">
-          <div><span class="side-label">PLAYER 1</span><h1>ROOK</h1></div>
+          <h1>ROOK</h1>
           <span id="player-hp-text" class="hp-number">100</span>
         </div>
         <div class="health-track" role="meter" aria-label="Player health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
           <div id="player-health" class="health-fill"></div>
         </div>
-        <div class="fighter-meta"><span>VANGUARD</span><span id="player-boost" class="boost-tag" hidden>POWER UP +50%</span></div>
+        <div class="fighter-meta"><span id="player-boost" class="boost-tag" hidden>POWER UP +50%</span></div>
       </div>
-
-      <div class="versus" aria-hidden="true">VS</div>
 
       <div class="fighter-status bot-status">
         <div class="fighter-heading">
-          <div><span class="side-label">CPU</span><h1>BYTE</h1></div>
+          <h1>BYTE</h1>
           <span id="bot-hp-text" class="hp-number">100</span>
         </div>
         <div class="health-track" role="meter" aria-label="CPU health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
           <div id="bot-health" class="health-fill"></div>
         </div>
-        <div class="fighter-meta"><span>COMBAT UNIT</span><span id="bot-boost" class="boost-tag" hidden>POWER UP +50%</span></div>
+        <div class="fighter-meta"><span id="bot-boost" class="boost-tag" hidden>POWER UP +50%</span></div>
       </div>
     </section>
 
     <section class="arena-wrap" aria-label="Fight arena">
-      <div class="arena-topline"><span>NEON DISTRICT // NIGHT SHIFT</span><span class="arena-live"><i></i> LIVE</span></div>
       <canvas id="arena" width="960" height="420" role="img" aria-label="Rook and Byte face off in a pixel art city arena"></canvas>
-      <div class="arena-caption"><span>ROOK <b>PLAYER 1</b></span><span class="floor-mark">FIGHT</span><span>BYTE <b>CPU</b></span></div>
     </section>
 
     <section class="fight-console" aria-label="Combat controls">
-      <div class="console-heading">
-        <div><span class="side-label">YOUR MOVE</span><h2>Choose an action</h2></div>
-        <p>One move each. Read the opponent, then strike.</p>
-      </div>
       <div class="action-row">
         <button class="action-button attack-button" id="attack-button" type="button">
-          <span class="action-key">01</span><span class="action-copy"><strong>Attack</strong><small>15 DAMAGE</small></span><span class="button-arrow" aria-hidden="true">&gt;</span>
+          <span class="action-copy"><strong>Attack</strong><small>15 DAMAGE</small></span>
         </button>
         <button class="action-button block-button" id="block-button" type="button">
-          <span class="action-key">02</span><span class="action-copy"><strong>Block</strong><small>GUARD + COUNTER</small></span><span class="button-arrow" aria-hidden="true">&gt;</span>
+          <span class="action-copy"><strong>Block</strong><small>GUARD + COUNTER</small></span>
         </button>
         <button class="action-button ultimate-button" id="ultimate-button" type="button" disabled>
-          <span class="action-key">03</span><span class="action-copy"><strong>Ultimate</strong><small id="ultimate-detail">CHARGES IN 3</small></span><span class="button-arrow" aria-hidden="true">&gt;</span>
+          <span class="action-copy"><strong>Ultimate</strong><small id="ultimate-detail">CHARGES IN 3</small></span>
         </button>
       </div>
       <div class="console-bottom">
-        <p id="combat-message" class="combat-message" aria-live="polite">The bell is yours. Make the first move.</p>
         <button class="restart-button" id="restart-button" type="button" hidden>PLAY AGAIN</button>
-        <span class="combat-tip">BLOCKED? YOUR NEXT ATTACK DEALS 1.5X</span>
       </div>
     </section>
-
-    <footer class="page-footer"><span>TACTIC FIGHT <b>01</b></span><span>THINK FAST. HIT HARD.</span></footer>
   </main>
+  <div class="screen-announcement" id="screen-announcement" aria-live="assertive" aria-atomic="true" hidden>
+    <p id="announcement-text"></p>
+  </div>
   <script src="sound.js"></script>
   <script src="graphics.js"></script>
   <script src="game.js"></script>

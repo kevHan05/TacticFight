@@ -20,4 +20,4 @@ The arena is rendered by `graphics.js` at 320x140 and scaled 3x with hard pixel 
 
 ## Sound
 
-All sound effects are synthesized live with the Web Audio API in `sound.js`, so there are no audio files. Press `M` or use the SOUND button to mute. The setting is remembered between visits.
+All sound effects are synthesized live with the Web Audio API in `sound.js`, so there are no audio files. Press `M` or use the speaker button to toggle sound. The setting is remembered between visits.
