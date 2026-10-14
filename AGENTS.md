@@ -7,7 +7,7 @@ This file is the shared source of truth for Claude Code (`CLAUDE.md` imports it)
 TacticFight is a turn-based 1v1 arcade fighter in a 16-bit, Street Fighter II–style look. It is plain HTML/CSS/JavaScript: **no build step, no dependencies, no audio or image files**. Open `index.html` in a browser to play. GitHub Pages serves `main` at https://kevhan05.github.io/TacticFight/ and redeploys about 1–2 minutes after each merge.
 
 - `spec.md`: the original game spec. Rook vs Byte, Attack/Block/Ultimate, 100 HP, 15 attack.
-- `characterspec.md`: spec for Bobbie, R.O.C.K.Y, Ninja Main and ZOO-mbie.
+- `characterspec.md`: spec for Bobbie, R.O.C.K.Y, Ninja Main, ZOO-mbie, BANANAS and the secret fighter PROPHET.
 - `README.md`: player-facing rules, roster table and modes. Keep it up to date when gameplay changes.
 
 ## Architecture
@@ -33,7 +33,8 @@ Scripts are classic `<script>` tags. Each file defines one global, and **load or
 - **The ultimate is always a fighter's last move.** It unlocks after 3 rounds and recharges for 3.
 - **Statuses** (`boost`, `exposed`, `staggered`, `blinded`, `fortified`, `tracking`) last exactly one round, except `boost`, which lasts until the next non-ultimate strike.
 - **Stages:** each fight happens on the opponent's stage (`state.stage`, which defaults to `state.bot.id`). Music plays the stage id as its track.
-- **Persistence:** `localStorage` keys are `tactic-fight-muted`, `tactic-fight-campaign` and `tactic-fight-endless-best`. Always wrap access in try/catch.
+- **Secret fighter:** a roster entry with `secret: true` (PROPHET) is locked until every other campaign is cleared or the title-screen code `PROPHET` is entered. Locked, its select card shows `???` and is disabled, and Quick Fight/Endless leave it out. PROPHET is always the last opponent of every other campaign.
+- **Persistence:** `localStorage` keys are `tactic-fight-muted`, `tactic-fight-campaign`, `tactic-fight-endless-best` and `tactic-fight-unlocked`. Always wrap access in try/catch.
 
 ## Conventions
 
@@ -48,11 +49,12 @@ Scripts are classic `<script>` tags. Each file defines one global, and **load or
   - Use limited palettes, hard colour bands with checkerboard dithering, and integer pixels.
   - Don't use anti-aliased arc/stroke/ellipse calls in stages. Sprites are snapped to their palette and get a 1px dark outline.
   - Fighters stand with their feet at y=92 on desktop and y=126 on mobile. The desktop view is cropped to roughly x 60–260, y 20–110.
-- **The UI must work at phone width.** Check the `@media (max-width: 620px / 420px)` rules, keep keyboard shortcuts working (1–4 moves, 1–6 select, 1–3 modes, M mute, Enter/Space/Escape in dialogue), and respect `prefers-reduced-motion` (no screen shake or flash).
+- **The UI must work at phone width.** Check the `@media (max-width: 620px / 420px)` rules, keep keyboard shortcuts working (1–4 moves, 1–8 select, 1–3 modes, M mute, Enter/Space/Escape in dialogue; shortcuts are ignored while typing in the code box), and respect `prefers-reduced-motion` (no screen shake or flash).
 - **Humour and tone:** the content (banter, campaign, move names) is comedic and family friendly. Keep each character's voice from `characterspec.md`. Dialogue lines stay at 90 characters or fewer.
 
 ## Design decisions to respect
 
+- **PROPHET is meant to be strong** (about 58% in the simulation) as the secret final boss; keep him somewhat above the 45–55% band.
 - **Rook and Byte stay at their original kit** (100 HP, Attack 15, Block, Ultimate 30) even though they win only about 20% in simulations. The owner wants them as the challenging option. Don't buff them or flag their balance.
 - **Balance target:** the other fighters should land at roughly a **45–55%** win rate against each other in the CPU-vs-CPU simulation (see the `balance-check` skill).
 - When the spec describes real-time abilities (dashes, area attacks, stealth), translate them into **turn-based rules** using the existing move fields, and explain the translation in the PR.

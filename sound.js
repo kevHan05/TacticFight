@@ -268,6 +268,40 @@ const Sound = (() => {
       tone({ type: "sine", freq: 96, to: 38, start: blast, duration: 0.7, volume: 0.72 });
     },
 
+    // PROPHET's grunt: a deep, echoing voice from very far away.
+    prophetHurt(t) {
+      tone({ type: "sawtooth", freq: vary(150), to: 95, start: t, duration: 0.3, volume: 0.12, attack: 0.02, out: echoBus });
+      tone({ type: "triangle", freq: vary(300), to: 190, start: t, duration: 0.24, volume: 0.1, attack: 0.02 });
+    },
+
+    // Nova Palm: a twinkling shimmer gathering into the palm.
+    nova(t) {
+      [1320, 1760, 2200, 2640].forEach((freq, index) => tone({ type: "sine", freq, start: t + index * 0.04, duration: 0.12, volume: 0.05, out: echoBus }));
+      noise({ start: t + 0.12, duration: 0.14, volume: 0.12, freq: 3200, q: 2 });
+    },
+
+    // Wormhole Warp: a sliding, swirling whoop into the portal.
+    warp(t) {
+      const whoop = tone({ type: "triangle", freq: 900, to: 120, start: t, duration: 0.35, volume: 0.14, out: echoBus });
+      vibrato(whoop, t, 0.35, 18, 40);
+    },
+
+    // Prophecy: a rising eerie choir note, then the beam's crackle.
+    prophecy(t) {
+      const choir = tone({ type: "sine", freq: 440, to: 880, start: t, duration: 0.4, volume: 0.12, attack: 0.08, out: echoBus });
+      vibrato(choir, t, 0.4, 6, 10);
+      noise({ start: t + 0.3, duration: 0.25, volume: 0.1, freq: 2600, to: 1400, q: 3 });
+    },
+
+    // BIG BANG: a long cosmic swell, a heartbeat of silence, then the blast.
+    bigBang(t) {
+      tone({ type: "sawtooth", freq: 60, to: 240, start: t, duration: 0.95, volume: 0.1, attack: 0.3, out: echoBus });
+      [523, 659, 784, 1047].forEach((freq, index) => tone({ type: "square", freq, start: t + 0.2 + index * 0.12, duration: 0.2, volume: 0.04, out: echoBus }));
+      const blast = t + 1.1;
+      tone({ type: "sine", freq: 110, to: 30, start: blast, duration: 0.9, volume: 0.8 });
+      noise({ start: blast, duration: 0.6, volume: 0.36, filter: "lowpass", freq: 2400, to: 90, attack: 0.01 });
+    },
+
     // Quick sidestep: a bright, short whoosh.
     dodge(t) {
       noise({ start: t, duration: 0.12, volume: 0.18, freq: vary(2000), to: 5200, q: 3, attack: 0.03 });

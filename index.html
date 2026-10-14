@@ -5,47 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f3ead5">
   <title>Tactic Fight</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="game-shell">
-    <header class="topbar">
-      <button class="brand" id="home-button" type="button" aria-label="Back to the start screen">
-        <span class="brand-mark" aria-hidden="true">TF</span>
-        <span>TACTIC<span class="brand-accent">FIGHT</span></span>
-      </button>
-      <div class="round-readout" aria-live="polite">
-        <span class="readout-label" id="mode-label">ROUND</span>
-        <strong id="round-number">01</strong>
-      </div>
-      <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Mute sound" aria-pressed="true" title="Mute sound (M)">
-        <svg class="speaker-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path class="speaker-shape" d="M4 9v6h4l5 4V5L8 9H4Z"></path>
-          <path class="sound-waves" d="M16 9a5 5 0 0 1 0 6M18.5 6.5a8.5 8.5 0 0 1 0 11"></path>
-          <path class="mute-slash" d="m15 9 6 6m0-6-6 6"></path>
-        </svg>
-      </button>
-    </header>
-
+    <!-- Arcade HUD: life bars with a red damage trail, name plates under them and the round in the middle. -->
     <section class="matchup" aria-label="Fighter status">
       <div class="fighter-status player-status">
-        <div class="fighter-heading">
-          <h1 id="player-name">ROOK</h1>
-          <span id="player-hp-text" class="hp-number">100</span>
-        </div>
         <div class="health-track" role="meter" aria-label="Player health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <div id="player-lag" class="health-lag"></div>
           <div id="player-health" class="health-fill"></div>
+        </div>
+        <div class="fighter-heading">
+          <h1 id="player-name" class="name-plate">ROOK</h1>
+          <span id="player-hp-text" class="hp-number">100</span>
         </div>
         <div class="fighter-meta"><span id="player-tags" class="boost-tag"></span></div>
       </div>
 
-      <div class="fighter-status bot-status">
-        <div class="fighter-heading">
-          <h1 id="bot-name">BYTE</h1>
-          <span id="bot-hp-text" class="hp-number">100</span>
+      <div class="hud-center">
+        <div class="round-readout" aria-live="polite">
+          <span class="readout-label" id="mode-label">ROUND</span>
+          <strong id="round-number">01</strong>
         </div>
+        <div class="corner-controls">
+          <button class="menu-button" id="home-button" type="button" aria-label="Back to the start screen" title="Main menu">MENU</button>
+          <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Mute sound" aria-pressed="true" title="Mute sound (M)">
+            <svg class="speaker-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path class="speaker-shape" d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+              <path class="sound-waves" d="M16 9a5 5 0 0 1 0 6M18.5 6.5a8.5 8.5 0 0 1 0 11"></path>
+              <path class="mute-slash" d="m15 9 6 6m0-6-6 6"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="fighter-status bot-status">
         <div class="health-track" role="meter" aria-label="CPU health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <div id="bot-lag" class="health-lag"></div>
           <div id="bot-health" class="health-fill"></div>
+        </div>
+        <div class="fighter-heading">
+          <h1 id="bot-name" class="name-plate">BYTE</h1>
+          <span id="bot-hp-text" class="hp-number">100</span>
         </div>
         <div class="fighter-meta"><span id="bot-tags" class="boost-tag"></span></div>
       </div>
@@ -97,10 +100,16 @@
       <p class="panel-kicker">16-BIT TURN-BASED ARCADE FIGHTER</p>
       <h2 class="game-logo" id="title-heading">TACTIC<span>FIGHT</span></h2>
       <div class="mode-list">
-        <button class="mode-button" type="button" data-mode="campaign"><strong>Campaign</strong><span>Each fighter's story. Beat all six rivals on their home turf.</span></button>
+        <button class="mode-button" type="button" data-mode="campaign"><strong>Campaign</strong><span>Each fighter's story. Beat every rival on their home turf, then face the one behind it all.</span></button>
         <button class="mode-button" type="button" data-mode="endless"><strong>Endless</strong><span>New opponent every fight, full health each time. How long can you last?</span><em id="endless-best"></em></button>
         <button class="mode-button" type="button" data-mode="quick"><strong>Quick Fight</strong><span>Pick a fighter and take on a random opponent.</span></button>
       </div>
+      <form class="code-entry" id="code-form" autocomplete="off">
+        <label for="code-input">ENTER CODE</label>
+        <input id="code-input" type="text" maxlength="16" spellcheck="false" autocapitalize="characters" aria-describedby="code-message">
+        <button class="code-submit" type="submit">OK</button>
+        <p class="code-message" id="code-message" aria-live="polite"></p>
+      </form>
       <p class="title-hint">Click or press 1-3. Press M to mute.</p>
     </div>
   </section>

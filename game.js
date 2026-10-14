@@ -7,8 +7,10 @@ const ui = {
   playerName: $("#player-name"),
   botName: $("#bot-name"),
   playerHealth: $("#player-health"),
+  playerLag: $("#player-lag"),
   playerHealthText: $("#player-hp-text"),
   botHealth: $("#bot-health"),
+  botLag: $("#bot-lag"),
   botHealthText: $("#bot-hp-text"),
   playerMeter: $(".player-status .health-track"),
   botMeter: $(".bot-status .health-track"),
@@ -35,6 +37,9 @@ const ui = {
   dialogueSkip: $("#dialogue-skip"),
   title: $("#title-screen"),
   endlessBest: $("#endless-best"),
+  codeForm: $("#code-form"),
+  codeInput: $("#code-input"),
+  codeMessage: $("#code-message"),
   select: $("#character-select"),
   selectMode: $("#select-mode"),
   selectGrid: $("#select-grid"),
@@ -63,6 +68,8 @@ const STATUS_LABELS = {
 const MODE_NAMES = { campaign: "CAMPAIGN", endless: "ENDLESS", quick: "QUICK FIGHT" };
 const CAMPAIGN_KEY = "tactic-fight-campaign";
 const ENDLESS_KEY = "tactic-fight-endless-best";
+const UNLOCK_KEY = "tactic-fight-unlocked";
+const SECRET_ID = "prophet";
 
 let screenName = "title";
 let mode = "quick";
@@ -75,6 +82,7 @@ let selectedId = null;
 let timers = [];
 let dialogueState = null;
 let lastPortraitDraw = 0;
+let pendingFinish = null;
 
 // ---------------------------------------------------------------------------
 // Helpers.
@@ -157,7 +165,9 @@ function goToTitle() {
   clearTimers();
   clearAnnouncement();
   animation = null;
+  pendingFinish = null;
   run = null;
+  ui.codeMessage.textContent = "";
   const best = load(ENDLESS_KEY, 0);
   ui.endlessBest.textContent = best ? `BEST STREAK: ${best}` : "";
   showScreen("title");
@@ -189,15 +199,50 @@ function campaignOrder(id) {
   return campaign ? campaign.order : ROSTER.filter(fighter => fighter.id !== id).map(fighter => fighter.id);
 }
 
+// PROPHET unlocks when every other fighter's campaign is cleared, or with the code.
+function storyFighters() {
+  return ROSTER.filter(fighter => !fighter.secret);
+}
+
+function allCampaignsCleared() {
+  const progress = campaignProgress();
+  return storyFighters().every(fighter => progress[fighter.id] && progress[fighter.id].cleared);
+}
+
+function isUnlocked(id) {
+  const fighter = fighterInfo(id);
+  if (!fighter || !fighter.secret) return true;
+  return Boolean(load(UNLOCK_KEY, {})[id]) || allCampaignsCleared();
+}
+
+function unlockFighter(id) {
+  const unlocked = load(UNLOCK_KEY, {});
+  unlocked[id] = true;
+  save(UNLOCK_KEY, unlocked);
+}
+
+// Quick Fight and Endless only send PROPHET at you once he is unlocked.
+function opponentPool(id) {
+  return ROSTER.filter(fighter => fighter.id !== id && isUnlocked(fighter.id));
+}
+
 function buildSelectScreen() {
   const progress = campaignProgress();
   ui.selectGrid.replaceChildren(...ROSTER.map((fighter, index) => {
     const card = document.createElement("button");
     card.type = "button";
     card.className = "fighter-card";
-    card.style.setProperty("--fighter", fighter.color);
     card.innerHTML = '<span class="card-number"></span><span class="card-name"></span><span class="card-role"></span><span class="card-progress"></span>';
     card.querySelector(".card-number").textContent = index + 1;
+    if (!isUnlocked(fighter.id)) {
+      card.classList.add("locked");
+      card.disabled = true;
+      card.setAttribute("aria-label", "Locked fighter");
+      card.querySelector(".card-name").textContent = "???";
+      card.querySelector(".card-role").textContent = "LOCKED";
+      return card;
+    }
+    card.style.setProperty("--fighter", fighter.color);
     card.querySelector(".card-name").textContent = fighter.name;
     card.querySelector(".card-role").textContent = fighter.role;
     if (mode === "campaign") {
@@ -251,7 +296,7 @@ function openDetail(id) {
 function startWithSelected() {
   const id = selectedId;
   if (mode === "quick") {
-    const opponents = ROSTER.filter(fighter => fighter.id !== id);
+    const opponents = opponentPool(id);
     run = { fighter: id };
     beginMatch(id, opponents[Math.floor(Math.random() * opponents.length)].id);
   } else if (mode === "endless") {
@@ -275,7 +320,7 @@ function startWithSelected() {
 }
 
 function nextEndlessFight() {
-  if (!run.queue.length) run.queue = shuffled(ROSTER.filter(fighter => fighter.id !== run.fighter).map(fighter => fighter.id));
+  if (!run.queue.length) run.queue = shuffled(opponentPool(run.fighter).map(fighter => fighter.id));
   beginMatch(run.fighter, run.queue.shift());
 }
 
@@ -289,6 +334,7 @@ function campaignFight() {
 // Sets the stage, plays the pre-fight dialogue, then rings the bell.
 function beginMatch(playerId, botId, lines) {
   clearTimers();
+  pendingFinish = null;
   state = newMatch(playerId, botId);
   animation = null;
   buildMoveButtons();
@@ -312,6 +358,9 @@ function startFight() {
 // Dialogue, Mortal Kombat style: portraits either side and a typewriter box.
 function playDialogue(lines, leftId, rightId, done) {
   clearTimers();
+  // A post-fight talk must not keep the K.O. banner and "YOU WIN!" up behind it.
+  clearAnnouncement();
+  animation = null;
   dialogueState = { lines, index: -1, leftId, rightId, done, typed: 0, full: "" };
   showScreen("dialogue");
   music("story");
@@ -395,11 +444,15 @@ function unlockInput() {
 
 function updateUI() {
   ui.round.textContent = String(state.completedRounds + 1).padStart(2, "0");
-  [["player", ui.playerName, ui.playerHealth, ui.playerHealthText, ui.playerMeter, ui.playerTags], ["bot", ui.botName, ui.botHealth, ui.botHealthText, ui.botMeter, ui.botTags]].forEach(([side, name, bar, text, meter, tags]) => {
+  [["player", ui.playerName, ui.playerHealth, ui.playerLag, ui.playerHealthText, ui.playerMeter, ui.playerTags], ["bot", ui.botName, ui.botHealth, ui.botLag, ui.botHealthText, ui.botMeter, ui.botTags]].forEach(([side, name, bar, lag, text, meter, tags]) => {
     const fighter = state[side];
     const shown = state.shown[side];
-    name.textContent = fighterInfo(fighter.id).name;
+    const info = fighterInfo(fighter.id);
+    name.textContent = info.name;
+    meter.parentElement.style.setProperty("--fighter", info.color);
     bar.style.width = `${(shown / fighter.maxHp) * 100}%`;
+    lag.style.width = bar.style.width;
+    meter.classList.toggle("danger", shown > 0 && shown / fighter.maxHp <= 0.25);
     text.textContent = shown;
     meter.setAttribute("aria-valuenow", shown);
     meter.setAttribute("aria-valuemax", fighter.maxHp);
@@ -527,6 +580,19 @@ function playMoveCue(outcome, start, hit, lead) {
     case "fruitNuclear":
       Sound.play("fruitNuclear", start);
       break;
+    case "novaPalm":
+      Sound.play("nova", hit - 0.3);
+      Sound.play("swing", hit - 0.14);
+      break;
+    case "wormhole":
+      Sound.play("warp", hit - 0.3);
+      break;
+    case "prophecy":
+      Sound.play("prophecy", start);
+      break;
+    case "bigBang":
+      Sound.play("bigBang", hit - 1.1);
+      break;
     case "fortress":
       Sound.play("armor", hit - 0.2);
       break;
@@ -635,11 +701,20 @@ function resolveRound(moveId) {
   });
   if (state.finished) {
     const won = state.bot.hp <= 0 && state.player.hp > 0;
+    pendingFinish = { won, at: animation.start + plan.koAt + 2600 };
     later(plan.koAt + 500, () => announce(won ? "YOU WIN!" : "YOU LOSE!", won ? "win" : "lose"));
-    later(plan.koAt + 2600, () => finishMatch(won));
+    later(plan.koAt + 2600, finishPending);
   }
   playRoundSounds(report, plan, ultimateWasReady);
   updateUI();
+}
+
+// Runs the K.O. follow-up exactly once, whether the timer or the watchdog gets there first.
+function finishPending() {
+  if (!pendingFinish) return;
+  const { won } = pendingFinish;
+  pendingFinish = null;
+  finishMatch(won);
 }
 
 // ---------------------------------------------------------------------------
@@ -709,6 +784,7 @@ function finishMatch(won) {
   const campaign = campaignFor(playerId);
   const after = campaign && campaign.fights[botId] ? campaign.fights[botId].after : null;
   run.index += 1;
+  const wasUnlocked = isUnlocked(SECRET_ID);
   const progress = campaignProgress();
   const cleared = run.index >= total;
   progress[playerId] = { index: cleared ? 0 : run.index, cleared: cleared || Boolean(progress[playerId] && progress[playerId].cleared) };
@@ -717,7 +793,10 @@ function finishMatch(won) {
   const next = () => {
     if (cleared) {
       const ending = campaign && campaign.ending;
-      const done = () => showResult(MODE_NAMES.campaign, "CAMPAIGN CLEAR!", `${fighterInfo(playerId).name} beat all ${total} rivals.`, [
+      const unlockedNow = !wasUnlocked && isUnlocked(SECRET_ID);
+      if (unlockedNow) unlockFighter(SECRET_ID);
+      const detail = `${fighterInfo(playerId).name} beat all ${total} rivals.${unlockedNow ? ` Every campaign cleared: ${fighterInfo(SECRET_ID).name} is now playable!` : ""}`;
+      const done = () => showResult(MODE_NAMES.campaign, unlockedNow ? "PROPHET UNLOCKED!" : "CAMPAIGN CLEAR!", detail, [
         resultButton("PLAY ANOTHER", () => chooseMode("campaign"), true),
         menu
       ], "victory");
@@ -751,6 +830,8 @@ function endEndless() {
 
 // ---------------------------------------------------------------------------
 function drawArena(now) {
+  // Watchdog: if the K.O. timer was ever lost, still move on from the K.O. screen.
+  if (pendingFinish && screenName === "fight" && performance.now() > pendingFinish.at + 1500) finishPending();
   Arena.draw(context, state, animation, now);
   typeDialogue(now);
   if (now - lastPortraitDraw > 90) {
@@ -770,6 +851,33 @@ ui.title.querySelectorAll(".mode-button").forEach(button => {
   button.addEventListener("mouseenter", () => Sound.playIfUnlocked("hover"));
 });
 ui.selectBack.addEventListener("click", goToTitle);
+
+// Cheat codes typed on the title screen.
+function enterCode(raw) {
+  const code = raw.trim().toUpperCase().replace(/\s+/g, "");
+  ui.codeMessage.dataset.state = "error";
+  if (!code) {
+    ui.codeMessage.textContent = "Type a code first.";
+    Sound.play("denied");
+  } else if (code === "PROPHET") {
+    ui.codeMessage.dataset.state = "ok";
+    if (isUnlocked(SECRET_ID)) {
+      ui.codeMessage.textContent = "PROPHET is already unlocked. He knew you'd try that.";
+    } else {
+      unlockFighter(SECRET_ID);
+      ui.codeMessage.textContent = "CODE ACCEPTED! PROPHET is now playable.";
+      Sound.play("ultimateReady");
+    }
+  } else {
+    ui.codeMessage.textContent = `"${code.slice(0, 16)}" is not a valid code. Try again!`;
+    Sound.play("denied");
+  }
+  ui.codeInput.value = "";
+}
+ui.codeForm.addEventListener("submit", event => {
+  event.preventDefault();
+  enterCode(ui.codeInput.value);
+});
 ui.detailBack.addEventListener("click", () => {
   showScreen("select");
   const card = ui.selectGrid.querySelectorAll("button")[ROSTER.findIndex(fighter => fighter.id === selectedId)];
@@ -797,6 +905,8 @@ window.addEventListener("keydown", unlockAudio);
 
 document.addEventListener("keydown", event => {
   if (event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+  // Typing a code must not trigger the shortcuts.
+  if (event.target instanceof HTMLInputElement) return;
   if (event.key === "m" || event.key === "M") {
     ui.sound.click();
     return;
@@ -807,7 +917,7 @@ document.addEventListener("keydown", event => {
   if (screenName === "title" && digit && digit <= 3) {
     chooseMode(["campaign", "endless", "quick"][digit - 1]);
   } else if (screenName === "select") {
-    if (digit && digit <= ROSTER.length) openDetail(ROSTER[digit - 1].id);
+    if (digit && digit <= ROSTER.length && isUnlocked(ROSTER[digit - 1].id)) openDetail(ROSTER[digit - 1].id);
     if (event.key === "Escape") goToTitle();
   } else if (screenName === "detail") {
     if (event.key === "Escape") ui.detailBack.click();

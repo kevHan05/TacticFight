@@ -48,11 +48,11 @@ const MoveIcons = (() => {
       rows: ["..aa....aa..", ".aaaa..aaaa.", ".aaaa..aaaa.", "..aa....aa..", "aa..aaaa..aa", "aa.aaaaaa.aa", "..aaaaaaaa..", "..aaabbaaa..", "..aaaaaaaa..", "...aaaaaa...", "....aaaa....", "............"]
     },
     citrusKick: {
-      colors: { a: "#f47718", b: "#ffcc4d", c: "#3286e8", d: "#fff7db" },
+      colors: { a: "#f47718", b: "#ffcc4d", c: "#141014", d: "#ffffff" },
       rows: ["....bb......", "..aabbaa....", ".aabbbbaa...", ".abcccbba...", ".abddcbba...", "..abbbba....", "...aaaa.....", "..aa..aa....", ".aa....aa...", "............", "............", "............"]
     },
     orangeBounce: {
-      colors: { a: "#f47718", b: "#ffcc4d", c: "#3286e8", d: "#fff7db" },
+      colors: { a: "#f47718", b: "#ffcc4d", c: "#141014", d: "#ffffff" },
       rows: [".....bb.....", "......b.....", "..aabbaa....", ".aabbbbaa...", ".abcccbba...", ".abddcbba...", "..abbbba....", "...aaaa.....", "............", "..b......b..", "............", "............"]
     },
     peelOut: {
@@ -62,6 +62,22 @@ const MoveIcons = (() => {
     fruitNuclear: {
       colors: { a: "#f47718", b: "#ffcc4d", c: "#fff2a8", d: "#55a83e" },
       rows: [".....d......", "....ddd.....", "...aabbaa...", "..aabbbbaa..", ".aabcccbbaa.", "aabcccccbbaa", ".aabcccbbaa.", "..aabbbbaa..", "...aabbaa...", "..a......a..", ".a........a.", "............"]
+    },
+    novaPalm: {
+      colors: { a: "#2e1a6b", b: "#5a3bb0", c: "#ff5fc8", d: "#ffffff", e: "#5fe0ff" },
+      rows: ["..........d.", "...aaa...ded", "..abbba...d.", "..abbbba....", ".aabbbbbacc.", "aabbbbbbbcdc", "aabbbbbbacc.", ".aabbbba....", "..abbba..e..", "..aaaa..ede.", ".........e..", "............"]
+    },
+    wormhole: {
+      colors: { a: "#ff5fc8", b: "#5fe0ff", c: "#120a2e", d: "#ffffff" },
+      rows: ["............", "....abab....", "..ba....ab..", ".a..cccc..b.", "b.cccccccc.a", "a.cccdcccc.b", "b.cccccccc.a", ".a..cccc..b.", "..ab....ba..", "....baba....", "............", "............"]
+    },
+    prophecy: {
+      colors: { a: "#2e1a6b", b: "#e8fdff", c: "#5fe0ff", d: "#ff5fc8" },
+      rows: ["............", "............", "...aaaaaa...", ".aabbbbbbaa.", "abbbccccbbba", "abbccddccbba", "abbbccccbbba", ".aabbbbbbaa.", "...aaaaaa...", "............", "d.c.d.c.d.c.", "............"]
+    },
+    bigBang: {
+      colors: { a: "#5a3bb0", b: "#ff5fc8", c: "#5fe0ff", d: "#ffffff" },
+      rows: ["c....d....b.", "..b..c..c...", "....bbbb....", "d..bccccb..c", "..bcddddcb..", ".bcddddddcb.", "..bcddddcb..", "c..bccccb..d", "....bbbb....", "..c..a..b...", "b....d....c.", "............"]
     },
     vanish: {
       colors: { a: "#2a2236", b: "#e0a77a", c: "#ffffff" },
