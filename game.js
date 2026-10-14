@@ -54,7 +54,9 @@ const ui = {
   detailProgress: $("#detail-progress"),
   detailBack: $("#detail-back"),
   detailFight: $("#detail-fight"),
-  sound: $("#sound-toggle")
+  sound: $("#sound-toggle"),
+  fullscreen: $("#fullscreen-toggle"),
+  installHint: $("#install-hint")
 };
 
 const STATUS_LABELS = {
@@ -894,6 +896,102 @@ ui.sound.addEventListener("click", () => {
   updateSoundToggle();
 });
 
+// ---------------------------------------------------------------------------
+// Full screen. Turning a phone sideways goes full screen on the next tap
+// (browsers only allow it after a tap); turning it back upright leaves it.
+// iPhone Safari has no fullscreen API, so there the hint suggests adding the
+// game to the home screen, which opens it without browser bars.
+const touchScreen = window.matchMedia("(pointer: coarse)");
+const landscape = window.matchMedia("(orientation: landscape)");
+let autoFullscreen = true;
+let enteredAutomatically = false;
+
+function fullscreenElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+
+function canFullscreen() {
+  const root = document.documentElement;
+  return Boolean((document.fullscreenEnabled || document.webkitFullscreenEnabled) && (root.requestFullscreen || root.webkitRequestFullscreen));
+}
+
+function enterFullscreen(automatic = false) {
+  if (!canFullscreen() || fullscreenElement()) return;
+  const root = document.documentElement;
+  try {
+    const request = root.requestFullscreen ? root.requestFullscreen({ navigationUI: "hide" }) : root.webkitRequestFullscreen();
+    enteredAutomatically = automatic;
+    if (request && request.catch) request.catch(() => { enteredAutomatically = false; });
+  } catch {
+    enteredAutomatically = false;
+  }
+}
+
+function exitFullscreen() {
+  if (!fullscreenElement()) return;
+  try {
+    const exit = document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen();
+    if (exit && exit.catch) exit.catch(() => {});
+  } catch {
+    // Already leaving full screen.
+  }
+}
+
+function updateFullscreenToggle() {
+  const active = Boolean(fullscreenElement());
+  ui.fullscreen.hidden = !canFullscreen();
+  ui.fullscreen.setAttribute("aria-pressed", String(active));
+  ui.fullscreen.textContent = active ? "EXIT" : "FULL";
+  ui.fullscreen.setAttribute("aria-label", active ? "Exit full screen" : "Full screen");
+  document.body.classList.toggle("is-fullscreen", active);
+}
+
+ui.fullscreen.addEventListener("click", () => {
+  autoFullscreen = false;
+  if (fullscreenElement()) exitFullscreen();
+  else enterFullscreen();
+});
+["fullscreenchange", "webkitfullscreenchange"].forEach(name => document.addEventListener(name, () => {
+  // Leaving full screen by hand while sideways means "stop doing that".
+  if (!fullscreenElement() && enteredAutomatically && landscape.matches) autoFullscreen = false;
+  if (!fullscreenElement()) enteredAutomatically = false;
+  updateFullscreenToggle();
+}));
+window.addEventListener("pointerup", event => {
+  if (event.target.closest && event.target.closest("#fullscreen-toggle, input")) return;
+  if (autoFullscreen && touchScreen.matches && landscape.matches) enterFullscreen(true);
+});
+landscape.addEventListener("change", () => {
+  if (landscape.matches) autoFullscreen = true;
+  else if (enteredAutomatically) exitFullscreen();
+});
+
+// iPhone and iPad Safari: offer the home-screen route, and give it a pixel-art icon drawn in code.
+function setUpHomeScreenApp() {
+  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const standalone = window.navigator.standalone === true || window.matchMedia("(display-mode: fullscreen), (display-mode: standalone)").matches;
+  ui.installHint.hidden = !(ios && !standalone && !canFullscreen());
+  const icon = document.createElement("canvas");
+  icon.width = 180;
+  icon.height = 180;
+  const ctx = icon.getContext("2d");
+  ctx.fillStyle = "#0d1a1d";
+  ctx.fillRect(0, 0, 180, 180);
+  ctx.fillStyle = "#ec5139";
+  ctx.fillRect(22, 22, 136, 136);
+  ctx.fillStyle = "#f3ead5";
+  // "TF" in chunky pixels, 11px per pixel on a 16x16 grid.
+  [[4, 5, 4, 1], [5.5, 6, 1, 5], [9, 5, 3, 1], [9, 6, 1, 5], [10, 7.5, 1.5, 1]].forEach(([x, y, w, h]) => ctx.fillRect(x * 11 + 2, y * 11 + 2, w * 11, h * 11));
+  try {
+    const link = document.createElement("link");
+    link.rel = "apple-touch-icon";
+    link.href = icon.toDataURL("image/png");
+    document.head.append(link);
+  } catch {
+    // No icon: the home screen falls back to a page snapshot.
+  }
+}
+
 // Browsers only start audio after a user gesture; start the music on the first one.
 function unlockAudio() {
   if (typeof Music !== "undefined") Music.unlock();
@@ -909,6 +1007,10 @@ document.addEventListener("keydown", event => {
   if (event.target instanceof HTMLInputElement) return;
   if (event.key === "m" || event.key === "M") {
     ui.sound.click();
+    return;
+  }
+  if ((event.key === "f" || event.key === "F") && canFullscreen()) {
+    ui.fullscreen.click();
     return;
   }
   const number = Number(event.key);
@@ -936,6 +1038,8 @@ document.addEventListener("keydown", event => {
 });
 
 updateSoundToggle();
+updateFullscreenToggle();
+setUpHomeScreenApp();
 buildMoveButtons();
 updateUI();
 requestAnimationFrame(drawArena);

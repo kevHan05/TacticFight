@@ -16,6 +16,12 @@ Every fight starts with some pre-fight trash talk. Each fighter has a home stage
 
 Open `index.html` in a browser. No install or build step is required.
 
+### Playing on a phone
+
+- **Turn the phone sideways** for a full-screen, handheld-style layout: the arena fills the screen, the life bars sit in a thin strip at the top and the moves run along the bottom.
+- **Android (Chrome, Samsung Internet):** the game goes full screen and hides the browser bars on your first tap after turning sideways, and leaves full screen when you turn the phone upright again. The `FULL` button (or `F` on a keyboard) toggles it by hand.
+- **iPhone:** Safari doesn't let websites go full screen. Tap Share, then **Add to Home Screen**, and the game opens like an app without browser bars.
+
 ## Combat
 
 Both fighters pick a move at the same time. The round then plays out one fighter at a time: set-up moves such as guards go first, then strikes, and the player goes first on a tie. Hover over a move to read what it does.

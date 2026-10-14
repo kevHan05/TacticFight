@@ -49,7 +49,7 @@ Scripts are classic `<script>` tags. Each file defines one global, and **load or
   - Use limited palettes, hard colour bands with checkerboard dithering, and integer pixels.
   - Don't use anti-aliased arc/stroke/ellipse calls in stages. Sprites are snapped to their palette and get a 1px dark outline.
   - Fighters stand with their feet at y=92 on desktop and y=126 on mobile. The desktop view is cropped to roughly x 60–260, y 20–110.
-- **The UI must work at phone width.** Check the `@media (max-width: 620px / 420px)` rules, keep keyboard shortcuts working (1–4 moves, 1–8 select, 1–3 modes, M mute, Enter/Space/Escape in dialogue; shortcuts are ignored while typing in the code box), and respect `prefers-reduced-motion` (no screen shake or flash).
+- **The UI must work at phone width.** Check the `@media (max-width: 620px / 420px)` rules, keep keyboard shortcuts working (1–4 moves, 1–8 select, 1–3 modes, M mute, F full screen, Enter/Space/Escape in dialogue; shortcuts are ignored while typing in the code box), and respect `prefers-reduced-motion` (no screen shake or flash). Phones held sideways use the `(min-width: 621px) and (max-height: 500px)` landscape layout; check it too (for example 844x390). `manifest.webmanifest` and the apple meta tags make the game an installable full-screen home-screen app; its icon is drawn in code (an inline SVG and a canvas-generated apple-touch-icon), not an image file.
 - **Humour and tone:** the content (banter, campaign, move names) is comedic and family friendly. Keep each character's voice from `characterspec.md`. Dialogue lines stay at 90 characters or fewer.
 
 ## Design decisions to respect
