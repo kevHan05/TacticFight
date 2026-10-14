@@ -56,6 +56,9 @@ const ui = {
   detailFight: $("#detail-fight"),
   sound: $("#sound-toggle"),
   fullscreen: $("#fullscreen-toggle"),
+  pause: $("#pause-menu"),
+  pauseResume: $("#pause-resume"),
+  pauseTitle: $("#pause-title-button"),
   installHint: $("#install-hint")
 };
 
@@ -85,6 +88,7 @@ let timers = [];
 let dialogueState = null;
 let lastPortraitDraw = 0;
 let pendingFinish = null;
+let paused = false;
 
 // ---------------------------------------------------------------------------
 // Helpers.
@@ -146,7 +150,10 @@ function newMatch(playerId, botId) {
     history: [],
     revealed: null,
     finished: false,
-    stage: botId
+    stage: botId,
+    // Fighters stay off screen during dialogue and walk on in `startFight`.
+    hideFighters: true,
+    entrance: null
   };
 }
 
@@ -154,6 +161,7 @@ function newMatch(playerId, botId) {
 // Screens.
 function showScreen(name) {
   screenName = name;
+  setPaused(false);
   ui.title.hidden = name !== "title";
   ui.select.hidden = name !== "select" && name !== "detail";
   ui.detail.hidden = name !== "detail";
@@ -169,6 +177,9 @@ function goToTitle() {
   animation = null;
   pendingFinish = null;
   run = null;
+  // A clean scene behind the title, so nothing from the last fight lingers.
+  state = newMatch("rook", "byte");
+  updateUI();
   ui.codeMessage.textContent = "";
   const best = load(ENDLESS_KEY, 0);
   ui.endlessBest.textContent = best ? `BEST STREAK: ${best}` : "";
@@ -349,11 +360,17 @@ function beginMatch(playerId, botId, lines) {
 function startFight() {
   showScreen("fight");
   music(state.stage);
-  Sound.play("bell");
-  busyUntil = performance.now() + 600;
+  // Both fighters make their entrance, then the bell rings.
+  state.hideFighters = false;
+  state.entrance = { start: performance.now() };
+  busyUntil = performance.now() + Arena.ENTRANCE + 600;
   updateUI();
-  later(600, unlockInput);
-  announce("Start Fight!", "start", 3000);
+  later(Arena.ENTRANCE, () => {
+    state.entrance = null;
+    Sound.play("bell");
+    announce("Start Fight!", "start", 3000);
+  });
+  later(Arena.ENTRANCE + 600, unlockInput);
 }
 
 // ---------------------------------------------------------------------------
@@ -363,6 +380,7 @@ function playDialogue(lines, leftId, rightId, done) {
   // A post-fight talk must not keep the K.O. banner and "YOU WIN!" up behind it.
   clearAnnouncement();
   animation = null;
+  state.hideFighters = true;
   dialogueState = { lines, index: -1, leftId, rightId, done, typed: 0, full: "" };
   showScreen("dialogue");
   music("story");
@@ -463,7 +481,7 @@ function updateUI() {
     tags.parentElement.hidden = labels.length === 0;
   });
 
-  const locked = state.finished || busy() || screenName !== "fight";
+  const locked = state.finished || busy() || paused || screenName !== "fight";
   playerMoves().forEach((move, index) => {
     const button = moveButtons[index];
     if (!button) return;
@@ -667,7 +685,7 @@ function playRoundSounds(report, plan, ultimateWasReady) {
 // ---------------------------------------------------------------------------
 // A round: both fighters commit, then the turns play out one at a time.
 function resolveRound(moveId) {
-  if (screenName !== "fight" || state.finished || busy()) return;
+  if (screenName !== "fight" || state.finished || busy() || paused) return;
   if (!Rules.available(state.player, moveId)) return;
   clearAnnouncement();
   hideTooltip();
@@ -847,7 +865,32 @@ function drawArena(now) {
   requestAnimationFrame(drawArena);
 }
 
-ui.home.addEventListener("click", goToTitle);
+// Pause menu. Timers keep running underneath, so a K.O. still moves on to the
+// result screen (which closes the menu) instead of getting stuck.
+function setPaused(value) {
+  paused = value;
+  ui.pause.hidden = !value;
+  document.body.classList.toggle("is-paused", value);
+}
+
+function openPause() {
+  if (screenName !== "fight") return;
+  hideTooltip();
+  setPaused(true);
+  ui.pauseResume.focus();
+}
+
+function closePause() {
+  setPaused(false);
+  updateUI();
+}
+
+ui.home.addEventListener("click", openPause);
+ui.pauseResume.addEventListener("click", closePause);
+ui.pauseTitle.addEventListener("click", goToTitle);
+ui.pause.addEventListener("click", event => {
+  if (event.target === ui.pause) closePause();
+});
 ui.title.querySelectorAll(".mode-button").forEach(button => {
   button.addEventListener("click", () => chooseMode(button.dataset.mode));
   button.addEventListener("mouseenter", () => Sound.playIfUnlocked("hover"));
@@ -1029,7 +1072,10 @@ document.addEventListener("keydown", event => {
       advanceDialogue();
     }
     if (event.key === "Escape") finishDialogue();
-  } else if (screenName === "fight" && digit) {
+  } else if (screenName === "fight" && event.key === "Escape") {
+    if (paused) closePause();
+    else openPause();
+  } else if (screenName === "fight" && digit && !paused) {
     const move = playerMoves()[digit - 1];
     if (!move || state.finished || busy()) return;
     if (Rules.available(state.player, move.id)) resolveRound(move.id);

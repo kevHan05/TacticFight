@@ -36,7 +36,7 @@
           <strong id="round-number">01</strong>
         </div>
         <div class="corner-controls">
-          <button class="menu-button" id="home-button" type="button" aria-label="Back to the start screen" title="Main menu">MENU</button>
+          <button class="menu-button" id="home-button" type="button" aria-label="Open the menu" aria-haspopup="dialog" title="Menu (Esc)">MENU</button>
           <button class="menu-button fullscreen-toggle" id="fullscreen-toggle" type="button" aria-label="Full screen" aria-pressed="false" title="Full screen (F)" hidden>FULL</button>
           <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Mute sound" aria-pressed="true" title="Mute sound (M)">
             <svg class="speaker-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -79,6 +79,16 @@
   <div class="screen-announcement" id="screen-announcement" aria-live="assertive" aria-atomic="true" hidden>
     <p id="announcement-text"></p>
   </div>
+
+  <section class="pause-menu" id="pause-menu" aria-labelledby="pause-title" hidden>
+    <div class="pause-box">
+      <h2 id="pause-title">PAUSED</h2>
+      <div class="pause-actions">
+        <button class="big-button" id="pause-resume" type="button">RESUME</button>
+        <button class="big-button secondary" id="pause-title-button" type="button">BACK TO TITLE SCREEN</button>
+      </div>
+    </div>
+  </section>
 
   <section class="result-panel" id="result-panel" aria-labelledby="result-title" hidden>
     <div class="result-box">

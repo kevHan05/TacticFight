@@ -133,8 +133,8 @@ const ROSTER = [
   {
     id: "prophet",
     name: "PROPHET",
-    title: "Ruler of the TacticFight Universe",
-    role: "Cosmic overlord",
+    title: "The Traveling Fortune Teller",
+    role: "Mysterious challenger",
     color: "#ff5fc8",
     hp: 100,
     voice: "prophetHurt",
