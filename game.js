@@ -321,11 +321,6 @@ function playDialogue(lines, leftId, rightId, done) {
 function advanceDialogue() {
   const d = dialogueState;
   if (!d) return;
-  if (d.typed < d.full.length) {
-    d.typed = d.full.length;
-    ui.dialogueText.textContent = d.full;
-    return;
-  }
   d.index += 1;
   if (d.index >= d.lines.length) {
     finishDialogue();
@@ -659,7 +654,11 @@ function resultButton(label, action, primary = false) {
 }
 
 function showResult(kicker, title, detail, actions, track) {
+  clearTimers();
   clearAnnouncement();
+  dialogueState = null;
+  animation = null;
+  busyUntil = 0;
   ui.resultKicker.textContent = kicker;
   ui.resultTitle.textContent = title;
   ui.resultDetail.textContent = detail;
