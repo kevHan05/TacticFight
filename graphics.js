@@ -148,7 +148,7 @@ const Arena = (() => {
     bananas: { head: [0, -43], chest: [0, -33], hip: [0, -19], fKnee: [8, -11], fFoot: [13, 0], bKnee: [-8, -11], bFoot: [-14, 0] },
     // PROPHET floats upright, arms loose at his sides with the palms open,
     // legs together with the toes pointed down, turned slightly to the opponent.
-    prophet: { head: [0, -57], chest: [0, -43], hip: [0, -29], fElbow: [-7, -36], fHand: [-11, -28], bElbow: [6, -36], bHand: [10, -28], fKnee: [-1, -14], fFoot: [-1, 0], bKnee: [2, -14], bFoot: [3, -1] }
+    prophet: { head: [1, -57], chest: [0, -43], hip: [0, -29], fElbow: [8, -36], fHand: [9, -27], bElbow: [-8, -36], bHand: [-9, -27], fKnee: [2, -14], fFoot: [2, 0], bKnee: [-2, -14], bFoot: [-2, -1] }
   };
   const SCALES = { rocky: 1.1, ninja: 0.93, zoombie: 1.06, bananas: 1.05, prophet: 1.04 };
 
@@ -769,71 +769,58 @@ const Arena = (() => {
     },
     arm(shoulder, elbow, hand, back) {
       const skin = back ? dim(PROPHET.void) : PROPHET.void;
-      // Lean, athletic arms: a small rounded shoulder, a defined biceps, a fist.
-      shaded(shoulder, elbow, 2.8, 2.1, skin);
-      const biceps = mix(shoulder, elbow, 0.45);
-      shaded(biceps, biceps, 2.6, 2.6, skin);
-      shaded(elbow, hand, 2.1, 1.7, skin);
-      // A human hand hanging open: a palm, four separate fingers and a thumb.
-      const reach = Math.hypot(hand[0] - elbow[0], hand[1] - elbow[1]) || 1;
-      const ux = (hand[0] - elbow[0]) / reach;
-      const uy = (hand[1] - elbow[1]) / reach;
-      shaded(hand, [hand[0] + ux * 1.5, hand[1] + uy * 1.5], 2.1, 2.1, skin);
-      const knuckles = [hand[0] + ux * 3, hand[1] + uy * 3];
-      [-1.5, -0.5, 0.5, 1.5].forEach((spread, k) => {
-        const base = [knuckles[0] - uy * spread, knuckles[1] + ux * spread];
-        const length = k === 0 ? 2 : k === 3 ? 2.5 : 3;
-        line(base, [base[0] + ux * length, base[1] + uy * length], k % 2 ? skin[2] : skin[1]);
-      });
-      // The thumb splays out from the side of the palm.
-      const thumb = [hand[0] + ux * 1.5 + uy * 2.6, hand[1] + uy * 1.5 - ux * 2.6];
-      line(thumb, [thumb[0] + ux * 1.5 + uy * 1, thumb[1] + uy * 1.5 - ux * 1], skin[2]);
-      if (!back) {
-        px(biceps, 0, -2, PROPHET.shine);
-        starfield(shoulder, hand, 4, 0.3, performance.now());
-      }
+      // Square, front-on shoulders: each arm starts out at the edge of the
+      // chest and hangs straight down at his side.
+      const top = [shoulder[0] + (back ? -5 : 5), shoulder[1] + 1];
+      shaded(top, top, 3.2, 3.2, skin);
+      shaded(top, elbow, 2.8, 2.2, skin);
+      shaded(elbow, hand, 2.2, 1.8, skin);
+      // An open hand: palm, four fingers pointing down and a thumb.
+      shaded(hand, at(hand, 0, 1.5), 1.9, 1.9, skin);
+      [-1.5, -0.5, 0.5, 1.5].forEach((dx, k) => line(at(hand, dx, 3), at(hand, dx, k === 0 || k === 3 ? 4.5 : 5.5), k % 2 ? skin[2] : skin[1]));
+      line(at(hand, back ? 2.5 : -2.5, 1), at(hand, back ? 3 : -3, 3), skin[2]);
+      if (!back) starfield(top, hand, 4, 0.3, performance.now());
     },
     leg(hip, knee, foot, back) {
       const skin = back ? dim(PROPHET.void) : PROPHET.void;
-      // Long runner's legs ending in pointed toes (he never stands on them).
-      shaded(hip, knee, 3.3, 2.4, skin);
-      shaded(knee, foot, 2.3, 1.3, skin);
-      const calf = mix(knee, foot, 0.3);
-      shaded(calf, calf, 2.5, 2.5, skin);
-      if (!back) {
-        line(mix(hip, knee, 0.3), mix(hip, knee, 0.75), PROPHET.muscle);
-        starfield(hip, foot, 5, 0.7, performance.now());
-      }
+      // Long legs hanging straight, toes pointed down (he never stands on them).
+      shaded(hip, knee, 3.4, 2.5, skin);
+      shaded(knee, foot, 2.4, 1.4, skin);
+      if (!back) starfield(hip, foot, 5, 0.7, performance.now());
     },
     torso(j, time) {
-      // Seen side-on, turned toward the opponent: a slim waist, a firm chest.
-      shaded(j.hip, j.chest, 4.4, 5.6, PROPHET.void);
-      shaded(along(j, j.chest, 0, 2), j.neck, 5.8, 4.8, PROPHET.void);
-      // Chest line and abs sit toward the front, like a profile.
-      line(along(j, j.chest, -5, 3), along(j, j.chest, 4, 3), PROPHET.muscle);
-      line(along(j, j.chest, -4, 5), along(j, j.chest, 3, 5), PROPHET.shine);
-      line(along(j, j.chest, -0.5, 2), along(j, j.chest, -0.5, 8), PROPHET.muscle);
-      [-1, -4].forEach(up => {
-        line(along(j, j.chest, -3, up), along(j, j.chest, 2, up), PROPHET.muscle);
-        px(along(j, j.chest, -1.5, up + 1.5), 0, 0, PROPHET.shine);
-        px(along(j, j.chest, 1, up + 1.5), 0, 0, PROPHET.shine);
-      });
-      // Nebula swirls and stars.
-      line(along(j, j.hip, -3, 2), along(j, j.chest, -3, 6), PROPHET.nebula[0]);
-      line(along(j, j.hip, -1, 6), along(j, j.neck, -4, -1), PROPHET.nebula[1]);
+      // A front-on athletic torso: broad shoulders tapering to a slim waist.
+      shaded(j.hip, j.chest, 4.6, 6.4, PROPHET.void);
+      shaded(at(j.chest, 0, -3), at(j.neck, 0, 0), 7.2, 7, PROPHET.void);
+      // The Milky Way band sweeping diagonally across the chest.
+      const from = at(j.neck, -5, 1);
+      const to = at(j.hip, 4, -1);
+      line(from, to, PROPHET.shine);
+      line(at(from, 1, 0), at(to, 1, 0), PROPHET.nebula[0]);
+      line(at(from, -1, 1), at(to, -1, 1), PROPHET.void[2]);
+      for (let k = 0; k < 6; k += 1) {
+        const point = mix(from, to, (k + 0.5) / 6);
+        if (Math.floor(time / 200 + k) % 3) px(point, (k % 2) * 2 - 1, 0, PROPHET.star);
+      }
       starfield(j.hip, j.neck, 10, 0.11, time);
+      // A faint chest line for definition.
+      line(at(j.chest, -4, -3), at(j.chest, 4, -3), PROPHET.muscle);
     },
     head(j, time) {
       const h = j.head;
       shaded(at(j.neck, 0, 1), at(h, 0, 4), 2.6, 2.2, PROPHET.void);
-      shaded(at(h, 0, -0.5), at(h, 1, 1.5), 4.8, 4, PROPHET.void);
+      // Head in profile, turned toward the opponent: skull, brow, nose and chin.
+      shaded(at(h, -0.5, -0.5), at(h, 0.5, 1.5), 4.6, 3.8, PROPHET.void);
+      px(h, 4, -1, PROPHET.void[1], 2);
+      px(h, 5, 1, PROPHET.void[1]);
+      px(h, 4, 3, PROPHET.void[1]);
+      // Short swept-back hair.
+      polygon(h, [[-5, -2], [-4, -6], [0, -7], [4, -6], [3, -4], [-2, -4]], PROPHET.void[0]);
       starfield(at(h, -3, -2), at(h, 1, 2), 3, 0.5, time);
-      // Turned three-quarters: two bright eyes set toward the near side. No mouth.
-      px(h, -3, -1, PROPHET.eye[1], 2);
-      px(h, 1, -1, PROPHET.eye[1], 2);
-      px(h, -3, 0, PROPHET.eye[0]);
-      px(h, 2, 0, PROPHET.eye[0]);
-      if (Math.floor(time / 500) % 2) px(h, -4, -1, PROPHET.eye[0]);
+      // One bright eye facing forward. No mouth.
+      px(h, 2, -1, PROPHET.eye[1], 2);
+      px(h, 3, 0, PROPHET.eye[0]);
+      if (Math.floor(time / 500) % 2) px(h, 4, -1, PROPHET.eye[0]);
     }
   };
 
