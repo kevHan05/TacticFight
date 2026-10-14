@@ -785,13 +785,19 @@ const Arena = (() => {
       const skin = back ? dim(PROPHET.void) : PROPHET.void;
       // Long legs hanging straight, toes pointed down (he never stands on them).
       shaded(hip, knee, 3.4, 2.5, skin);
-      shaded(knee, foot, 2.4, 1.4, skin);
+      shaded(knee, at(foot, 0, -2), 2.4, 1.8, skin);
+      // A foot with the toes pointed down, as he floats: heel, arch and toes.
+      const side = back ? -1 : 1;
+      shaded(at(foot, 0, -2), at(foot, side * 1.5, 1), 1.9, 1.5, skin);
+      shaded(at(foot, side * 1.5, 1), at(foot, side * 2.5, 2.5), 1.5, 1.1, skin);
       if (!back) starfield(hip, foot, 5, 0.7, performance.now());
     },
     torso(j, time) {
       // A front-on athletic torso: broad shoulders tapering to a slim waist.
       shaded(j.hip, j.chest, 4.6, 6.4, PROPHET.void);
-      shaded(at(j.chest, 0, -3), at(j.neck, 0, 0), 7.2, 7, PROPHET.void);
+      shaded(at(j.chest, 0, -3), at(j.neck, 0, 2), 7.2, 6.4, PROPHET.void);
+      // Trapezius sloping from the shoulders up into the neck.
+      polygon(j.neck, [[-6, 3], [-2, -1], [2, -1], [6, 3]], PROPHET.void[1]);
       // The Milky Way band sweeping diagonally across the chest.
       const from = at(j.neck, -5, 1);
       const to = at(j.hip, 4, -1);
@@ -808,7 +814,9 @@ const Arena = (() => {
     },
     head(j, time) {
       const h = j.head;
-      shaded(at(j.neck, 0, 1), at(h, 0, 4), 2.6, 2.2, PROPHET.void);
+      // A straight, solid neck from the shoulders up under the jaw.
+      capsule(at(j.neck, 0, 1), at(h, -0.5, 3.5), 2.4, 2.2, PROPHET.void[1]);
+      line(at(j.neck, 1.5, 0), at(h, 1, 4), PROPHET.void[2]);
       // Head in profile, turned toward the opponent: skull, brow, nose and chin.
       shaded(at(h, -0.5, -0.5), at(h, 0.5, 1.5), 4.6, 3.8, PROPHET.void);
       px(h, 4, -1, PROPHET.void[1], 2);
