@@ -655,19 +655,20 @@ const Arena = (() => {
   };
 
   // BANANAS is a stolen supermarket orange: dimpled peel, a stem and leaf,
-  // glued-on googly eyes, a marker-drawn mouth and two homemade stick legs.
+  // real cartoon eyes and mouth (the serum made them real) and two thin orange legs.
   const BANANAS = {
     peel: ["#c2410c", "#f77a18", "#ffb45a"],
     pore: "#d85a10",
     shine: "#fff1c8",
-    leg: ["#3a2418", "#6b4630"],
-    shoe: ["#9a958c", "#f4f0e6"],
-    sole: "#e0302a",
+    leg: ["#c2410c", "#f77a18", "#ffb45a"],
     stem: "#5a3a1a",
     leaf: ["#286b2d", "#55a83e", "#9bd34b"],
-    eye: ["#1c1418", "#ffffff"],
+    white: "#ffffff",
+    iris: ["#174f9e", "#3286e8"],
     pupil: "#141014",
-    marker: "#2a1214",
+    brow: "#8a2c0a",
+    lip: "#5a1a0c",
+    mouth: "#a8202a",
     tongue: "#ff6f7a"
   };
 
@@ -677,11 +678,11 @@ const Arena = (() => {
   const bananasParts = {
     arm() {},
     leg(hip, knee, foot, back) {
+      // Thin orange legs ending in little rounded feet, no shoes.
       const tones = back ? dim(BANANAS.leg) : BANANAS.leg;
-      shaded(hip, knee, 1.8, 1.6, tones);
-      shaded(knee, at(foot, 0, -2), 1.6, 1.5, tones);
-      shaded(at(foot, -2, -1.5), at(foot, 3, -1.5), 2.6, 2.3, back ? dim(BANANAS.shoe) : BANANAS.shoe);
-      px(foot, -3, 0, BANANAS.sole, 7);
+      shaded(hip, knee, 2, 1.8, tones);
+      shaded(knee, at(foot, 0, -1.5), 1.8, 1.7, tones);
+      shaded(at(foot, -1, -1.2), at(foot, 2.5, -1.2), 1.9, 1.7, tones);
     },
     torso(j, time) {
       const center = j.chest;
@@ -700,23 +701,32 @@ const Arena = (() => {
     },
     head(j, time) {
       const h = j.head;
-      // Googly eyes: the pupils rattle around loose inside the plastic.
-      [[-3, 4.6], [5, 4]].forEach(([dx, size], index) => {
+      // Two eyes with blue irises, looking ahead, that blink now and then.
+      const blink = time % 3400 < 130;
+      [-3, 5].forEach(dx => {
         const eye = at(h, dx, -2);
-        disc(sg, eye[0], eye[1], Math.round(size), BANANAS.eye[0]);
-        disc(sg, eye[0], eye[1], Math.round(size) - 1, BANANAS.eye[1]);
-        const jx = Math.round(Math.sin(time / 70 + index * 2.1) * 1.4);
-        const jy = Math.round(1 + Math.cos(time / 90 + index) * 1.2);
-        disc(sg, eye[0] + jx, eye[1] + jy, 1, BANANAS.pupil);
+        px(eye, -2, -4, BANANAS.brow, 4);
+        if (blink) {
+          px(eye, -2, 0, BANANAS.lip, 4);
+          return;
+        }
+        for (let dy = -2; dy <= 2; dy += 1) px(eye, Math.abs(dy) === 2 ? -1 : -2, dy, BANANAS.white, Math.abs(dy) === 2 ? 3 : 4);
+        px(eye, 0, -1, BANANAS.iris[1], 2);
+        px(eye, 0, 0, BANANAS.iris[0]);
+        px(eye, 1, 0, BANANAS.pupil);
+        px(eye, 0, 1, BANANAS.iris[0], 2);
+        px(eye, 0, -1, BANANAS.white);
       });
-      // Marker-drawn grin with a tongue.
-      const mouth = at(h, 1, 6);
-      px(mouth, -5, -1, BANANAS.marker);
-      px(mouth, -4, 0, BANANAS.marker);
-      px(mouth, -3, 1, BANANAS.marker, 7);
-      px(mouth, 4, 0, BANANAS.marker);
-      px(mouth, 5, -1, BANANAS.marker);
+      // A wide, open smile.
+      const mouth = at(h, 1, 5);
+      px(mouth, -4, -1, BANANAS.lip);
+      px(mouth, 4, -1, BANANAS.lip);
+      px(mouth, -3, 0, BANANAS.lip, 7);
+      px(mouth, -2, 1, BANANAS.mouth, 5);
       px(mouth, -1, 2, BANANAS.tongue, 3);
+      px(mouth, -2, 2, BANANAS.lip);
+      px(mouth, 2, 2, BANANAS.lip);
+      px(mouth, -1, 3, BANANAS.lip, 3);
     }
   };
 

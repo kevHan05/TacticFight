@@ -14,7 +14,7 @@ const STORY = {
     rocky: "R.O.C.K.Y was built in Lab 7 as a security robot, and declared a failure because he kept protecting innocent people instead of following orders. His horn upgrade ran on a meteorite crumb PROPHET dropped while snacking, and it worked a little too well: he charged through three walls and out of the lab. Street performers named him, and he kept it because it sounded structurally impressive. Now he searches for his creators, and for what it means to have a heart.",
     ninja: "Ninja Main grew up on old martial arts movies, ninja toys and dramatic poses in the bedroom mirror. His first smoke bomb set off every alarm in his building. In an abandoned dojo he found a mysterious scroll and decided it was his destiny. The scroll is actually PROPHET's lost TV guide, but Ninja Main has memorised every word and treats 'Tuesday, 8pm' as a secret technique. He is not a master yet. But he never, ever gives up.",
     zoombie: "He was a safari guide who loved animals and talked to them like old friends. Then PROPHET sneezed, a tiny comet crashed into an abandoned research station, and its strange microorganism left him green, clumsy and without a heartbeat. He still lives in the safari reserve, protecting the wildlife and eating fruit nobody else wants. He is searching for a cure, and for a chance to finally say 'bless you'.",
-    bananas: "BANANAS was an ordinary orange in a grocery store until a boy stole him, glued on googly eyes, drew a mouth and gave him two little legs. The boy named him BANANAS, because it was the funniest word he knew. On a school trip to Lab 7, the boy found a glowing syringe in a glass case labelled 'PROPHET: DO NOT TOUCH', and used it on the orange. BANANAS grew to human size, yelled his own name and ran away. He has been bouncing ever since.",
+    bananas: "BANANAS was an ordinary orange in a grocery store until a boy stole him, glued on googly eyes, drew a mouth and gave him two little legs. The boy named him BANANAS, because it was the funniest word he knew. On a school trip to Lab 7, the boy found a glowing syringe in a glass case labelled 'PROPHET: DO NOT TOUCH', and used it on the orange. The plastic eyes and marker mouth turned real, BANANAS grew to human size, yelled his own name and ran away. He has been bouncing ever since.",
     prophet: "PROPHET controls the entire TacticFight universe. His skin is a living galaxy, his eyes glow like twin suns, and his feet have not touched the ground in four billion years. Having created everything, he got bored, so now he watches the fighters like his favourite TV show, with a remote made of moons. He knows how every episode ends, except for one thing: the gold envelopes."
   },
 
@@ -331,7 +331,7 @@ const STORY = {
       ["prophet", "Fair. Odd thing: my Prophecy can't read you. You're my favourite plot twist."]
     ],
     "bananas>prophet": [
-      ["prophet", "Ah, the orange. Do you know your googly eyes are glued on crooked?"],
+      ["prophet", "Ah, the orange. My serum gave you real eyes, and you use them to squint at me?"],
       ["bananas", "They are glued on with STYLE! NO ARMS, NO PROBLEM!"],
       ["prophet", "You're named after a boy's favourite silly word. I find that unbearably cute."],
       ["bananas", "BANANAS finds YOU unbearably shiny! Prepare for FRUIT NUCLEAR!"]
@@ -974,7 +974,7 @@ const STORY = {
     bananas: {
       title: "Googly-Eyed Glory",
       intro: [
-        ["narrator", "The produce aisle, closing time. A gold envelope lands on a giant googly-eyed orange."],
+        ["narrator", "The produce aisle, closing time. A gold envelope lands on a giant wide-eyed orange."],
         ["bananas", "BANANAS HAS ARRIVED! ...At his own mail. MAIL HAS ARRIVED AT BANANAS!"],
         ["narrator", "'Win seven fights. The last is PROPHET, who owned that syringe. -The Patron'"],
         ["bananas", "The syringe guy! BANANAS will thank him, then kick him! NO ARMS, NO PROBLEM!"]
@@ -1012,7 +1012,7 @@ const STORY = {
           ],
           after: [
             ["ninja", "You bounced into that wall without making a sound."],
-            ["bananas", "It was a soft wall! BANANAS has a black eye. It is a googly one, so it's fine."]
+            ["bananas", "It was a soft wall! BANANAS has a black eye. Real eyes bruise. Who knew?!"]
           ]
         },
         zoombie: {
@@ -1028,7 +1028,7 @@ const STORY = {
         },
         byte: {
           before: [
-            ["byte", "Orange detected. Eyes: glued. Mouth: marker. Name: BANANAS. Error count: 3."],
+            ["byte", "Orange detected. Eyes: once glued, now real. Mouth: once marker. Error count: 3."],
             ["bananas", "Not errors! A boy made all of that! Except the size. That was a syringe."],
             ["byte", "Unregulated fruit enlargement. Filing a report. Then fighting you."]
           ],

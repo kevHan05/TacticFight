@@ -500,11 +500,11 @@ They are designed to be visually distinct, mechanically varied, and flexible eno
 
 ## Backstory
 
-BANANAS started life as a perfectly ordinary orange in the fruit aisle of a grocery store. A boy stole him, glued on a pair of googly eyes, drew a mouth with a marker, stuck on two little homemade legs and named him after the funniest word he knew. On a school field trip to Lab 7 the boy found a syringe in a glass case marked "DO NOT TOUCH" (it belonged to PROPHET), and injected it straight into the orange. BANANAS grew to human size, said his first word ("BANANAS!") and ran out of the lab before the teacher finished counting heads. He now travels in search of fame, adventure and the boy, who still owes him a better mouth.
+BANANAS started life as a perfectly ordinary orange in the fruit aisle of a grocery store. A boy stole him, glued on a pair of googly eyes, drew a mouth with a marker, stuck on two little homemade legs and named him after the funniest word he knew. On a school field trip to Lab 7 the boy found a syringe in a glass case marked "DO NOT TOUCH" (it belonged to PROPHET), and injected it straight into the orange. The googly eyes and marker mouth turned into a real face, BANANAS grew to human size, said his first word ("BANANAS!") and ran out of the lab before the teacher finished counting heads. He now travels in search of fame, adventure and the boy, who still owes him a better mouth.
 
 ## Appearance and Personality
 
-BANANAS is a bright, round, dimpled orange with a stem and a wobbly green leaf, two glued-on googly eyes whose pupils rattle around loose, a marker-drawn grin, and two thin homemade stick legs in little sneakers. He has no arms. His silhouette is round, orange and unmistakable: an orange, not a cinnamon bun.
+BANANAS is a bright, round, dimpled orange with a stem and a wobbly green leaf, two real cartoon eyes with blue irises and eyebrows (they blink), a wide open smile, and two thin orange legs with little rounded feet (no shoes). He has no arms. His silhouette is round, orange and unmistakable: an orange, not a cinnamon bun.
 
 He is friendly, optimistic, brave and convinced he is the greatest fruit hero alive. He announces his moves, celebrates tiny victories and refers to himself in the third person. He acts before thinking, but will throw himself into danger to help a friend.
 

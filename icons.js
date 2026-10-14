@@ -56,7 +56,7 @@ const MoveIcons = (() => {
       rows: [".....bb.....", "......b.....", "..aabbaa....", ".aabbbbaa...", ".abcccbba...", ".abddcbba...", "..abbbba....", "...aaaa.....", "............", "..b......b..", "............", "............"]
     },
     peelOut: {
-      colors: { a: "#f47718", b: "#ffcc4d", c: "#fff7db" },
+      colors: { a: "#f47718", b: "#ffcc4d", c: "#c2410c" },
       rows: ["............", "............", "..aabbaa....", ".abbbbaa....", "abbbbbbbba..", "abbbccbbba..", "abbbccbbba..", ".abbbbaa....", "..aabbaa....", "............", "..cc..cc....", "............"]
     },
     fruitNuclear: {
