@@ -304,7 +304,7 @@ function startFight() {
   Sound.play("bell");
   busyUntil = performance.now() + 600;
   updateUI();
-  later(600, updateUI);
+  later(600, unlockInput);
   announce("Start Fight!", "start", 3000);
 }
 
@@ -389,6 +389,13 @@ function playerUltimateReady() {
 
 function busy() {
   return performance.now() < busyUntil;
+}
+
+// Timers can fire a hair before performance.now() reaches busyUntil, which
+// would leave the move buttons disabled for good, so end the lock explicitly.
+function unlockInput() {
+  busyUntil = 0;
+  updateUI();
 }
 
 function updateUI() {
@@ -618,7 +625,7 @@ function resolveRound(moveId) {
   });
   later(plan.end, () => {
     state.shown = { player: state.player.hp, bot: state.bot.hp };
-    updateUI();
+    unlockInput();
   });
   if (state.finished) {
     const won = state.bot.hp <= 0 && state.player.hp > 0;
