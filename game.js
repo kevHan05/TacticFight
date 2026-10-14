@@ -202,7 +202,7 @@ function buildSelectScreen() {
     card.querySelector(".card-role").textContent = fighter.role;
     if (mode === "campaign") {
       const entry = progress[fighter.id] || {};
-      card.querySelector(".card-progress").textContent = entry.cleared ? "CLEARED" : entry.index ? `${entry.index}/5` : "";
+      card.querySelector(".card-progress").textContent = entry.cleared ? "CLEARED" : entry.index ? `${entry.index}/${campaignOrder(fighter.id).length}` : "";
     }
     card.addEventListener("click", () => openDetail(fighter.id));
     card.addEventListener("mouseenter", () => Sound.playIfUnlocked("hover"));
@@ -238,7 +238,7 @@ function openDetail(id) {
     const entry = campaignProgress()[id] || {};
     const campaign = campaignFor(id);
     const titleText = campaign ? `"${campaign.title}" ` : "";
-    ui.detailProgress.textContent = entry.cleared ? `${titleText}CLEARED. Play it again from the start.` : `${titleText}PROGRESS: ${entry.index || 0}/5`;
+    ui.detailProgress.textContent = entry.cleared ? `${titleText}CLEARED. Play it again from the start.` : `${titleText}PROGRESS: ${entry.index || 0}/${campaignOrder(id).length}`;
     ui.detailFight.textContent = entry.index && !entry.cleared ? "CONTINUE" : "START CAMPAIGN";
   } else {
     ui.detailFight.textContent = mode === "endless" ? "START ENDLESS" : "FIGHT!";
@@ -482,6 +482,7 @@ function playMoveCue(outcome, start, hit, lead) {
   switch (outcome.move.anim) {
     case "punch":
     case "shuffle":
+    case "citrusKick":
       Sound.play("swing", hit - 0.14);
       break;
     case "combo":
@@ -521,6 +522,16 @@ function playMoveCue(outcome, start, hit, lead) {
     case "dash":
       Sound.play("dodge", hit - 0.13);
       break;
+    case "orangeBounce":
+      Sound.play("boing", hit - 0.2);
+      break;
+    case "peelOut":
+      Sound.play("rush", start);
+      Sound.play("boing", hit - 0.12);
+      break;
+    case "fruitNuclear":
+      Sound.play("fruitNuclear", start);
+      break;
     case "fortress":
       Sound.play("armor", hit - 0.2);
       break;
@@ -544,7 +555,7 @@ function playOutcome(report, side, hit) {
   const mine = report[side];
   const defense = report[other].move;
   const voice = fighterInfo(state[other].id).voice;
-  const multi = ["combo", "stampede", "shuriken"].includes(mine.move.anim);
+  const multi = ["combo", "stampede", "shuriken", "fruitNuclear"].includes(mine.move.anim);
   const spacing = (mine.move.anim === "stampede" ? 0.07 : 0.1) * Arena.SLOW;
 
   if (["hit", "broke", "chipped", "armored"].includes(mine.result)) {
@@ -688,8 +699,9 @@ function finishMatch(won) {
   }
 
   // Campaign.
+  const total = campaignOrder(playerId).length;
   if (!won) {
-    showResult(`${MODE_NAMES.campaign} ${run.index + 1}/5`, "YOU LOSE!", `${botName} wins this one. Shake it off and try again.`, [
+    showResult(`${MODE_NAMES.campaign} ${run.index + 1}/${total}`, "YOU LOSE!", `${botName} wins this one. Shake it off and try again.`, [
       resultButton("TRY AGAIN", () => campaignFight(), true),
       menu
     ], "defeat");
@@ -699,14 +711,14 @@ function finishMatch(won) {
   const after = campaign && campaign.fights[botId] ? campaign.fights[botId].after : null;
   run.index += 1;
   const progress = campaignProgress();
-  const cleared = run.index >= 5;
+  const cleared = run.index >= total;
   progress[playerId] = { index: cleared ? 0 : run.index, cleared: cleared || Boolean(progress[playerId] && progress[playerId].cleared) };
   save(CAMPAIGN_KEY, progress);
 
   const next = () => {
     if (cleared) {
       const ending = campaign && campaign.ending;
-      const done = () => showResult(MODE_NAMES.campaign, "CAMPAIGN CLEAR!", `${fighterInfo(playerId).name} beat all five rivals.`, [
+      const done = () => showResult(MODE_NAMES.campaign, "CAMPAIGN CLEAR!", `${fighterInfo(playerId).name} beat all ${total} rivals.`, [
         resultButton("PLAY ANOTHER", () => chooseMode("campaign"), true),
         menu
       ], "victory");
@@ -715,7 +727,7 @@ function finishMatch(won) {
       return;
     }
     const upcoming = fighterInfo(campaignOrder(playerId)[run.index]).name;
-    showResult(`${MODE_NAMES.campaign} ${run.index}/5`, "YOU WIN!", `Next up: ${upcoming}.`, [
+    showResult(`${MODE_NAMES.campaign} ${run.index}/${total}`, "YOU WIN!", `Next up: ${upcoming}.`, [
       resultButton("NEXT FIGHT", () => campaignFight(), true),
       menu
     ], "victory");

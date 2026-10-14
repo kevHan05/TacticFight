@@ -1681,5 +1681,82 @@ const Stages = (() => {
     }
   };
 
-  return { rook, byte, bobbie, rocky, ninja, zoombie };
+  // BANANAS - the supermarket produce aisle, with a suspicious fruit-salad display.
+  const bananas = {
+    name: "Produce Aisle",
+    build(ctx, h) {
+      const R = painter(ctx, h);
+      bands(ctx, h, [[0, "#243c4a"], [10, "#385d64"], [21, "#638477"], [34, "#9aab83"], [48, "#c5c69a"], [63, "#d9d1a3"], [77, "#8f9d71"]], 0, 84);
+
+      // Fluorescent ceiling and the store's very proud produce sign.
+      R(0, 0, W, 7, "#18232a");
+      [24, 98, 198, 272].forEach(x => {
+        R(x, 9, 30, 2, "#f8f0c6");
+        R(x + 3, 11, 24, 1, "#f4d97c");
+      });
+      R(121, 13, 78, 19, "#1e302c");
+      R(123, 15, 74, 15, "#477746");
+      R(123, 15, 74, 1, "#c6d789");
+      h.text(ctx, "PRODUCE", 146, 20, () => "#fff0a8");
+
+      // End-cap shelves frame the fighters and leave the centre aisle open.
+      [[0, 72], [248, 72]].forEach(([x, width]) => {
+        R(x, 37, width, 3, "#31443e");
+        R(x, 40, width, 2, "#bfd09a");
+        R(x, 60, width, 3, "#31443e");
+        R(x, 63, width, 2, "#bfd09a");
+      });
+      [[8, 43], [258, 39], [26, 66], [278, 65]].forEach(([x, y], index) => {
+        const fruit = index % 2 ? "#d74632" : "#f47718";
+        [[0, 0], [7, 2], [14, 0], [21, 2], [28, 0]].forEach(([dx, dy], k) => {
+          h.disc(ctx, x + dx, y + dy, 4, k % 2 ? fruit : "#e9bd45");
+          R(x + dx, y + dy - 5, 1, 2, "#477746");
+        });
+      });
+
+      // A low display of orange crates, plus the cart that started it all.
+      [[7, 72], [265, 72]].forEach(([x, y]) => {
+        R(x, y, 47, 11, "#764b2c");
+        R(x, y, 47, 2, "#b5793b");
+        for (let dx = 4; dx < 45; dx += 8) R(x + dx, y + 3, 2, 7, "#a66b35");
+      });
+      R(41, 76, 21, 2, "#78838a");
+      R(43, 78, 17, 2, "#b6c0bd");
+      h.disc(ctx, 45, 82, 3, "#344047");
+      h.disc(ctx, 59, 82, 3, "#344047");
+      h.text(ctx, "2 FOR 1", 9, 56, () => "#fff0a8");
+
+      // Pale green supermarket tiles in perspective.
+      bands(ctx, h, [[84, "#7b8b68"], [91, "#8b9b72"], [103, "#738565"], [116, "#879671"], [129, "#6d7e62"]], 84, H);
+      seams(ctx, h, 85, 26, 16, "#53644d");
+      for (let y = 91; y < H; y += 10) {
+        const offset = Math.floor(y / 10) % 2 ? 10 : 0;
+        for (let x = offset; x < W; x += 52) R(x, y, 1, 1, "#a4ae7d");
+      }
+      R(0, 84, W, 2, "#d5d5a5");
+      R(0, 86, W, 1, "#52604b");
+    },
+    animate(ctx, h, now, excitement) {
+      const R = painter(ctx, h);
+      const flicker = Math.floor(now / 520) % 4 === 0;
+      if (flicker) {
+        ctx.globalAlpha = 0.18;
+        R(121, 13, 78, 19, "#f8efbd");
+        ctx.globalAlpha = 1;
+      }
+      const bob = Math.round(Math.sin(now / 105) * (1 + excitement * 2));
+      [[17, 46], [287, 43], [36, 68], [269, 67]].forEach(([x, y], index) => {
+        const dx = index % 2 ? -bob : bob;
+        R(x + dx, y - 5, 1, 2, "#477746");
+        R(x + dx - 1, y - 6, 3, 1, "#79b04a");
+      });
+      if (excitement > 0.12) {
+        const spark = Math.floor(now / 70) % 2;
+        R(89 + spark * 3, 82, 2, 1, "#fff0a8");
+        R(229 - spark * 3, 80, 2, 1, "#fff0a8");
+      }
+    }
+  };
+
+  return { rook, byte, bobbie, rocky, ninja, zoombie, bananas };
 })();

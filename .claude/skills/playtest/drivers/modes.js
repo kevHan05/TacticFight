@@ -1,7 +1,7 @@
 // Mode driver: plays a whole campaign (forcing quick wins), a campaign loss
 // and retry, and a short Endless run. Rendering is stubbed out so the logic
 // runs fast under the browser's virtual time. Query parameters:
-//   fighter=<index 0-5> (default 0)   endless=<wins before quitting> (default 3)
+//   fighter=<index 0-6> (default 0)   endless=<wins before quitting> (default 3)
 // Use a large budget: browser.sh dom <page> 250000
 Arena.draw = () => {};
 Arena.portrait = () => {};

@@ -178,6 +178,21 @@ const Music = (() => {
       mix: { lead2: 0.06 }
     },
 
+    // BANANAS / Produce Aisle: springy F major fruit-cart bounce at 152 BPM.
+    bananas: {
+      bpm: 152, crash: 8, fillEvery: 4,
+      chords: "F | C | Dm | Bb | F | C | Bb C | F",
+      lead: "F5 . A5 C6 . A5 G5 . | E5 . G5 C6 . G5 E5 . | F5 . A5 D6 . C6 A5 . | Bb5 . A5 G5 F5 . . . |" +
+        "F5 . A5 C6 . A5 G5 . | E5 . G5 C6 . D6 C6 . | D6 . . C6 Bb5 . G5 . | A5 . G5 F5 . . . -",
+      lead2: -12,
+      bass: "1 . 1 8 5 . 8 .",
+      arp: "1 5 8 5 1 5 8 5",
+      drums: { k: "x...x...x.x.....", s: "....X.......X...", h: "x.x.x.x.x.x.x.x." },
+      fill: { s: "....X...x.x.XxXX" },
+      inst: { lead: "pulse12", lead2: "square", bass: "tri", arp: "pluck" },
+      mix: { lead2: 0.07, arp: 0.045 }
+    },
+
     // Victory: four triumphant bars with a harmony line a third below.
     victory: {
       bpm: 132, crash: 4,

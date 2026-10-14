@@ -114,6 +114,21 @@ const ROSTER = [
       { id: "senses", name: "Safari Senses", track: true, cooldown: 2, anim: "senses", detail: "READ NEXT MOVE", info: "Use old tracking skills: see the opponent's next move, and your next strike can't be evaded. Recharges for 2 rounds." },
       { id: "stampede", name: "Zombie Stampede", ultimate: true, damage: 7, hits: 4, area: true, anim: "stampede", detail: "4x7, CAN'T BE DODGED", info: "Roar for an infected wildlife stampede: 4 hits of 7 damage. Can't be dodged, and a block only halves it." }
     ]
+  },
+  {
+    id: "bananas",
+    name: "BANANAS",
+    title: "The Juicy Jumper",
+    role: "Mobility trickster",
+    color: "#ff8a1e",
+    hp: 95,
+    voice: "bananasHurt",
+    moves: [
+      { id: "citrus", name: "Citrus Kick", damage: 13, interrupt: true, anim: "citrusKick", detail: "13, INTERRUPTS", info: "Spin into a quick kick for 13 damage. If both fighters strike, the opponent's hit is weakened by 30%." },
+      { id: "bounce", name: "Orange Bounce", guard: "dodge", momentum: true, anim: "orangeBounce", detail: "DODGE + POWER UP", info: "Bounce over a single-target strike and power up your next strike to 1.5x. Area attacks still hit." },
+      { id: "peel", name: "Peel Out", damage: 12, guard: "shuffle", risky: true, momentum: true, anim: "peelOut", detail: "12 + 50% EVADE, RISKY", info: "Roll forward for 12 damage with a 50% chance to evade a single-target strike. If it misses, is blocked, or is evaded, you take 1.5x damage next round." },
+      { id: "nuclear", name: "FRUIT NUCLEAR!", ultimate: true, damage: 7, hits: 4, area: true, anim: "fruitNuclear", detail: "4x7, CAN'T BE DODGED", info: "Launch into a four-hit ground-slam shockwave for 28 damage and yell, 'BANANAS HAS ARRIVED!' Can't be dodged, and a block only halves it. Unlocks after 3 rounds, then recharges for 3." }
+    ]
   }
 ];
 
