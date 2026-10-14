@@ -1,10 +1,10 @@
 # Tactic Fight
 
-A turn-based 1v1 arcade fighter. Pick one of six fighters and take on a CPU opponent.
+A turn-based 1v1 arcade fighter. Pick one of seven fighters and take on a CPU opponent.
 
 ## Modes
 
-- **Campaign:** each fighter has a story. Beat the other five fighters, in order, on their home stages, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
+- **Campaign:** each fighter has a story. Beat the other six fighters, in order, on their home stages, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
 - **Endless:** fight until you are defeated. Every fight is against a new opponent and both fighters start at full health. Your best streak is saved.
 - **Quick Fight:** pick a fighter and take on a random opponent.
 
@@ -23,7 +23,7 @@ Both fighters pick a move at the same time. The round then plays out one fighter
 - Each fighter's last move is their ultimate. It becomes available after three completed rounds and recharges three rounds after use.
 - Some moves have their own cooldown, shown on the button.
 - Reduce the opponent to 0 HP to win. If your HP reaches 0, the match is lost.
-- Use the buttons or press `1`-`4` for the moves. On the select screen, press `1`-`6` to pick a fighter.
+- Use the buttons or press `1`-`4` for the moves. On the select screen, press `1`-`7` to pick a fighter.
 
 ## Fighters
 
@@ -37,6 +37,7 @@ The roster and every move's rules live in `characters.js`. The new fighters are 
 | R.O.C.K.Y | 110 | Bull Rush (12, breaks guard), Steel Fist (14, interrupts), Fortress Mode (armour for 2 rounds), Full Charge Overdrive (26, can't be blocked or dodged) |
 | Ninja Main | 80 | Shadow Step (dodge + 8 counter), Rookie Shuriken (3x7, each may miss), Smoke Panic (evade all, blind), Almost Invisible (evade + 28, may be spotted) |
 | ZOO-mbie | 115 | Rotten Swing (16, can't be dodged), Undead Shuffle (10 + 50% evade), Safari Senses (reveals the CPU's next move), Zombie Stampede (4x7, can't be dodged) |
+| BANANAS | 95 | Citrus Kick (13, interrupts), Orange Bounce (dodge + power up), Peel Out (12 + 50% evade, risky), FRUIT NUCLEAR! (4x7, can't be dodged) |
 
 Status effects:
 

@@ -250,6 +250,24 @@ const Sound = (() => {
       noise({ start: t, duration: 0.3, volume: 0.07, freq: 500, q: 1.5, attack: 0.04 });
     },
 
+    // BANANAS' cartoon squeak: a bright chirp that wobbles on the way down.
+    bananasHurt(t) {
+      const squeak = tone({ type: "triangle", freq: vary(780), to: 390, start: t, duration: 0.2, volume: 0.16, attack: 0.015 });
+      vibrato(squeak, t, 0.2, 12, 24);
+      tone({ type: "sine", freq: 1040, to: 720, start: t + 0.04, duration: 0.11, volume: 0.07 });
+    },
+
+    // FRUIT NUCLEAR: rising citrus chirps followed by an echoing squashy boom.
+    fruitNuclear(t) {
+      [440, 660, 880, 1320].forEach((freq, index) => {
+        tone({ type: "square", freq, to: freq * 1.3, start: t + index * 0.09, duration: 0.18, volume: 0.06, out: echoBus });
+      });
+      const blast = t + 0.52;
+      tone({ type: "triangle", freq: 180, to: 42, start: blast, duration: 0.55, volume: 0.65, out: echoBus });
+      noise({ start: blast, duration: 0.42, volume: 0.32, filter: "lowpass", freq: 1700, to: 120, attack: 0.01 });
+      tone({ type: "sine", freq: 96, to: 38, start: blast, duration: 0.7, volume: 0.72 });
+    },
+
     // Quick sidestep: a bright, short whoosh.
     dodge(t) {
       noise({ start: t, duration: 0.12, volume: 0.18, freq: vary(2000), to: 5200, q: 3, attack: 0.03 });

@@ -11,7 +11,8 @@ const STORY = {
     bobbie: "Bobbie Macalanger grew up in a neighbourhood where respect was earned, and his temper earned him plenty of trouble. His grandfather put boxing gloves on him, and years at the local gym taught him discipline and when not to throw a punch. He still coaches the neighbourhood kids for free. Now a mysterious invite to an underground tournament promises a place on a secret team that protects the city.",
     rocky: "R.O.C.K.Y was built in a secret industrial lab as a security robot, and declared a failure because he kept protecting innocent people instead of following orders. An experimental horn upgrade worked a little too well: he charged through three walls and out of the lab. Street performers named him, and he kept it because it sounded structurally impressive. Now he searches for his creators, and for what it means to have a heart.",
     ninja: "Ninja Main grew up on old martial arts movies, ninja toys and dramatic poses in the bedroom mirror. His first smoke bomb set off every alarm in his building. In an abandoned dojo behind the old marketplace he found a mysterious training scroll and decided it was his destiny. He is not a master yet. He is not even particularly stealthy. But he never, ever gives up.",
-    zoombie: "He was a safari guide who loved animals and talked to them like old friends. At an abandoned research station, a broken containment unit released a strange microorganism, and he woke up green, clumsy and without a heartbeat. He still lives in the safari reserve, protecting the wildlife and eating fruit nobody else wants. Now he searches for the source of the infection, and maybe a cure."
+    zoombie: "He was a safari guide who loved animals and talked to them like old friends. At an abandoned research station, a broken containment unit released a strange microorganism, and he woke up green, clumsy and without a heartbeat. He still lives in the safari reserve, protecting the wildlife and eating fruit nobody else wants. Now he searches for the source of the infection, and maybe a cure.",
+    bananas: "Nobody knows where BANANAS came from. He says an orange ate a banana in a suspicious fruit salad; his real name may have been lost in a supermarket label mix-up. He grew up ignored in the produce section, then rolled off a shelf, bounced through cereal and toy sneakers, and discovered his talent for launching his round body at trouble. Now the armless, overconfident orange travels for fame, adventure and an answer to the question: why is an orange called BANANAS? His answer: ORANGES sounded too normal."
   },
 
   banter: {
@@ -186,6 +187,67 @@ const STORY = {
       ["zoombie", "Safari Senses say: behind the barrel. Your foot's sticking out."],
       ["ninja", "That is a decoy foot."],
       ["zoombie", "It's wearing a sock with little stars on it."]
+    ],
+    "bananas>bobbie": [
+      ["bananas", "BANANAS challenges you to a boxing match!"],
+      ["bobbie", "How you gonna box without fists?"],
+      ["bananas", "WITH MY FEET, OBVIOUSLY!"],
+      ["bobbie", "Ha! That's ridiculous. I like you. Let's train after this."]
+    ],
+    "bobbie>bananas": [
+      ["bobbie", "A strange fruit mascot wants to box? You don't even have arms!"],
+      ["bananas", "BANANAS boxes with feet. This is a very advanced style."],
+      ["bobbie", "Then I'll teach you the basics. Step into my ring, Orange Guy!"]
+    ],
+    "bananas>rocky": [
+      ["rocky", "UNIDENTIFIED FRUIT-SHAPED OBJECT. PLEASE HOLD STILL FOR SCANNING."],
+      ["bananas", "Is the scanning beam a dance spotlight? BANANAS has a routine!"],
+      ["rocky", "CLASSIFICATION: FRIENDLY FRUIT. HIGH CHAOS POTENTIAL."]
+    ],
+    "rocky>bananas": [
+      ["rocky", "SCANNING... ORANGE BODY. NO ARMS. NAME DOES NOT MATCH SPECIES."],
+      ["bananas", "The name is a prophecy! Also, the beam makes me want to dance."],
+      ["rocky", "FRIENDLY FRUIT. HIGH CHAOS POTENTIAL. INITIATING DANCE SCAN."]
+    ],
+    "bananas>ninja": [
+      ["ninja", "Remain still. Stealth begins by becoming one with the shadows."],
+      ["bananas", "BANANAS is still! ...Oops. I bounced into a wall."],
+      ["ninja", "Bouncing silently is... actually, let me write that down."]
+    ],
+    "ninja>bananas": [
+      ["ninja", "My stealth lesson: stay perfectly still. No bouncing."],
+      ["bananas", "BANANAS has mastered silent bouncing! Bonk."],
+      ["ninja", "That was a wall. I am writing it down anyway."]
+    ],
+    "bananas>zoombie": [
+      ["zoombie", "A banana! Wait, you're round. Are you a citrus?"],
+      ["bananas", "BANANAS is an orange! Please stop trying to classify me."],
+      ["zoombie", "Sorry, friend. You rolled downhill and rescued me. Definitely friend."]
+    ],
+    "zoombie>bananas": [
+      ["zoombie", "Small. Round. Loud. Possibly edible. Definitely friend."],
+      ["bananas", "BANANAS is not a snack! ...Unless the snack is victory."],
+      ["zoombie", "I'll bring a field guide. You can correct the fruit page."]
+    ],
+    "bananas>rook": [
+      ["bananas", "I am BANANAS, legendary fruit warrior! Did you hear my name?"],
+      ["rook", "Hard to miss. You bounced into the sign that says QUIET STREET."],
+      ["bananas", "BANANAS has made a strong first impression!"]
+    ],
+    "rook>bananas": [
+      ["rook", "An orange named BANANAS? I have questions. Mostly about the name."],
+      ["bananas", "ORANGES sounded too normal. Now witness my Citrus Kick!"],
+      ["rook", "I respect the confidence. Let's see about the kick."]
+    ],
+    "bananas>byte": [
+      ["byte", "Species: orange. Name: BANANAS. Probability of confusion: 100%."],
+      ["bananas", "BANANAS has a plan! Does the plan include snacks?"],
+      ["byte", "I am still calculating. Please do not roll into the server rack."]
+    ],
+    "byte>bananas": [
+      ["byte", "Name and species mismatch confirmed. Recommend a firmware update."],
+      ["bananas", "No update needed! BANANAS is running on pure enthusiasm."],
+      ["byte", "That explains the unpredictable movement. Engaging carefully."]
     ]
   },
 
@@ -194,10 +256,10 @@ const STORY = {
       title: "District Defender",
       intro: [
         ["narrator", "Neon District. A gold envelope slides under Rook's door. It smells like expensive mystery."],
-        ["narrator", "'The Patron seeks protectors. Win five fights. The best district gets a champion.'"],
+        ["narrator", "'The Patron seeks protectors. Win every fight. The best district gets a champion.'"],
         ["rook", "Best district? That's mine, obviously. Somebody tell the other districts to stop trying."]
       ],
-      order: ["ninja", "zoombie", "rocky", "bobbie", "byte"],
+      order: ["ninja", "zoombie", "rocky", "bobbie", "byte", "bananas"],
       fights: {
         ninja: {
           before: [
@@ -262,6 +324,17 @@ const STORY = {
             ["byte", "Error. Outcome does not match prediction. Rebooting my sense of humility."],
             ["rook", "Twelve percent's all I need, buddy. Twelve percent and a Blaze Ball."]
           ]
+        },
+        bananas: {
+          before: [
+            ["narrator", "The supermarket. An orange has rolled into the Neon District aisle."],
+            ["bananas", "BANANAS has arrived! Is this where the noodles live?"],
+            ["rook", "Not quite. But if you stop rolling into my signs, I'll show you."]
+          ],
+          after: [
+            ["rook", "You fought well. The noodle stand is two blocks east."],
+            ["bananas", "BANANAS is on the way! ...I may arrive upside down."]
+          ]
         }
       },
       ending: [
@@ -277,11 +350,11 @@ const STORY = {
       title: "Patch Notes",
       intro: [
         ["narrator", "Server Room B. Combat Unit BYTE receives a gold envelope. The printer jams twice."],
-        ["byte", "Sender: 'The Patron.' Defeat five fighters. Prize: the city's best combat data."],
+        ["byte", "Sender: 'The Patron.' Defeat every fighter. Prize: the city's best combat data."],
         ["byte", "That data unlocks version 2.0. Planned patch notes: 'Now 100% undefeated.'"],
         ["byte", "Leaving the server room. Please do not unplug anything while I am away."]
       ],
-      order: ["zoombie", "ninja", "bobbie", "rook", "rocky"],
+      order: ["zoombie", "ninja", "bobbie", "rook", "rocky", "bananas"],
       fights: {
         zoombie: {
           before: [
@@ -343,6 +416,17 @@ const STORY = {
             ["rocky", "YOU WIN, SMALL GREEN ROBOT. DID IT MAKE YOUR POWER CORE FEEL WARM?"],
             ["byte", "...Core temperature rose two degrees. Logging it as 'not a feeling'."]
           ]
+        },
+        bananas: {
+          before: [
+            ["byte", "Orange detected. Name: BANANAS. Taxonomic error: unresolved."],
+            ["bananas", "BANANAS is not an error! BANANAS is a lifestyle!"],
+            ["byte", "I will test that claim with a controlled fight."]
+          ],
+          after: [
+            ["byte", "Chaos level exceeded the scanner's maximum range."],
+            ["bananas", "The scanner was cheering! BANANAS can tell."]
+          ]
         }
       },
       ending: [
@@ -357,10 +441,10 @@ const STORY = {
       title: "Underground Invitational",
       intro: [
         ["narrator", "Midnight at the neighbourhood gym. A gold envelope is taped to Bobbie's punching bag."],
-        ["narrator", "'Win five underground fights and join a secret team that protects the city.'"],
+        ["narrator", "'Win every underground fight and join a secret team that protects the city.'"],
         ["bobbie", "A secret team? With a secret handshake? I'M IN. Grandpa, watch the gym!"]
       ],
-      order: ["ninja", "zoombie", "byte", "rocky", "rook"],
+      order: ["ninja", "zoombie", "byte", "rocky", "rook", "bananas"],
       fights: {
         ninja: {
           before: [
@@ -424,11 +508,22 @@ const STORY = {
             ["rook", "Okay... you earned it. The Neon District's yours. Just for tonight."],
             ["bobbie", "Nah, keep your street. I just wanted a good fight. And maybe your headband."]
           ]
+        },
+        bananas: {
+          before: [
+            ["bobbie", "You came to my gym to learn boxing? You don't have arms!"],
+            ["bananas", "WITH MY FEET, OBVIOUSLY!"],
+            ["bobbie", "Ha! Let's see those kicks. The kids are gonna love this."]
+          ],
+          after: [
+            ["bobbie", "You've got heart, Orange Guy. Come back for footwork drills."],
+            ["bananas", "BANANAS has no arms, but does have a gym membership!"]
+          ]
         }
       },
       ending: [
         ["narrator", "A figure in a gold mask steps out of the crowd and starts slow-clapping."],
-        ["narrator", "'Five fights, Bobbie. And you helped a ninja, a zombie and a cat along the way.'"],
+        ["narrator", "'Six fights, Bobbie. And you helped a ninja, a zombie and a cat along the way.'"],
         ["bobbie", "Wait, THAT was the test? Helping people? I thought it was the punching!"],
         ["narrator", "'It was also the punching.' The Patron hands him a gold team jacket. It's tiny."],
         ["bobbie", "Doesn't matter! Step into my ring, city! Your new protector has arrived!"]
@@ -439,10 +534,10 @@ const STORY = {
       title: "Heart of Steel",
       intro: [
         ["narrator", "R.O.C.K.Y finds a gold envelope stuck on one of his horns. Nobody knows for how long."],
-        ["narrator", "'Win five fights, and I will tell you who built you. -The Patron'"],
+        ["narrator", "'Win all six fights, and I will tell you who built you. -The Patron'"],
         ["rocky", "TRUTH ABOUT CREATORS: REQUESTED. HORNS: ACTIVATED. ENVELOPE: STILL ON HORNS."]
       ],
-      order: ["ninja", "zoombie", "bobbie", "rook", "byte"],
+      order: ["ninja", "zoombie", "bobbie", "rook", "byte", "bananas"],
       fights: {
         ninja: {
           before: [
@@ -505,6 +600,17 @@ const STORY = {
             ["byte", "Access granted. Do not tell anyone I lost. Especially the break room toaster."],
             ["rocky", "I WILL NOT TELL ANYONE. I WILL ONLY TELL EVERYONE."]
           ]
+        },
+        bananas: {
+          before: [
+            ["rocky", "SCANNING... FRUIT-SHAPED OBJECT. NO ARMS DETECTED."],
+            ["bananas", "The scanning beam is my dance spotlight! Watch this bounce!"],
+            ["rocky", "FRIENDLY FRUIT. HIGH CHAOS POTENTIAL. I WILL BE CAREFUL."]
+          ],
+          after: [
+            ["rocky", "SCAN COMPLETE. YOU ARE AN ORANGE. YOUR NAME REMAINS MYSTERIOUS."],
+            ["bananas", "Mystery is part of the prophecy! Also, I forgot my old name."]
+          ]
         }
       },
       ending: [
@@ -521,10 +627,10 @@ const STORY = {
       intro: [
         ["narrator", "The abandoned dojo. A gold envelope is pinned to the wall with a shuriken."],
         ["ninja", "A shuriken! Finally, a ninja who respects the old ways! ...Oh. It's one of mine."],
-        ["narrator", "'Win five fights and earn the title of true ninja. -The Patron'"],
+        ["narrator", "'Win all six fights and earn the title of true ninja. -The Patron'"],
         ["ninja", "My destiny calls! And it has excellent handwriting!"]
       ],
-      order: ["zoombie", "byte", "bobbie", "rocky", "rook"],
+      order: ["zoombie", "byte", "bobbie", "rocky", "rook", "bananas"],
       fights: {
         zoombie: {
           before: [
@@ -587,6 +693,17 @@ const STORY = {
             ["rook", "Okay, kid. That one was 100%. Don't let it go to your head."],
             ["ninja", "Too late. It's in my head. I'm doing a victory pose. Don't look."]
           ]
+        },
+        bananas: {
+          before: [
+            ["ninja", "To remain hidden, do not bounce. This is lesson two."],
+            ["bananas", "BANANAS can bounce silently! I only hit that wall a little."],
+            ["ninja", "A useful technique. I will add it to the notebook."]
+          ],
+          after: [
+            ["ninja", "You bounced past me without making a sound."],
+            ["bananas", "The wall caught the sound. BANANAS planned that."]
+          ]
         }
       },
       ending: [
@@ -602,10 +719,10 @@ const STORY = {
       intro: [
         ["narrator", "The safari reserve, midnight. ZOO-mbie finds a gold envelope inside a banana peel."],
         ["zoombie", "Ooh, mail! I never get mail. Probably because I live in a jeep."],
-        ["narrator", "'Win five fights and I will lead you to the source of your infection. -The Patron'"],
+        ["narrator", "'Win all six fights and I will lead you to the source of your infection. -The Patron'"],
         ["zoombie", "A cure? For real? Let me check my pulse... nope. Okay, let's go!"]
       ],
-      order: ["ninja", "bobbie", "rook", "byte", "rocky"],
+      order: ["ninja", "bobbie", "rook", "byte", "rocky", "bananas"],
       fights: {
         ninja: {
           before: [
@@ -667,6 +784,17 @@ const STORY = {
             ["rocky", "YOU ARE WORTHY. ALSO VERY STICKY. THE FILES ARE IN THE BLUE CABINET."],
             ["zoombie", "Thanks, buddy. You smell like warm metal. It's nice."]
           ]
+        },
+        bananas: {
+          before: [
+            ["zoombie", "Small, round, orange... are you a new kind of banana?"],
+            ["bananas", "I am an orange, and I am named BANANAS!"],
+            ["zoombie", "Right. Sorry, friend. Let's fight, then I'll check my field guide."]
+          ],
+          after: [
+            ["zoombie", "Small. Round. Loud. Possibly edible. Definitely friend."],
+            ["bananas", "BANANAS accepts the friend part. Not the edible part."]
+          ]
         }
       },
       ending: [
@@ -674,6 +802,93 @@ const STORY = {
         ["zoombie", "Ingredient one: rare jungle moss. Two: cold water. Three: one hundred bananas."],
         ["narrator", "A gold envelope falls out: 'I'll find the moss. You handle the bananas. -The Patron'"],
         ["zoombie", "Best. Cure. Ever. Let me check my pulse... ooh! Was that a flicker?!"]
+      ]
+    },
+
+    bananas: {
+      title: "The Name Game",
+      intro: [
+        ["narrator", "A gold envelope lands upside down in the supermarket's citrus crate."],
+        ["bananas", "BANANAS has been invited to a tournament! The name finally makes sense!"],
+        ["narrator", "It does not. Win six fights, and the Patron may know its origin."],
+        ["bananas", "No arms, no problem! BANANAS is ready for fame!"]
+      ],
+      order: ["bobbie", "rocky", "ninja", "zoombie", "byte", "rook"],
+      fights: {
+        bobbie: {
+          before: [
+            ["bobbie", "You challenged me to box, but you don't have arms."],
+            ["bananas", "WITH MY FEET, OBVIOUSLY!"],
+            ["bobbie", "That confidence is championship material. Let's see the footwork!"]
+          ],
+          after: [
+            ["bobbie", "You can come train at my gym. We'll work on balance."],
+            ["bananas", "BANANAS has excellent balance! ...Why am I sideways?"]
+          ]
+        },
+        rocky: {
+          before: [
+            ["rocky", "UNIDENTIFIED FRUIT. PLEASE HOLD STILL WHILE I SCAN YOU."],
+            ["bananas", "A spotlight! BANANAS will now perform the Citrus Shuffle!"],
+            ["rocky", "CLASSIFICATION: FRIENDLY FRUIT. HIGH CHAOS POTENTIAL."]
+          ],
+          after: [
+            ["rocky", "SCAN COMPLETE. YOU ARE ALSO VERY BOUNCY."],
+            ["bananas", "BANANAS accepts this scientific compliment!"]
+          ]
+        },
+        ninja: {
+          before: [
+            ["ninja", "Stealth lesson one: do not move. Become one with the shadows."],
+            ["bananas", "BANANAS is motionless! ...Oops. Wall."],
+            ["ninja", "Silent bouncing is a real technique. I am taking notes."]
+          ],
+          after: [
+            ["ninja", "You bounced into that wall without making a sound."],
+            ["bananas", "It was a soft wall! BANANAS has a black eye."]
+          ]
+        },
+        zoombie: {
+          before: [
+            ["zoombie", "A banana! Wait, round and orange. Is that a citrus?"],
+            ["bananas", "I am an orange! And I am not edible!"],
+            ["zoombie", "You rescued me by rolling downhill. That's a friend move."]
+          ],
+          after: [
+            ["zoombie", "Small. Round. Loud. Possibly edible. Definitely friend."],
+            ["bananas", "BANANAS accepts the friendship, not the edible part."]
+          ]
+        },
+        byte: {
+          before: [
+            ["byte", "Orange species detected. Name mismatch: BANANAS."],
+            ["bananas", "The name is a prophecy! Or maybe I forgot the old one."],
+            ["byte", "Contradictory origin story. Confidence interval: enormous."]
+          ],
+          after: [
+            ["byte", "Your chaos potential exceeds my original estimate."],
+            ["bananas", "BANANAS knew the math would work out! I think."]
+          ]
+        },
+        rook: {
+          before: [
+            ["narrator", "Neon District. The final fight, beneath a bright orange street sign."],
+            ["rook", "So, why are you called BANANAS?"],
+            ["bananas", "ORANGES sounded too normal. Now witness my ultimate!"],
+            ["rook", "That still doesn't explain anything. But it does explain the confidence."]
+          ],
+          after: [
+            ["rook", "The Patron found your old label. It says ORANGES, crossed out."],
+            ["bananas", "A label cannot define BANANAS! It is a prophecy!"],
+            ["rook", "Sure, champ. Keep bouncing. The crowd likes it."]
+          ]
+        }
+      },
+      ending: [
+        ["narrator", "The Patron reveals the truth: a child switched the fruit-basket labels."],
+        ["bananas", "That is not the truth! BANANAS is a prophecy!"],
+        ["narrator", "The child also drew a tiny crown beside the name."],
+        ["bananas", "I knew it! BANANAS wins again! ...And rolls out of frame."]
       ]
     }
   }

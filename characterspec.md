@@ -483,3 +483,53 @@ These interactions can help the characters feel like members of the same world r
 Together, the four characters provide four different gameplay experiences: aggressive melee combat, heavy defense, agile movement, and chaotic area control.
 
 They are designed to be visually distinct, mechanically varied, and flexible enough to support future updates, additional abilities, and individual character storylines.
+
+---
+
+# 8. BANANAS
+
+## Basic Information
+
+- **Full Name:** BANANAS
+- **Alias:** The Juicy Jumper
+- **Species:** Sentient orange
+- **Role:** Trickster / mobility fighter
+- **Personality:** Silly, energetic, overconfident and unpredictable
+- **Combat Style:** Kicks, bouncing, rolling and fruit-based chaos
+- **Difficulty:** Easy to medium
+
+## Backstory
+
+Nobody knows where BANANAS came from. He claims he was born when an orange ate a banana in a suspicious fruit salad. Before becoming a fruit warrior, he sat ignored in a supermarket produce section while customers picked everything but him. One night he rolled off the shelf, hit a cart, bounced off cereal and landed in a box of toy sneakers. There he discovered his talent for bouncing. Now he travels in search of fame, adventure and an answer to his name. His official explanation is that "ORANGES" sounded too normal; unofficially, he forgot his original name.
+
+## Appearance and Personality
+
+BANANAS is a bright, slightly bumpy, almost spherical orange with oversized blue eyes, a tiny expressive mouth, blush marks, two short orange legs and rounded feet. He has no arms. A little green leaf on his head wiggles when he gets excited. His silhouette is round, orange and unmistakable.
+
+He is friendly, optimistic, brave and convinced he is the greatest fruit hero alive. He announces his moves, celebrates tiny victories and refers to himself in the third person. He acts before thinking, but will throw himself into danger to help a friend.
+
+**Catchphrase:** "NO ARMS, NO PROBLEM!"
+
+## Abilities and Turn-Based Translation
+
+- **Citrus Kick:** A quick, spinning 13-damage kick that interrupts a simultaneous strike.
+- **Orange Bounce:** A high, squash-and-stretch hop. In the turn-based rules it dodges a single-target strike and powers up the next strike; area attacks still connect.
+- **Peel Out:** A risky 12-damage roll with a 50% chance to evade a single-target strike. A failed attempt leaves BANANAS exposed next round.
+- **FRUIT NUCLEAR!:** BANANAS compresses, launches like a cannonball and lands in a four-hit, 28-damage shockwave. It cannot be dodged, a block halves it, and he wobbles dizzy afterward. He yells, "BANANAS HAS ARRIVED!"
+
+## Strengths and Weaknesses
+
+He is mobile, difficult to predict and can disrupt opponents with a wide ultimate. He has short range, limited defense and a risky roll that can leave him vulnerable. His compact body and lack of arms are central to his visual identity; he attacks with his legs and whole body.
+
+## Character Interactions
+
+- **Bobbie Macalanger:** Bobbie asks how BANANAS can box without fists. BANANAS replies, "WITH MY FEET, OBVIOUSLY!" Bobbie laughs and offers to train him.
+- **R.O.C.K.Y:** R.O.C.K.Y scans him as a fruit-shaped object; BANANAS dances in the scanning beam. R.O.C.K.Y classifies him as "FRIENDLY FRUIT. HIGH CHAOS POTENTIAL."
+- **Ninja Main:** Ninja Main tries to teach stealth, but BANANAS keeps bouncing into walls. BANANAS calls silent bouncing a ninja technique; Ninja Main secretly writes it down.
+- **ZOO-mbie:** ZOO-mbie mistakes him for a banana and tries to classify him as citrus. They become friends after BANANAS accidentally rolls downhill and rescues him. ZOO-mbie calls him "Small. Round. Loud. Possibly edible. Definitely friend."
+
+## Animation and Future Ideas
+
+Idle BANANAS looks around, bounces, tries to scratch his head with a foot and falls over before pretending nothing happened. His body squashes on landing and stretches in the air; his eyes widen when surprised. Victory is three higher bounces, a dramatic spin, a perfect landing, then a sideways roll out of the pose. In defeat he falls over, tries to stand, rolls onto his back and sighs, "Maybe BANANAS needs a nap."
+
+Future ideas include fruit power-ups, cosmetic skins, bounce challenges, collectibles, a serious banana rival and a quest to find the legendary fruit salad. BANANAS refuses to accept that a child may simply have switched the fruit-basket labels.

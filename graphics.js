@@ -127,7 +127,12 @@ const Arena = (() => {
     cheer: { head: [0, -56], chest: [0, -42], hip: [0, -28], fElbow: [8, -56], fHand: [10, -66], bElbow: [-8, -56], bHand: [-10, -66], fKnee: [5, -14], fFoot: [8, 0], bKnee: [-5, -14], bFoot: [-8, 0] },
     dance: { head: [-4, -54], chest: [-2, -41], hip: [1, -27], fElbow: [10, -46], fHand: [14, -56], bElbow: [-10, -36], bHand: [-14, -30], fKnee: [10, -17], fFoot: [11, -5], bKnee: [-6, -14], bFoot: [-10, 0] },
     dance2: { head: [5, -54], chest: [3, -41], hip: [0, -27], fElbow: [12, -36], fHand: [16, -28], bElbow: [-8, -46], bHand: [-12, -56], fKnee: [8, -14], fFoot: [12, 0], bKnee: [-4, -17], bFoot: [-9, -5] },
-    ko: { head: [-30, -5], chest: [-17, -6], hip: [-3, -5], fElbow: [-14, -2], fHand: [-6, -1], bElbow: [-24, -1], bHand: [-30, -1], fKnee: [10, -8], fFoot: [22, -2], bKnee: [10, -4], bFoot: [24, 0] }
+    ko: { head: [-30, -5], chest: [-17, -6], hip: [-3, -5], fElbow: [-14, -2], fHand: [-6, -1], bElbow: [-24, -1], bHand: [-30, -1], fKnee: [10, -8], fFoot: [22, -2], bKnee: [10, -4], bFoot: [24, 0] },
+    fruitKick: { head: [0, -49], chest: [0, -37], hip: [0, -23], fElbow: [0, -37], fHand: [0, -37], bElbow: [0, -37], bHand: [0, -37], fKnee: [15, -25], fFoot: [31, -25], bKnee: [-8, -10], bFoot: [-14, 0] },
+    fruitCharge: { head: [-2, -44], chest: [-1, -33], hip: [0, -19], fElbow: [0, -32], fHand: [0, -32], bElbow: [0, -32], bHand: [0, -32], fKnee: [11, -10], fFoot: [15, 0], bKnee: [-10, -10], bFoot: [-16, 0] },
+    fruitRoll: { head: [13, -29], chest: [5, -27], hip: [-4, -24], fElbow: [0, -30], fHand: [0, -30], bElbow: [0, -30], bHand: [0, -30], fKnee: [10, -12], fFoot: [16, -1], bKnee: [-10, -12], bFoot: [-17, -1] },
+    fruitLaunch: { head: [0, -63], chest: [0, -51], hip: [0, -39], fElbow: [0, -50], fHand: [0, -50], bElbow: [0, -50], bHand: [0, -50], fKnee: [12, -31], fFoot: [17, -23], bKnee: [-11, -29], bFoot: [-17, -22] },
+    fruitDizzy: { head: [3, -48], chest: [0, -36], hip: [0, -22], fElbow: [0, -35], fHand: [0, -35], bElbow: [0, -35], bHand: [0, -35], fKnee: [12, -9], fFoot: [17, 0], bKnee: [-8, -12], bFoot: [-14, 0] }
   };
   const UPPER_BODY = ["head", "chest", "fElbow", "fHand", "bElbow", "bHand"];
 
@@ -136,9 +141,10 @@ const Arena = (() => {
     bobbie: { fElbow: [9, -38], fHand: [13, -50], bElbow: [3, -36], bHand: [8, -48] },
     rocky: { fElbow: [12, -34], fHand: [16, -40], bElbow: [-4, -32], bHand: [2, -28], fKnee: [10, -14], fFoot: [16, 0], bKnee: [-10, -14], bFoot: [-17, 0] },
     ninja: { head: [4, -52], chest: [2, -39], hip: [-1, -25], fElbow: [12, -36], fHand: [20, -40], bElbow: [-4, -32], bHand: [-8, -26], fKnee: [11, -13], fFoot: [17, 0], bKnee: [-10, -12], bFoot: [-17, 0] },
-    zoombie: { head: [9, -53], chest: [4, -41], hip: [-1, -27], fElbow: [11, -31], fHand: [14, -19], bElbow: [1, -31], bHand: [3, -19] }
+    zoombie: { head: [9, -53], chest: [4, -41], hip: [-1, -27], fElbow: [11, -31], fHand: [14, -19], bElbow: [1, -31], bHand: [3, -19] },
+    bananas: { head: [0, -43], chest: [0, -33], hip: [0, -19], fKnee: [8, -11], fFoot: [13, 0], bKnee: [-8, -11], bFoot: [-14, 0] }
   };
-  const SCALES = { rocky: 1.1, ninja: 0.93, zoombie: 1.06 };
+  const SCALES = { rocky: 1.1, ninja: 0.93, zoombie: 1.06, bananas: 1.05 };
 
   function blend(a, b, t) {
     if (t <= 0) return a;
@@ -179,6 +185,12 @@ const Arena = (() => {
       const dangle = Math.sin(now / 380 + seed) * 2;
       return shift(shift(pose, ["head", "chest"], sway, 0), ["fHand", "bHand"], dangle, 0);
     }
+    if (id === "bananas") {
+      const bounce = Math.round(Math.abs(Math.sin(now / 170 + seed)) * 3);
+      const bounced = shift(pose, ["head", "chest", "hip", "fKnee", "bKnee"], 0, -bounce);
+      const feet = Math.sin(now / 55 + seed) > 0 ? 2 : -2;
+      return shift(bounced, ["fKnee", "bKnee"], feet, 0);
+    }
     return shift(pose, UPPER_BODY, 0, Math.sin(now / 280 + seed) > 0 ? 1 : 0);
   }
 
@@ -187,6 +199,12 @@ const Arena = (() => {
     if (id === "rocky") return POSES.fortress;
     if (id === "ninja") return shift(POSES.flourish, UPPER_BODY, Math.round(Math.sin(now / 60)), 0);
     if (id === "zoombie") return Math.floor(now / 320) % 2 ? POSES.dance : POSES.dance2;
+    if (id === "bananas") {
+      const bounce = Math.abs(Math.sin(now / 130)) * 4;
+      const pose = shift(STANCES.bananas, ["head", "chest", "hip"], 0, -bounce);
+      const wobble = (now % 3000) / 3000;
+      return wobble > 0.82 ? blend(pose, POSES.ko, phase(wobble, 0.82, 1)) : pose;
+    }
     return POSES.victory;
   }
 
@@ -626,6 +644,56 @@ const Arena = (() => {
     }
   };
 
+  // BANANAS is a round orange with no arms, huge blue eyes and a wobbly leaf.
+  const BANANAS = {
+    peel: ["#b83d13", "#f47718", "#ffad32"],
+    gold: ["#d87818", "#ffcc4d"],
+    leg: ["#bd4d18", "#f47718", "#ffad32"],
+    leaf: ["#286b2d", "#55a83e", "#9bd34b"],
+    eye: ["#174f9e", "#3286e8", "#8edcff"],
+    white: "#fff7db",
+    blush: "#e94d42",
+    mouth: "#71301e"
+  };
+
+  const bananasParts = {
+    arm() {},
+    leg(hip, knee, foot, back) {
+      const tones = back ? dim(BANANAS.leg) : BANANAS.leg;
+      shaded(hip, knee, 2.8, 2.3, tones);
+      shaded(knee, at(foot, 0, -2), 2.3, 2, tones);
+      shaded(at(foot, -2, -1), at(foot, 3, -1), 3.2, 2.9, back ? dim(BANANAS.gold) : BANANAS.gold);
+    },
+    torso(j, time) {
+      const center = j.chest;
+      shaded(at(center, 0, 1), center, 17.5, 17.5, BANANAS.peel);
+      shaded(at(center, 2, 0), at(center, 2, 0), 13.5, 13.5, BANANAS.gold);
+      shaded(at(center, 2.5, -1), at(center, 2.5, -1), 9.5, 9.5, BANANAS.peel);
+      [[-8, -5], [-12, 1], [-5, 7], [7, 8], [12, 2], [9, -8], [-2, -12]].forEach(([x, y], index) => {
+        px(center, x, y, index % 2 ? BANANAS.gold[0] : BANANAS.peel[0]);
+      });
+      px(center, -10, 4, BANANAS.blush, 3);
+      px(center, 8, 4, BANANAS.blush, 3);
+      const wobble = Math.round(Math.sin(time / 90) * 2);
+      line(at(center, 0, -16), at(center, wobble, -22), BANANAS.leaf[0]);
+      shaded(at(center, wobble, -22), at(center, wobble + 5, -24), 3, 1.5, BANANAS.leaf);
+    },
+    head(j, time) {
+      const h = j.head;
+      const wideEyes = Math.floor(time / 1900) % 5 === 0;
+      const eyeSize = wideEyes ? 4 : 3;
+      [-4, 4].forEach((dx, index) => {
+        const eye = at(h, dx, -1);
+        shaded(eye, eye, eyeSize, eyeSize, ["#c94718", BANANAS.white]);
+        shaded(at(eye, index ? 1 : -1, 0), at(eye, index ? 1 : -1, 0), 2.3, 2.3, BANANAS.eye);
+        px(eye, index ? 1 : -1, -1, BANANAS.eye[2]);
+        px(eye, index ? 1 : -1, 0, "#10294f");
+      });
+      px(h, -1, 5, BANANAS.mouth, 3);
+      px(h, 0, 6, BANANAS.mouth);
+    }
+  };
+
   function paletteOf(look) {
     const colors = new Set();
     Object.values(look).flat().forEach(color => colors.add(color));
@@ -637,7 +705,8 @@ const Arena = (() => {
     bobbie: { parts: bobbieParts, palette: paletteOf(BOBBIE) },
     rocky: { parts: rockyParts, palette: paletteOf(ROCKY) },
     ninja: { parts: ninjaParts, palette: paletteOf(NINJA) },
-    zoombie: { parts: zoombieParts, palette: paletteOf(ZOO) }
+    zoombie: { parts: zoombieParts, palette: paletteOf(ZOO) },
+    bananas: { parts: bananasParts, palette: paletteOf(BANANAS) }
   };
 
   // Snaps the anti-aliased drawing to the palette and adds a 1px outline.
@@ -729,6 +798,10 @@ const Arena = (() => {
     plasma: { lead: 390, projectile: "plasma" },
     shuriken: { lead: 330, projectile: "shuriken" },
     stampede: { lead: 640, projectile: "stampede" },
+    citrusKick: { lead: 170, melee: "fruitKick", reach: 27 },
+    orangeBounce: {},
+    peelOut: { lead: 250, melee: "fruitRoll", windup: "fruitCharge", reach: 31, jerky: true },
+    fruitNuclear: { lead: 540, fruitNuclear: true },
     vanish: { lead: 560, vanish: true, reach: 31 },
     block: {},
     dash: {},
@@ -794,6 +867,13 @@ const Arena = (() => {
       if (anim.flurry && e >= H && e < H + 260) pose = blend(pose, Math.floor((e - H) / 100) % 2 ? POSES.jab : POSES.attack, t);
       offset = plan.lunge[frame.side] * t;
       if (anim.jerky && e < H) offset += Math.round(Math.sin(e / 35) * 3) * t;
+    } else if (anim.fruitNuclear) {
+      const compress = phase(e, start, start + 220) * (1 - phase(e, start + 220, H - 90));
+      const launch = phase(e, start + 220, H) * (1 - phase(e, H + 70, H + 230));
+      pose = blend(blend(idle, POSES.fruitCharge, compress), POSES.fruitLaunch, launch);
+      frame.lift = Math.round(34 * Math.sin(Math.PI * phase(e, start + 220, H + 100)));
+      pose = blend(pose, POSES.fruitDizzy, phase(e, H + 100, H + 260));
+      if (e >= H + 130) pose = shift(pose, ["head", "chest"], Math.round(Math.sin(e / 30) * 3), 0);
     } else if (anim.projectile === "stampede") {
       pose = blend(idle, POSES.roar, phase(e, start, start + 200) * (1 - phase(e, H + 250, H + 500)));
     } else if (anim.projectile === "shuriken") {
@@ -839,6 +919,11 @@ const Arena = (() => {
       offset = -24 * t;
       frame.lift = Math.round(Math.sin(clamp01((e - (H - 130)) / 260) * Math.PI) * 6);
       if (t > 0.1 && t < 0.95 && e < H + 100) frame.ghosts = 2;
+    } else if (move.anim === "orangeBounce") {
+      const t = phase(e, H - 220, H - 100) * (1 - phase(e, H + 140, H + 360));
+      pose = blend(idle, POSES.fruitLaunch, t);
+      frame.lift = Math.round(27 * Math.sin(Math.PI * clamp01((e - (H - 220)) / 440)));
+      if (t > 0.1 && t < 0.95) frame.ghosts = 2;
     } else if (move.anim === "fortress") {
       pose = blend(idle, POSES.fortress, phase(e, H - 220, H - 90) * (1 - phase(e, H + 420, H + 640)));
     } else if (move.anim === "smoke") {
@@ -1121,6 +1206,20 @@ const Arena = (() => {
         if (k % 2 === 0) puff(x - dir * 10, floorY - 2, 2, 0.35);
       });
     }
+    if (mine.move.anim === "fruitNuclear" && e >= start && e < H + 440) {
+      const age = e - H;
+      const charge = e < H ? 1 - phase(e, start + 180, H) : 0;
+      const radius = e < H ? 8 + (1 - charge) * 10 : 8 + Math.min(34, age * 0.18);
+      for (let k = 0; k < 20; k += 1) {
+        const angle = k * Math.PI / 10 + (e < H ? e / 26 : 0);
+        const x = e < H ? me.x + Math.cos(angle) * radius : target.x + Math.cos(angle) * radius;
+        const y = e < H ? floorY - me.lift - 36 * me.scale + Math.sin(angle) * radius * 0.6 : floorY - 2 + Math.sin(angle) * radius * 0.22;
+        rect(g, x, y, 2, 2, k % 3 ? (e < H ? "#ffcc4d" : "#ff8a1e") : "#fff2a8");
+      }
+      if (e >= H && e < H + 220) {
+        for (let k = 0; k < 5; k += 1) puff(target.x + Math.cos(k * 1.25) * (radius * 0.65), floorY - 2, 3 + k % 2, 0.48 - age / 600);
+      }
+    }
     if (anim.melee === "ram" && e >= H - 130 && e < H) {
       for (let k = 0; k < 3; k += 1) puff(me.x - dir * (10 + k * 6), floorY - 2 - k, 2 + k, 0.4);
     }
@@ -1164,7 +1263,7 @@ const Arena = (() => {
       if (mine.result === "blocked" && age < 180) drawSpark(contactX, contactY - 6, age, GUARD_COLORS);
       if (mine.result === "armored" && age < 180) drawSpark(target.x + dir * -14, contactY, age, GUARD_COLORS, 0.7);
       if (["hit", "broke", "chipped"].includes(mine.result)) {
-        const multi = mine.move.anim === "combo" || mine.move.anim === "stampede" || mine.move.anim === "shuriken";
+        const multi = ["combo", "stampede", "shuriken", "fruitNuclear"].includes(mine.move.anim);
         const spacing = mine.move.anim === "stampede" ? 70 : 100;
         const count = multi ? mine.landed : 1;
         for (let k = 0; k < count; k += 1) {

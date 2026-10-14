@@ -47,6 +47,22 @@ const MoveIcons = (() => {
       colors: { a: "#5e8a3a", b: "#a8ff60" },
       rows: ["..aa....aa..", ".aaaa..aaaa.", ".aaaa..aaaa.", "..aa....aa..", "aa..aaaa..aa", "aa.aaaaaa.aa", "..aaaaaaaa..", "..aaabbaaa..", "..aaaaaaaa..", "...aaaaaa...", "....aaaa....", "............"]
     },
+    citrusKick: {
+      colors: { a: "#f47718", b: "#ffcc4d", c: "#3286e8", d: "#fff7db" },
+      rows: ["....bb......", "..aabbaa....", ".aabbbbaa...", ".abcccbba...", ".abddcbba...", "..abbbba....", "...aaaa.....", "..aa..aa....", ".aa....aa...", "............", "............", "............"]
+    },
+    orangeBounce: {
+      colors: { a: "#f47718", b: "#ffcc4d", c: "#3286e8", d: "#fff7db" },
+      rows: [".....bb.....", "......b.....", "..aabbaa....", ".aabbbbaa...", ".abcccbba...", ".abddcbba...", "..abbbba....", "...aaaa.....", "............", "..b......b..", "............", "............"]
+    },
+    peelOut: {
+      colors: { a: "#f47718", b: "#ffcc4d", c: "#fff7db" },
+      rows: ["............", "............", "..aabbaa....", ".abbbbaa....", "abbbbbbbba..", "abbbccbbba..", "abbbccbbba..", ".abbbbaa....", "..aabbaa....", "............", "..cc..cc....", "............"]
+    },
+    fruitNuclear: {
+      colors: { a: "#f47718", b: "#ffcc4d", c: "#fff2a8", d: "#55a83e" },
+      rows: [".....d......", "....ddd.....", "...aabbaa...", "..aabbbbaa..", ".aabcccbbaa.", "aabcccccbbaa", ".aabcccbbaa.", "..aabbbbaa..", "...aabbaa...", "..a......a..", ".a........a.", "............"]
+    },
     vanish: {
       colors: { a: "#2a2236", b: "#e0a77a", c: "#ffffff" },
       rows: ["....aaaa....", "..aaaaaaaa..", ".aaaaaaaaaa.", ".aaaaaaaaaa.", ".abbbbbbbba.", ".abcbbbbcba.", ".abbbbbbbba.", ".aaaaaaaaaa.", "..aaaaaaaa..", "..a.a..a.a..", "............", "............"]
