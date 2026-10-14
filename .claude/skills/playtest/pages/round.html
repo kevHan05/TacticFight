@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Round filmstrip</title>
+  <style>
+    body { margin: 0; display: grid; grid-template-columns: repeat(var(--columns, 4), 1fr); gap: 2px; background: #222; }
+    canvas { width: 100%; image-rendering: pixelated; }
+    p { margin: 0; color: #fff; font: 11px monospace; }
+  </style>
+</head>
+<body>
+  <!-- Renders one round as a filmstrip, straight from the real renderer.
+       Query: a, ma (player fighter + move id), b, mb (CPU fighter + move id),
+       stage (default b), frames (default 8), columns (default 4),
+       finished=1 (render the K.O. path with b at 0 HP), crop=1 (zoom on the fighters). -->
+  <script>window.errors = []; window.onerror = (message, source, line) => window.errors.push(`${message} @${line}`);</script>
+  <script src="../../../../characters.js"></script>
+  <script src="../../../../stages.js"></script>
+  <script src="../../../../graphics.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const a = params.get("a") || "rook";
+    const b = params.get("b") || "byte";
+    const ma = params.get("ma") || Rules.character(a).moves[0].id;
+    const mb = params.get("mb") || Rules.character(b).moves[0].id;
+    const count = Number(params.get("frames") || 8);
+    document.body.style.setProperty("--columns", params.get("columns") || 4);
+
+    const player = Rules.newFighter(a);
+    const bot = Rules.newFighter(b);
+    const report = Rules.resolve(player, ma, bot, mb, () => 0.3);
+    const finished = params.get("finished") === "1";
+    if (finished) bot.hp = 0;
+    const plan = Arena.timing(report, { player: a, bot: b });
+    const end = finished ? plan.koAt + 2500 : plan.end;
+    const state = { player, bot, finished, stage: params.get("stage") || b };
+
+    for (let k = 0; k < count; k += 1) {
+      const t = Math.round((end * (k + 0.5)) / count);
+      const label = document.createElement("p");
+      label.textContent = `${a} ${ma} (${report.player.result}) vs ${b} ${mb} (${report.bot.result})  t=${t}/${Math.round(end)}  phases ${plan.phases.map(p => `${p.actor}@${Math.round(p.hit)}`).join(", ")}`;
+      const canvas = document.createElement("canvas");
+      canvas.width = 960;
+      canvas.height = 420;
+      try {
+        Arena.draw(canvas.getContext("2d"), state, { report, start: 10000 - t }, 10000);
+      } catch (error) {
+        window.errors.push(`t=${t}: ${error.message}`);
+      }
+      let shown = canvas;
+      if (params.get("crop") === "1") {
+        shown = document.createElement("canvas");
+        shown.width = 600;
+        shown.height = 300;
+        const zoom = shown.getContext("2d");
+        zoom.imageSmoothingEnabled = false;
+        zoom.drawImage(canvas, 180, 30, 600, 300, 0, 0, 600, 300);
+      }
+      const cell = document.createElement("div");
+      cell.append(label, shown);
+      document.body.append(cell);
+    }
+    document.body.dataset.errors = window.errors.join(" | ");
+  </script>
+</body>
+</html>

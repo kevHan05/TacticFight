@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Stage gallery</title>
+  <style>
+    body { margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; background: #222; }
+    canvas { width: 100%; image-rendering: pixelated; }
+    p { margin: 0; color: #fff; font: 11px monospace; }
+  </style>
+</head>
+<body>
+  <!-- Every stage with two real fighters on it, mid-round, through the real renderer.
+       Query: only=<stage id>, excitement is driven by the round (hits make crowds react),
+       t=<ms into the round> (default: just after the first hit). -->
+  <script>window.errors = []; window.onerror = (message, source, line) => window.errors.push(`${message} @${line}`);</script>
+  <script src="../../../../characters.js"></script>
+  <script src="../../../../stages.js"></script>
+  <script src="../../../../graphics.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const visitor = { rook: "bobbie", byte: "ninja", bobbie: "rocky", rocky: "zoombie", ninja: "byte", zoombie: "rook" };
+    const ids = params.get("only") ? [params.get("only")] : Object.keys(Stages);
+    ids.forEach(id => {
+      const playerId = visitor[id] || "rook";
+      const botId = ROSTER.some(fighter => fighter.id === id) ? id : "byte";
+      const player = Rules.newFighter(playerId);
+      const bot = Rules.newFighter(botId);
+      const report = Rules.resolve(player, Rules.character(playerId).moves[0].id, bot, Rules.character(botId).moves[0].id, () => 0.3);
+      const plan = Arena.timing(report, { player: playerId, bot: botId });
+      const t = Number(params.get("t") || plan.phases[0].hit + 120);
+      const canvas = document.createElement("canvas");
+      canvas.width = 960;
+      canvas.height = 420;
+      try {
+        Arena.draw(canvas.getContext("2d"), { player, bot, finished: false, stage: id }, { report, start: 10000 - t }, 10000);
+      } catch (error) {
+        window.errors.push(`${id}: ${error.message}`);
+      }
+      const label = document.createElement("p");
+      label.textContent = `${id}: ${Stages[id].name}`;
+      const cell = document.createElement("div");
+      cell.append(label, canvas);
+      document.body.append(cell);
+    });
+    document.body.dataset.errors = window.errors.join(" | ");
+  </script>
+</body>
+</html>

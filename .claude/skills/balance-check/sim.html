@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Balance simulation</title>
+</head>
+<body>
+  <!-- CPU-vs-CPU simulation of every ordered pairing, straight against characters.js.
+       Query: games=<per ordered pair, default 150>. Reports to document.body.dataset:
+       result (win rates, longest match), pairs (worst matchups), outcomes (how often
+       each move ends in each result), errors (any invariant broken). -->
+  <script>window.errors = []; window.onerror = (message, source, line) => window.errors.push(`${message} @${line}`);</script>
+  <script src="../../../characters.js"></script>
+  <script>
+    const games = Number(new URLSearchParams(location.search).get("games") || 150);
+    const wins = {};
+    const played = {};
+    const pairWins = {};
+    const outcomes = {};
+    let longest = 0;
+    const fail = message => { throw new Error(message); };
+
+    try {
+      for (const a of ROSTER) {
+        for (const b of ROSTER) {
+          if (a.id === b.id) continue;
+          for (let n = 0; n < games; n += 1) {
+            const p = Rules.newFighter(a.id);
+            const q = Rules.newFighter(b.id);
+            const pHistory = [];
+            const qHistory = [];
+            let rounds = 0;
+            while (p.hp > 0 && q.hp > 0 && rounds < 300) {
+              const pm = Rules.chooseMove(p, qHistory);
+              const qm = Rules.chooseMove(q, pHistory);
+              if (!Rules.available(p, pm) || !Rules.available(q, qm)) fail(`CPU chose a move on cooldown (${a.id} ${pm} / ${b.id} ${qm})`);
+              const report = Rules.resolve(p, pm, q, qm);
+              for (const side of ["player", "bot"]) {
+                const outcome = report[side];
+                const key = `${side === "player" ? a.id : b.id}.${outcome.move.id}:${outcome.result}`;
+                outcomes[key] = (outcomes[key] || 0) + 1;
+                if (!Number.isInteger(outcome.damage) || outcome.damage < 0) fail(`bad damage ${JSON.stringify(outcome)}`);
+              }
+              if (p.hp < 0 || q.hp < 0 || p.hp > p.maxHp || q.hp > q.maxHp) fail("HP out of range");
+              pHistory.push(Rules.isStrike(report.player.move) ? "offense" : "defense");
+              qHistory.push(Rules.isStrike(report.bot.move) ? "offense" : "defense");
+              rounds += 1;
+            }
+            if (rounds >= 300) fail(`${a.id} vs ${b.id} never ended`);
+            longest = Math.max(longest, rounds);
+            played[a.id] = (played[a.id] || 0) + 1;
+            played[b.id] = (played[b.id] || 0) + 1;
+            if (p.hp > 0 && q.hp <= 0) {
+              wins[a.id] = (wins[a.id] || 0) + 1;
+              pairWins[`${a.id}>${b.id}`] = (pairWins[`${a.id}>${b.id}`] || 0) + 1;
+            }
+            if (q.hp > 0 && p.hp <= 0) wins[b.id] = (wins[b.id] || 0) + 1;
+          }
+        }
+      }
+      const rate = id => Math.round((100 * (wins[id] || 0)) / played[id]);
+      document.body.dataset.result = `win rates: ${ROSTER.map(f => `${f.id}=${rate(f.id)}%`).join(" ")} | longest match: ${longest} rounds | games per pair: ${games}`;
+      const pairs = Object.entries(pairWins).map(([pair, count]) => [pair, Math.round((100 * count) / games)]).sort((x, y) => y[1] - x[1]);
+      document.body.dataset.pairs = `most one-sided: ${pairs.slice(0, 6).map(([pair, pct]) => `${pair} ${pct}%`).join(", ")}`;
+      document.body.dataset.outcomes = Object.entries(outcomes).sort().map(([key, count]) => `${key}=${count}`).join(" ");
+    } catch (error) {
+      window.errors.push(error.message);
+    }
+    document.body.dataset.errors = window.errors.join(" | ");
+  </script>
+</body>
+</html>
