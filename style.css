@@ -31,14 +31,7 @@ button, a { font: inherit; }
 button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
 
 .game-shell { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
-.topbar { height: 78px; display: flex; align-items: center; justify-content: space-between; }
-.brand { display: inline-flex; align-items: center; gap: 11px; padding: 0; border: 0; color: var(--paper); background: transparent; text-decoration: none; cursor: pointer; font: 800 21px/1 var(--display); letter-spacing: 0; text-shadow: 1px 2px 2px #132427; }
-.brand-mark { display: grid; width: 34px; height: 34px; place-items: center; color: var(--paper); background: var(--red); box-shadow: 4px 4px 0 var(--ink); font: 700 12px var(--mono); }
-.brand-accent { color: #ff775e; }
-.round-readout { display: flex; align-items: center; gap: 10px; padding: 0; }
-.readout-label, .top-status, .side-label, .fighter-meta, .arena-topline, .arena-caption, .combat-tip, .page-footer { font-size: 10px; font-weight: 700; letter-spacing: 0; }
-.readout-label { color: var(--paper); text-shadow: 1px 2px 2px #132427; }
-.round-readout strong { color: var(--paper); font: 700 17px var(--mono); text-shadow: 1px 2px 2px #132427; }
+.top-status, .side-label, .fighter-meta, .arena-topline, .arena-caption, .combat-tip, .page-footer { font-size: 10px; font-weight: 700; letter-spacing: 0; }
 .sound-toggle { display: grid; width: 40px; height: 40px; place-items: center; padding: 0; border: 0; color: var(--paper); background: transparent; cursor: pointer; }
 .sound-toggle:hover { color: var(--lime); }
 .speaker-icon { width: 27px; height: 27px; overflow: visible; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(1px 2px 2px #132427); }
@@ -47,16 +40,9 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
 .sound-toggle[aria-pressed="true"] .sound-waves, .sound-toggle[aria-pressed="false"] .mute-slash { display: block; }
 .mute-slash { stroke: var(--red); stroke-width: 3; }
 
-.matchup { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 26px; padding: 26px 4px 22px; }
 .fighter-status { min-width: 0; }
-.fighter-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 10px; }
 .side-label { color: var(--paper); text-shadow: 1px 2px 2px #132427; }
-.fighter-heading h1 { margin: 1px 0 0; color: var(--paper); font: 900 34px/.95 var(--display); text-shadow: 1px 2px 2px #132427; }
 .bot-status { text-align: right; }
-.hp-number { color: var(--paper); font: 700 19px var(--mono); text-shadow: 1px 2px 2px #132427; }
-.health-track { height: 13px; padding: 2px; border: 1px solid var(--paper); background: #263e41; box-shadow: 1px 2px 3px #13242766; }
-.health-fill { height: 100%; width: 100%; background: var(--mint); transition: width 280ms ease; }
-.bot-status .health-fill { margin-left: auto; background: var(--red); }
 .fighter-meta { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 7px; }
 .boost-tag { color: var(--lime); font-size: 9px; font-weight: 700; text-shadow: 1px 2px 2px #132427; }
 .player-status .fighter-meta { justify-content: flex-start; }
@@ -124,17 +110,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
 
 @media (max-width: 620px) {
   .game-shell { width: min(100% - 28px, 480px); }
-  .topbar { height: 65px; }
-  .brand { font-size: 18px; }
-  .brand-mark { width: 30px; height: 30px; }
-  .round-readout { padding: 7px 9px; gap: 6px; }
   .top-status { font-size: 8px; }
-  .matchup { gap: 10px; padding: 21px 0 16px; }
-  .fighter-heading h1 { font-size: 28px; }
-  .fighter-heading { margin-bottom: 8px; }
   .side-label { font-size: 9px; }
-  .hp-number { font-size: 15px; }
-  .health-track { height: 11px; }
   .fighter-meta { font-size: 8px; }
   .boost-tag { font-size: 7px; padding: 3px; }
   .versus { font-size: 17px; }
@@ -165,13 +142,7 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
 
 @media (max-width: 380px) {
   .game-shell { width: calc(100% - 24px); }
-  .brand { gap: 7px; font-size: 15px; }
-  .brand-mark { width: 27px; height: 27px; font-size: 10px; }
   .sound-toggle { width: 32px; height: 32px; }
-  .matchup { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .fighter-heading { gap: 3px; }
-  .fighter-heading h1 { font-size: 20px; }
-  .hp-number { font-size: 12px; }
   .fighter-meta { gap: 2px; font-size: 7px; }
   .action-row { grid-template-columns: 1fr; }
   .action-button { min-height: 56px; align-items: center; padding: 8px 10px; }
@@ -194,28 +165,15 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
     padding: 14px 22px;
     border: 1px solid var(--line);
   }
-  .topbar {
-    position: relative;
-    z-index: 1;
-    height: 48px;
-    flex: 0 0 48px;
-    padding: 0 14px;
-    border: 0;
-    background: transparent;
-  }
   .matchup {
     position: relative;
     z-index: 1;
     flex: 0 0 auto;
-    margin-top: 4px;
-    padding: 6px 14px;
+    margin-top: 0;
+    padding: 4px 10px;
     border: 0;
     background: transparent;
   }
-  .fighter-heading { margin-bottom: 8px; }
-  .fighter-heading h1 { font-size: 30px; }
-  .fighter-meta { margin-top: 4px; }
-  .side-label, .hp-number { color: var(--paper); text-shadow: 1px 2px 2px #132427; }
   .arena-wrap {
     position: fixed;
     z-index: 0;
@@ -384,5 +342,72 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
 /* The fight HUD only shows during fights and on the result screen. */
 body:not([data-screen="fight"]):not([data-screen="result"]) .matchup,
 body:not([data-screen="fight"]):not([data-screen="result"]) .fight-console,
-body:not([data-screen="fight"]):not([data-screen="result"]) .round-readout { visibility: hidden; }
+body:not([data-screen="fight"]):not([data-screen="result"]) .hud-center { visibility: hidden; }
 .dialogue { background: linear-gradient(180deg, #0d1a1d99 0%, #0d1a1dee 70%); }
+
+/* ---------------------------------------------------------------------------
+   Arcade HUD: chunky framed life bars across the top, a red trail that catches
+   up after each hit, pixel-font name plates and the round counter in between. */
+.matchup { display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 18px; padding: 14px 0 12px; }
+.fighter-status { min-width: 0; }
+.health-track { position: relative; height: 24px; overflow: hidden; border: 3px solid #140e16; background: #3a0c12; box-shadow: 0 0 0 2px #f1c95a, 0 0 0 5px #140e16, 5px 5px 0 5px #0007; }
+.health-track::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 2px), #140e1688 calc(10% - 2px) 10%); pointer-events: none; }
+.health-lag, .health-fill { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; }
+.health-lag { background: #ff3b2f; transition: width 520ms steps(8) 420ms; }
+.health-fill { background: linear-gradient(180deg, #fff7b0 0 22%, #ffd23a 22% 64%, #e89a12 64% 100%); transition: width 180ms steps(4); }
+.bot-status .health-lag, .bot-status .health-fill { right: 0; left: auto; }
+.health-track.danger .health-fill { animation: hp-danger 420ms steps(1) infinite; }
+@keyframes hp-danger { 50% { background: linear-gradient(180deg, #ffd0c0 0 22%, #ff6a3a 22% 64%, #c8321c 64% 100%); } }
+.fighter-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 9px; }
+.bot-status .fighter-heading { flex-direction: row-reverse; }
+.name-plate { min-width: 0; margin: 0; overflow: hidden; padding: 5px 8px 4px; border-left: 5px solid var(--fighter, var(--lime)); color: var(--paper); background: #140e16d9; font: 400 16px/1.1 "Press Start 2P", var(--mono); text-overflow: ellipsis; text-shadow: 2px 2px 0 var(--fighter, #000), 3px 3px 0 #140e16; white-space: nowrap; }
+.bot-status .name-plate { border-right: 5px solid var(--fighter, var(--lime)); border-left: 0; }
+.hp-number { color: #fff7b0; font: 400 11px/1 "Press Start 2P", var(--mono); text-shadow: 2px 2px 0 #140e16; }
+.fighter-meta { display: flex; justify-content: flex-start; margin-top: 6px; }
+.bot-status .fighter-meta { justify-content: flex-end; }
+.boost-tag { padding: 3px 5px; color: var(--lime); background: #140e16b3; font: 400 8px/1.2 "Press Start 2P", var(--mono); text-shadow: 1px 1px 0 #140e16; }
+.hud-center { display: grid; justify-items: center; gap: 6px; }
+.round-readout { display: grid; justify-items: center; gap: 4px; min-width: 70px; padding: 5px 8px 6px; border: 3px solid #140e16; background: #140e16; box-shadow: 0 0 0 2px #f1c95a, 4px 4px 0 2px #0007; }
+.readout-label { color: #f4e6b0; font: 400 7px/1 "Press Start 2P", var(--mono); }
+.round-readout strong { color: #ffe36a; font: 400 20px/1 "Press Start 2P", var(--mono); text-shadow: 2px 2px 0 #c8321c; }
+.corner-controls { display: flex; align-items: center; gap: 4px; }
+.menu-button { padding: 6px 6px 5px; border: 2px solid #f4e6b0; color: var(--paper); background: #140e16cc; font: 400 8px/1 "Press Start 2P", var(--mono); cursor: pointer; }
+.menu-button:hover, .menu-button:focus-visible { color: #140e16; background: var(--lime); }
+.corner-controls .sound-toggle { width: 30px; height: 30px; }
+.corner-controls .speaker-icon { width: 22px; height: 22px; }
+
+@media (max-width: 620px) {
+  .matchup { gap: 8px; padding: 12px 0 10px; }
+  .health-track { height: 16px; border-width: 2px; box-shadow: 0 0 0 2px #f1c95a, 0 0 0 4px #140e16; }
+  .name-plate { padding: 4px 5px 3px; border-width: 3px; font-size: 9px; }
+  .hp-number { font-size: 8px; }
+  .round-readout { min-width: 48px; padding: 4px 5px; }
+  .readout-label { font-size: 6px; }
+  .round-readout strong { font-size: 13px; }
+  .menu-button { font-size: 6px; }
+  .boost-tag { font-size: 6px; }
+}
+@media (max-width: 380px) {
+  .name-plate { font-size: 7px; }
+  .corner-controls .sound-toggle { width: 24px; height: 24px; }
+}
+
+/* Title screen code entry. */
+.code-entry { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; width: min(460px, 100%); margin: 22px auto 0; }
+.code-entry label { color: #f4e6b0; font: 400 9px/1 "Press Start 2P", var(--mono); }
+.code-entry input { min-width: 0; padding: 9px 10px; border: 3px solid #3a5054; color: #ffe36a; background: #0a1416; font: 400 12px/1 "Press Start 2P", var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
+.code-entry input:focus { border-color: var(--lime); outline: none; }
+.code-submit { padding: 9px 12px; border: 3px solid var(--lime); color: #10191b; background: var(--lime); font: 400 10px/1 "Press Start 2P", var(--mono); cursor: pointer; }
+.code-submit:hover, .code-submit:focus-visible { color: var(--lime); background: #10191b; outline: none; }
+.code-message { grid-column: 1 / -1; min-height: 14px; margin: 0; color: #ff9971; font: 400 8px/1.6 "Press Start 2P", var(--mono); }
+.code-message[data-state="ok"] { color: var(--lime); }
+@media (max-width: 420px) {
+  .code-entry { grid-template-columns: 1fr auto; }
+  .code-entry label { grid-column: 1 / -1; }
+}
+
+/* A locked secret fighter: a mystery box that can't be picked. */
+.fighter-card.locked { --fighter: #3a3448; cursor: not-allowed; background: repeating-linear-gradient(45deg, #15111c 0 8px, #1c1726 8px 16px); box-shadow: 0 5px 0 #0a1112; }
+.fighter-card.locked:hover { transform: none; box-shadow: 0 5px 0 #0a1112; }
+.fighter-card.locked .card-name { color: #6e6680; }
+.fighter-card.locked .card-role { color: #6e6680; }

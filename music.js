@@ -178,19 +178,45 @@ const Music = (() => {
       mix: { lead2: 0.06 }
     },
 
-    // BANANAS / Produce Aisle: springy F major fruit-cart bounce at 152 BPM.
+    // BANANAS / Produce Aisle: swung F major supermarket muzak with slap-bass funk, ending on the PA chime. 124 BPM.
     bananas: {
-      bpm: 152, crash: 8, fillEvery: 4,
-      chords: "F | C | Dm | Bb | F | C | Bb C | F",
-      lead: "F5 . A5 C6 . A5 G5 . | E5 . G5 C6 . G5 E5 . | F5 . A5 D6 . C6 A5 . | Bb5 . A5 G5 F5 . . . |" +
-        "F5 . A5 C6 . A5 G5 . | E5 . G5 C6 . D6 C6 . | D6 . . C6 Bb5 . G5 . | A5 . G5 F5 . . . -",
+      bpm: 124, swing: 0.22, crash: 8, fillEvery: 4,
+      chords: "Fmaj7 | Dm7 | Gm7 | C7 | Fmaj7 | Dm7 | Gm7 C7 | Fmaj7 |" +
+        "Bbmaj7 | Am7 | Gm7 | C7 | Bbmaj7 | Am7 D7 | Gm7 C7 | F",
+      lead: "F5 - F5 A5 - C6 - A5 G5 . - E5 F5 . - - | D5 - D5 F5 - A5 - C6 . . A5 . - - - - |" +
+        "Bb5 - Bb5 A5 - G5 - F5 G5 . - D5 F5 . - - | E5 . . G5 . . Bb5 . A5 . G5 . C6 . - - |" +
+        "F5 - F5 A5 - C6 - A5 G5 . - E5 F5 . - - | D5 - D5 F5 - A5 - D6 . . C6 . A5 . - - |" +
+        "Bb5 . A5 . G5 . F5 . E5 . G5 . Bb5 . C6 . | A5 . . . F5 . E5 F5 . . . . - - - - |" +
+        "D6 . . C6 . . A5 . . . F5 . A5 . - - | C6 . . A5 . . E5 . . . G5 . - - - - |" +
+        "Bb5 . . A5 . . G5 . . . D5 . F5 . G5 . | E5 . G5 . Bb5 . C6 . D6 . C6 . Bb5 . G5 . |" +
+        "D6 . . C6 . . A5 . . . F5 . A5 . - - | C6 . A5 . E5 . C6 . F#5 . A5 . C6 . D6 . |" +
+        "D6 . Bb5 . G5 . D5 . E5 . G5 . Bb5 . E5 . | A5 . . . F5 . . . G5 . . . C5 . . .",
+      lead2: 12,
+      bass: "1 . - 8 - 1 - 5 1 . 8 - 5 - 3 -",
+      arp: "- * - * - * - *",
+      pad: true,
+      drums: { k: "x.....x.x.x.....", s: "....X.......X..g", h: "x.x.x.x.x.x.x.x.", b: "...x.....x....x." },
+      fill: { s: "....X..g.gX.XgXX" },
+      inst: { lead: "pulse12", lead2: "vibes", bass: "slap", arp: "stab" },
+      mix: { lead2: 0.08, bass: 0.32, arp: 0.05, pad: 0.035 }
+    },
+
+    // PROPHET / final boss: ominous C harmonic minor space march with a Neapolitan Db twist. 168 BPM.
+    prophet: {
+      bpm: 168, crash: 8, fillEvery: 4,
+      chords: "Cm | Ab | Fm | G | Cm | Ab | Db | G | Ab | Bb | Gm Cm | Cm | Ab | Bb | Db | G",
+      lead: "C5 . G4 C5 Eb5 . G5 . | Ab5 . . G5 Eb5 . C5 . | F5 . Ab5 . C6 . Ab5 F5 | G5 . . . B4 . D5 F5 |" +
+        "C5 . G4 C5 Eb5 . G5 . | Ab5 . . Bb5 C6 . Eb6 . | Db6 . C6 . Ab5 . F5 . | G5 . . . F5 . D5 B4 |" +
+        "Eb6 . . C6 . Ab5 . C6 | D6 . . Bb5 . F5 . Bb5 | G5 . Bb5 D6 C6 . G5 Eb5 | C6 . . . G5 . Eb5 . |" +
+        "Ab5 . C6 . Eb6 . C6 . | Bb5 . D6 . F6 . D6 . | F6 . Eb6 . Db6 . C6 . | B5 . . . G5 . D5 B4",
       lead2: -12,
-      bass: "1 . 1 8 5 . 8 .",
-      arp: "1 5 8 5 1 5 8 5",
-      drums: { k: "x...x...x.x.....", s: "....X.......X...", h: "x.x.x.x.x.x.x.x." },
-      fill: { s: "....X...x.x.XxXX" },
-      inst: { lead: "pulse12", lead2: "square", bass: "tri", arp: "pluck" },
-      mix: { lead2: 0.07, arp: 0.045 }
+      bass: "1 . 1 8 1 . 1 8 1 . 1 8 5 . 8 .",
+      arp: "1 3 5 8 ^3 ^5 ^3 8 5 3 1 3 5 8 5 3",
+      pad: true,
+      drums: { k: "x.....x.x.....x.", s: "....X.......X...", h: "x.x.x.x.x.x.x.x.", t: "x...............", z: "...............x" },
+      fill: { s: "....X...x.xxXXXX", T: "........x.x.x.xx" },
+      inst: { lead: "pulse25", lead2: "brass", bass: "bassSquare", arp: "pulse12", pad: "choir" },
+      mix: { lead2: 0.095, arp: 0.04, pad: 0.05 }
     },
 
     // Victory: four triumphant bars with a harmony line a third below.
@@ -240,7 +266,11 @@ const Music = (() => {
     bassSquare: { waves: ["p50", "p25"], mix: [1, 0.5], detune: 4, cutoff: 900, attack: 0.005, decay: 0.25, sustain: 0.7, release: 0.05 },
     slap: { waves: ["p25", "triangle"], mix: [0.7, 1], detune: 0, cutoff: 5000, sweep: [2600, 380, 0.12], attack: 0.003, decay: 0.15, sustain: 0.4, release: 0.05 },
     stab: { waves: ["p12"], mix: [1], detune: 0, cutoff: 5000, attack: 0.003, decay: 0.06, sustain: 0.05, release: 0.04 },
-    pad: { waves: ["triangle", "p50"], mix: [1, 0.15], detune: 6, cutoff: 1800, attack: 0.25, decay: 1, sustain: 0.9, release: 0.5 }
+    pad: { waves: ["triangle", "p50"], mix: [1, 0.15], detune: 6, cutoff: 1800, attack: 0.25, decay: 1, sustain: 0.9, release: 0.5 },
+    // Mallet bell for muzak sheen, gritty boss brass and a hollow space choir.
+    vibes: { waves: ["triangle", "sine"], mix: [1, 0.6], detune: 3, cutoff: 4500, attack: 0.003, decay: 0.3, sustain: 0.12, release: 0.2 },
+    brass: { waves: ["sawtooth", "p25"], mix: [0.8, 0.5], detune: 8, cutoff: 2600, attack: 0.02, decay: 0.4, sustain: 0.75, release: 0.1, vibrato: 18 },
+    choir: { waves: ["p50", "triangle"], mix: [0.5, 1], detune: 11, cutoff: 1500, attack: 0.35, decay: 1.2, sustain: 0.9, release: 0.6, vibrato: 10 }
   };
 
   // Band-limited pulse wave with the given duty cycle (Fourier series).
@@ -418,6 +448,10 @@ const Music = (() => {
     },
     w(r, o, t, v) {
       blip(r, o, "triangle", 830, 800, t, 0.06, 0.3 * v);
+    },
+    // Cosmic zap: a falling square-wave laser.
+    z(r, o, t, v) {
+      blip(r, o, "square", 2400, 260, t, 0.16, 0.1 * v);
     }
   };
 

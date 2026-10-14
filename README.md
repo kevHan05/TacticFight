@@ -1,12 +1,14 @@
 # Tactic Fight
 
-A turn-based 1v1 arcade fighter. Pick one of seven fighters and take on a CPU opponent.
+A turn-based 1v1 arcade fighter. Pick one of seven fighters (plus a secret eighth) and take on a CPU opponent.
 
 ## Modes
 
-- **Campaign:** each fighter has a story. Beat the other six fighters, in order, on their home stages, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
+- **Campaign:** each fighter has a story. Beat the other fighters, in order, on their home stages, then face PROPHET, the ruler of the TacticFight universe, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
 - **Endless:** fight until you are defeated. Every fight is against a new opponent and both fighters start at full health. Your best streak is saved.
 - **Quick Fight:** pick a fighter and take on a random opponent.
+
+- **Secret fighter:** clear every fighter's campaign to unlock PROPHET, or type the code `PROPHET` in the code box on the title screen. Until then his select box shows `???`. Quick Fight and Endless only send PROPHET at you once he is unlocked.
 
 Every fight starts with some pre-fight trash talk. Each fighter has a home stage, and you always fight on your opponent's turf.
 
@@ -23,7 +25,7 @@ Both fighters pick a move at the same time. The round then plays out one fighter
 - Each fighter's last move is their ultimate. It becomes available after three completed rounds and recharges three rounds after use.
 - Some moves have their own cooldown, shown on the button.
 - Reduce the opponent to 0 HP to win. If your HP reaches 0, the match is lost.
-- Use the buttons or press `1`-`4` for the moves. On the select screen, press `1`-`7` to pick a fighter.
+- Use the buttons or press `1`-`4` for the moves. On the select screen, press `1`-`8` to pick a fighter.
 
 ## Fighters
 
@@ -38,6 +40,7 @@ The roster and every move's rules live in `characters.js`. The new fighters are 
 | Ninja Main | 80 | Shadow Step (dodge + 8 counter), Rookie Shuriken (3x7, each may miss), Smoke Panic (evade all, blind), Almost Invisible (evade + 28, may be spotted) |
 | ZOO-mbie | 115 | Rotten Swing (16, can't be dodged), Undead Shuffle (10 + 50% evade), Safari Senses (reveals the CPU's next move), Zombie Stampede (4x7, can't be dodged) |
 | BANANAS | 95 | Citrus Kick (13, interrupts), Orange Bounce (dodge + power up), Peel Out (12 + 50% evade, risky), FRUIT NUCLEAR! (4x7, can't be dodged) |
+| PROPHET (secret) | 100 | Nova Palm (14, interrupts), Wormhole Warp (dodge + 6 counter), Prophecy (8 + reveals the CPU's next move), BIG BANG (28, can't be blocked or dodged) |
 
 Status effects:
 
@@ -45,11 +48,11 @@ Status effects:
 - **Staggered:** hit by a full combo, so your next strike deals half damage.
 - **Blinded:** caught in smoke, so your next strike has a 50% chance to miss.
 - **Fortified:** Fortress Mode halves the damage taken in the next round too.
-- **Tracking:** Safari Senses shows the CPU's next move, and your next strike can't be evaded.
+- **Tracking:** Safari Senses or Prophecy shows the CPU's next move, and your next strike can't be evaded.
 
 ## Graphics
 
-The arena is rendered by `graphics.js` at 320x140 and scaled 3x with hard pixel edges, in the style of early-90s arcade fighters. Fighters are posed from a skeleton, snapped to a fixed palette and outlined, so every move is animated without sprite sheets.
+The arena is rendered by `graphics.js` at 320x140 and scaled 3x with hard pixel edges, in the style of early-90s arcade fighters. Fighters are posed from a skeleton, snapped to a fixed palette and outlined, so every move is animated without sprite sheets. The fight HUD across the top shows arcade-style life bars with a red damage trail, pixel-font name plates and the round counter.
 
 ## Sound
 

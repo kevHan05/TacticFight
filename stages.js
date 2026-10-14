@@ -1681,82 +1681,591 @@ const Stages = (() => {
     }
   };
 
-  // BANANAS - the supermarket produce aisle, with a suspicious fruit-salad display.
+  // ===========================================================================
+  // BANANAS - "Fruit Aisle 7": the produce section he sat ignored in. Somebody
+  // swapped the ORANGES and BANANAS labels, which explains a lot.
+
+  // One pixel fruit centred on (x, y).
+  function fruit(ctx, h, kind, x, y) {
+    const R = painter(ctx, h);
+    if (kind === "orange") {
+      h.disc(ctx, x, y, 2, "#e8701c");
+      R(x - 1, y - 1, 1, 1, "#ffb257");
+      R(x + 1, y + 1, 1, 1, "#b04a10");
+    } else if (kind === "apple" || kind === "green") {
+      h.disc(ctx, x, y, 2, kind === "apple" ? "#c8302a" : "#7ab83a");
+      R(x - 1, y - 1, 1, 1, kind === "apple" ? "#ff8a76" : "#c8ee8a");
+      R(x, y - 3, 1, 1, "#4a2a14");
+    } else if (kind === "grape") {
+      for (let dy = 0; dy < 4; dy += 1) {
+        for (let i = 0; i < 4 - dy; i += 1) {
+          R(x - 3 + dy + i * 2, y - 2 + dy, 2, 1, "#5a2478");
+          R(x - 3 + dy + i * 2, y - 2 + dy, 1, 1, "#a060c8");
+        }
+      }
+      R(x, y - 3, 1, 1, "#5a7a2a");
+    } else if (kind === "banana") {
+      [0, 1, 2].forEach(b => {
+        const c = b === 2 ? "#c89a1c" : "#f4d23c";
+        R(x - 3, y - 1 + b, 7, 1, c);
+        R(x - 4, y - 2 + b, 1, 1, c);
+        R(x + 4, y - 2 + b, 1, 1, c);
+      });
+      R(x - 5, y - 3, 1, 1, "#4a3a14");
+      R(x - 2, y - 2, 4, 1, "#fff08a");
+    } else if (kind === "melon") {
+      oval(ctx, h, x, y, 5, 3, "#2e7a2e");
+      [-3, 0, 3].forEach(dx => R(x + dx, y - 2, 1, 5, "#1a5220"));
+      R(x - 2, y - 2, 2, 1, "#6ab85a");
+    }
+  }
+
+  // Two staggered rows of one fruit, piled on the shelf lip at `lipY`.
+  function pile(ctx, h, kind, x0, x1, lipY) {
+    const step = { orange: 5, apple: 5, green: 5, grape: 8, banana: 10, melon: 11 }[kind];
+    [1, 0].forEach(row => {
+      for (let x = x0 + 3 + (row ? Math.floor(step / 2) : 0); x <= x1 - 3; x += step) fruit(ctx, h, kind, x, lipY - 3 - row * 3);
+    });
+  }
+
+  function priceTag(ctx, h, label, x, y, paper, ink) {
+    const R = painter(ctx, h);
+    const w = label.length * 4 + 1;
+    R(x, y, w + 1, 7, paper);
+    R(x, y + 7, w + 1, 1, "#2a1c12");
+    h.text(ctx, label, x + 1, y + 1, () => ink);
+  }
+
+  // A tall produce stand with a striped awning, a mister pipe and three tiers.
+  function produceStand(ctx, h, x0, x1, tiers) {
+    const R = painter(ctx, h);
+    const w = x1 - x0;
+    R(x0, 33, w, 49, "#33251a");
+    R(x0, 33, w, 3, "#1e150e");
+    R(x0, 27, w, 1, "#1c4a2a");
+    for (let x = x0; x < x1; x += 4) {
+      const green = Math.floor((x - x0) / 4) % 2 === 0;
+      R(x, 28, 4, green ? 6 : 5, green ? "#2f8a46" : "#f0ecd0");
+    }
+    // Mister pipe the sprays come out of.
+    R(x0, 36, w, 1, "#8a949a");
+    for (let x = x0 + 5; x < x1; x += 10) R(x, 37, 1, 1, "#c8d0d4");
+    [48, 62, 76].forEach((lip, index) => {
+      tiers[index].forEach(([kind, a, b]) => pile(ctx, h, kind, a, b, lip));
+      R(x0, lip, w, 3, "#9a6436");
+      R(x0, lip, w, 1, "#d09a5a");
+      R(x0, lip + 3, w, 1, "#1e150e");
+    });
+    R(x0, 79, w, 3, "#7a4a26");
+  }
+
+  // The shoppers and the stock clerk, built once.
+  const fruitShoppers = lazy(() => [
+    { x: 68, shirt: "#3a62a8", pants: "#2a2a40", skin: "#c48d6c", hair: "#3a2420", k: 0 },
+    { x: 250, shirt: "#c8406a", pants: "#3a3048", skin: "#e0b090", hair: "#e0c060", k: 1 },
+    { x: 306, shirt: "#8a5aa8", pants: "#2c3350", skin: "#c48d6c", hair: "#9a9a9a", k: 3 }
+  ]);
+
+  function shopper(ctx, h, p, now, excitement) {
+    const R = painter(ctx, h);
+    const cheer = excitement > 0.2 + p.k * 0.08;
+    const hop = cheer ? Math.round(Math.abs(Math.sin(now / 110 + p.k * 1.3)) * 3 * excitement) : 0;
+    const fy = 88 - hop;
+    const look = Math.sin(now / 1700 + p.k * 2) > 0 ? 1 : 0;
+    R(p.x - 2, fy - 6, 2, 6, p.pants);
+    R(p.x + 1, fy - 6, 2, 6, p.pants);
+    R(p.x - 3, fy - 1, 3, 1, "#1a1214");
+    R(p.x + 1, fy - 1, 3, 1, "#1a1214");
+    R(p.x - 3, fy - 14, 7, 8, p.shirt);
+    R(p.x - 2, fy - 19, 5, 5, p.skin);
+    R(p.x - 2, fy - 20, 5, 2, p.hair);
+    R(p.x - 1 + look, fy - 17, 1, 1, "#1a1214");
+    R(p.x + 1 + look, fy - 17, 1, 1, "#1a1214");
+    if (cheer) {
+      R(p.x - 4, fy - 21, 1, 8, p.shirt);
+      R(p.x + 4, fy - 21, 1, 8, p.shirt);
+      R(p.x - 4, fy - 22, 1, 1, p.skin);
+      R(p.x + 4, fy - 22, 1, 1, p.skin);
+      R(p.x, fy - 15, 1, 1, "#7a1a1a");
+    } else {
+      R(p.x - 4, fy - 13, 1, 6, p.shirt);
+      R(p.x + 4, fy - 13, 1, 6, p.shirt);
+      R(p.x - 4, fy - 7, 1, 1, p.skin);
+      R(p.x + 4, fy - 7, 1, 1, p.skin);
+    }
+  }
+
   const bananas = {
-    name: "Produce Aisle",
+    name: "Fruit Aisle 7",
     build(ctx, h) {
       const R = painter(ctx, h);
-      bands(ctx, h, [[0, "#243c4a"], [10, "#385d64"], [21, "#638477"], [34, "#9aab83"], [48, "#c5c69a"], [63, "#d9d1a3"], [77, "#8f9d71"]], 0, 84);
+      const rand = h.seeded(7777);
 
-      // Fluorescent ceiling and the store's very proud produce sign.
-      R(0, 0, W, 7, "#18232a");
-      [24, 98, 198, 272].forEach(x => {
-        R(x, 9, 30, 2, "#f8f0c6");
-        R(x + 3, 11, 24, 1, "#f4d97c");
-      });
-      R(121, 13, 78, 19, "#1e302c");
-      R(123, 15, 74, 15, "#477746");
-      R(123, 15, 74, 1, "#c6d789");
-      h.text(ctx, "PRODUCE", 146, 20, () => "#fff0a8");
-
-      // End-cap shelves frame the fighters and leave the centre aisle open.
-      [[0, 72], [248, 72]].forEach(([x, width]) => {
-        R(x, 37, width, 3, "#31443e");
-        R(x, 40, width, 2, "#bfd09a");
-        R(x, 60, width, 3, "#31443e");
-        R(x, 63, width, 2, "#bfd09a");
-      });
-      [[8, 43], [258, 39], [26, 66], [278, 65]].forEach(([x, y], index) => {
-        const fruit = index % 2 ? "#d74632" : "#f47718";
-        [[0, 0], [7, 2], [14, 0], [21, 2], [28, 0]].forEach(([dx, dy], k) => {
-          h.disc(ctx, x + dx, y + dy, 4, k % 2 ? fruit : "#e9bd45");
-          R(x + dx, y + dy - 5, 1, 2, "#477746");
-        });
+      // Drop ceiling with fluorescent tubes.
+      bands(ctx, h, [[0, "#1c2430"], [8, "#28323e"], [15, "#3a4652"]], 0, 17);
+      for (let x = 0; x < W; x += 20) R(x, 0, 1, 17, "#141a24");
+      [14, 96, 190, 272].forEach(x => {
+        R(x - 1, 8, 36, 4, "#6a7682");
+        R(x, 9, 34, 2, "#f4fbe8");
       });
 
-      // A low display of orange crates, plus the cart that started it all.
-      [[7, 72], [265, 72]].forEach(([x, y]) => {
-        R(x, y, 47, 11, "#764b2c");
-        R(x, y, 47, 2, "#b5793b");
-        for (let dx = 4; dx < 45; dx += 8) R(x + dx, y + 3, 2, 7, "#a66b35");
-      });
-      R(41, 76, 21, 2, "#78838a");
-      R(43, 78, 17, 2, "#b6c0bd");
-      h.disc(ctx, 45, 82, 3, "#344047");
-      h.disc(ctx, 59, 82, 3, "#344047");
-      h.text(ctx, "2 FOR 1", 9, 56, () => "#fff0a8");
-
-      // Pale green supermarket tiles in perspective.
-      bands(ctx, h, [[84, "#7b8b68"], [91, "#8b9b72"], [103, "#738565"], [116, "#879671"], [129, "#6d7e62"]], 84, H);
-      seams(ctx, h, 85, 26, 16, "#53644d");
-      for (let y = 91; y < H; y += 10) {
-        const offset = Math.floor(y / 10) % 2 ? 10 : 0;
-        for (let x = offset; x < W; x += 52) R(x, y, 1, 1, "#a4ae7d");
+      // Pale mint wall with the store's green stripe.
+      bands(ctx, h, [[17, "#c4d2bc"], [44, "#b8c8b2"], [64, "#aabca6"]], 17, 82);
+      R(0, 20, W, 4, "#2f7a46");
+      R(0, 20, W, 1, "#6ab07a");
+      R(0, 24, W, 1, "#1c4a2a");
+      for (let y = 30; y < 82; y += 8) {
+        for (let x = (y / 8) % 2 ? 0 : 8; x < W; x += 16) R(x, y, 1, 1, "#9aae98");
       }
-      R(0, 84, W, 2, "#d5d5a5");
-      R(0, 86, W, 1, "#52604b");
+
+      // Hanging FRUIT sign over the centre aisle.
+      R(136, 17, 1, 9, "#3a4652");
+      R(183, 17, 1, 9, "#3a4652");
+      R(126, 25, 68, 23, "#1c4a2a");
+      R(128, 27, 64, 19, "#e8402e");
+      R(128, 27, 64, 1, "#ff8a6a");
+      R(128, 45, 64, 1, "#a82a1e");
+      h.text(ctx, "FRUIT", 141, 29, row => (row < 2 ? "#fff6c0" : "#ffd83a"), 2);
+      h.text(ctx, "AISLE 7", 147, 40, () => "#fff6c0");
+      fruit(ctx, h, "orange", 133, 36);
+      fruit(ctx, h, "banana", 186, 36);
+
+      // Produce stands either side. Note the swapped labels.
+      produceStand(ctx, h, 0, 80, [
+        [["grape", 0, 40], ["orange", 40, 80]],
+        [["apple", 0, 40], ["green", 40, 80]],
+        [["orange", 0, 46], ["banana", 46, 80]]
+      ]);
+      produceStand(ctx, h, 240, 320, [
+        [["banana", 240, 282], ["grape", 282, 320]],
+        [["orange", 240, 280], ["apple", 280, 320]],
+        [["green", 240, 282], ["banana", 282, 320]]
+      ]);
+      priceTag(ctx, h, "BANANAS", 48, 49, "#fff6d8", "#1c3a7a");
+      priceTag(ctx, h, "ORANGES", 242, 49, "#fff6d8", "#1c3a7a");
+      priceTag(ctx, h, "1.99", 4, 63, "#fff6d8", "#c8302a");
+      priceTag(ctx, h, "2 FOR 1", 4, 74, "#fff6d8", "#1c4a2a");
+      priceTag(ctx, h, "SALE", 276, 63, "#ffd83a", "#c8302a");
+      priceTag(ctx, h, "99", 282, 74, "#fff6d8", "#c8302a");
+
+      // Centre melon island: back row is repainted over the clerk each frame.
+      R(122, 66, 76, 16, "#7a4a26");
+      R(122, 66, 76, 2, "#b5793b");
+      for (let x = 126; x < 196; x += 8) R(x, 69, 2, 12, "#5e3a1c");
+      R(142, 70, 36, 9, "#ffd83a");
+      R(142, 78, 36, 1, "#b8941a");
+      h.text(ctx, "MELONS", 148, 72, () => "#c8302a");
+      for (let x = 130; x < 194; x += 11) fruit(ctx, h, "melon", x, 59);
+      for (let x = 135; x < 190; x += 11) fruit(ctx, h, "melon", x, 63);
+      // One cut open to prove they are real.
+      oval(ctx, h, 160, 64, 6, 2, "#2e7a2e");
+      oval(ctx, h, 160, 63, 5, 2, "#e83a4a");
+      R(155, 62, 11, 1, "#f8f0d0");
+      [157, 160, 163].forEach(x => R(x, 64, 1, 1, "#1a1214"));
+
+      // Shopping cart with the cereal box and toy sneakers from his origin story.
+      R(36, 70, 22, 1, "#c8d0d4");
+      R(36, 70, 1, 10, "#9aa4aa");
+      R(57, 70, 1, 10, "#9aa4aa");
+      R(37, 79, 20, 1, "#9aa4aa");
+      for (let x = 40; x < 57; x += 4) R(x, 71, 1, 8, "#7a848a");
+      R(37, 74, 20, 1, "#7a848a");
+      R(40, 65, 6, 9, "#e8402e");
+      R(41, 67, 4, 2, "#ffd83a");
+      R(48, 68, 7, 3, "#f0f0f0");
+      R(48, 70, 7, 1, "#3a62a8");
+      R(58, 67, 4, 1, "#c8d0d4");
+      R(37, 80, 1, 5, "#9aa4aa");
+      R(56, 80, 1, 5, "#9aa4aa");
+      R(36, 85, 3, 2, "#1a1214");
+      R(55, 85, 3, 2, "#1a1214");
+
+      // Green kick plate, then the classic checkered floor in perspective.
+      R(0, 81, W, 4, "#2f5a3a");
+      R(0, 81, W, 1, "#5a8a5a");
+      const tiles = ["#d9dccb", "#a3ad9b"];
+      for (let y = 85; y < H; y += 1) {
+        const row = Math.floor(600 / (y - 40));
+        for (let i = -14; i < 14; i += 1) {
+          const xa = Math.round(persX(160 + i * 28, y));
+          const xb = Math.round(persX(160 + (i + 1) * 28, y));
+          R(xa, y, xb - xa, 1, tiles[(i + row + 100) % 2]);
+        }
+      }
+      // A few scuffs.
+      for (let i = 0; i < 30; i += 1) R(Math.floor(rand() * W), 88 + Math.floor(rand() * 50), 2, 1, "#8a9484");
+      R(0, 85, W, 1, "#6a7a64");
     },
     animate(ctx, h, now, excitement) {
       const R = painter(ctx, h);
-      const flicker = Math.floor(now / 520) % 4 === 0;
-      if (flicker) {
-        ctx.globalAlpha = 0.18;
-        R(121, 13, 78, 19, "#f8efbd");
+
+      // One tired tube flickers.
+      if (Math.sin(now / 1900) > 0.4 && hash(Math.floor(now / 80)) < 0.35) R(190, 9, 34, 2, "#8a948a");
+
+      // Produce misters: a burst every few seconds, faster when the crowd is loud.
+      const cycle = 6500 - excitement * 2500;
+      const t = now % cycle;
+      if (t < 1800) {
+        const fade = t < 1300 ? 1 : (1800 - t) / 500;
+        [[0, 80], [240, 320]].forEach(([x0, x1]) => {
+          ctx.globalAlpha = 0.12 * fade;
+          R(x0, 37, x1 - x0, Math.min(42, 4 + t / 30), "#e6f6ff");
+          ctx.globalAlpha = 0.7 * fade;
+          for (let x = x0 + 5; x < x1; x += 10) {
+            for (let k = 0; k < 4; k += 1) {
+              const dy = (t * 0.03 + k * 9 + x) % 40;
+              if (dy > t / 30 + 2) continue;
+              R(x + Math.round(Math.sin((t + k * 210) / 160) * (1 + dy / 14)), 38 + dy, 1, 1, "#f2fbff");
+            }
+          }
+        });
         ctx.globalAlpha = 1;
       }
-      const bob = Math.round(Math.sin(now / 105) * (1 + excitement * 2));
-      [[17, 46], [287, 43], [36, 68], [269, 67]].forEach(([x, y], index) => {
-        const dx = index % 2 ? -bob : bob;
-        R(x + dx, y - 5, 1, 2, "#477746");
-        R(x + dx - 1, y - 6, 3, 1, "#79b04a");
-      });
-      if (excitement > 0.12) {
-        const spark = Math.floor(now / 70) % 2;
-        R(89 + spark * 3, 82, 2, 1, "#fff0a8");
-        R(229 - spark * 3, 80, 2, 1, "#fff0a8");
+
+      // Stock clerk behind the melons: waves a WOW card when things get loud.
+      const loud = excitement > 0.25;
+      const hop = loud ? Math.round(Math.abs(Math.sin(now / 120)) * 3) : Math.round(Math.sin(now / 900));
+      const cx = 172;
+      const top = 47 - hop;
+      R(cx - 2, top, 6, 5, "#c48d6c");
+      R(cx - 3, top - 1, 8, 2, "#2f8a46");
+      R(cx + 5, top, 2, 1, "#2f8a46");
+      R(cx - 1, top + 2, 1, 1, "#1a1214");
+      R(cx + 2, top + 2, 1, 1, "#1a1214");
+      R(cx - 3, top + 5, 8, 8, "#f0ecd0");
+      R(cx - 2, top + 6, 6, 7, "#2f8a46");
+      if (loud) {
+        R(cx - 4, top - 4, 1, 9, "#f0ecd0");
+        R(cx + 5, top - 4, 1, 9, "#f0ecd0");
+        R(cx - 8, top - 11, 18, 8, "#ffd83a");
+        R(cx - 8, top - 4, 18, 1, "#b8941a");
+        h.text(ctx, "WOW", cx - 5, top - 10, () => (Math.floor(now / 140) % 2 ? "#c8302a" : "#1c4a2a"));
+      } else {
+        R(cx - 4, top + 6, 1, 6, "#f0ecd0");
+        R(cx + 5, top + 6, 1, 6, "#f0ecd0");
+      }
+      for (let x = 163; x < 194; x += 11) fruit(ctx, h, "melon", x, 59);
+
+      // Shoppers.
+      fruitShoppers(h).forEach(p => shopper(ctx, h, p, now, excitement));
+
+      // A loose orange hops on the floor when it gets really loud.
+      if (excitement > 0.45) {
+        const bounce = Math.round(Math.abs(Math.sin(now / 130)) * 6);
+        fruit(ctx, h, "orange", 74, 96 - bounce);
+        fruit(ctx, h, "orange", 244, 96 - Math.round(Math.abs(Math.cos(now / 130)) * 6));
       }
     }
   };
 
-  return { rook, byte, bobbie, rocky, ninja, zoombie, bananas };
+  // ===========================================================================
+  // PROPHET - "Cosmic Throne": the edge of everything, where he runs the
+  // TacticFight universe. His throne is empty because he is busy fighting you.
+
+  // Dithered oval: solid in the middle, checkerboard toward the rim.
+  function haze(ctx, h, cx, cy, rx, ry, color, solid) {
+    for (let dy = -ry; dy <= ry; dy += 1) {
+      const half = Math.floor(rx * Math.sqrt(Math.max(0, 1 - (dy / (ry + 0.5)) ** 2)));
+      const inner = Math.floor(half * solid);
+      const y = cy + dy;
+      if (inner > 0) h.rect(ctx, cx - inner, y, inner * 2 + 1, 1, color);
+      for (let x = cx - half; x <= cx + half; x += 1) {
+        if (Math.abs(x - cx) > inner && (x + y) % 2 === 0) h.rect(ctx, x, y, 1, 1, color);
+      }
+    }
+  }
+
+  // Ring of points around (cx, cy), used for orbits, pulses and floor runes.
+  function ring(ctx, h, cx, cy, rx, ry, color, count) {
+    for (let i = 0; i < count; i += 1) {
+      const a = (i / count) * Math.PI * 2;
+      h.rect(ctx, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, 1, 1, color);
+    }
+  }
+
+  const GALAXY = { x: 160, y: 38 };
+
+  function galaxyPoint(arm, s, spin) {
+    const r = 2 + s * 24;
+    const a = arm * Math.PI + s * 4.4 + spin;
+    return [GALAXY.x + Math.cos(a) * r * 1.55, GALAXY.y + Math.sin(a) * r * 0.45];
+  }
+
+  const cosmicStars = lazy(h => {
+    const rand = h.seeded(9191);
+    const stars = [];
+    for (let k = 0; k < 40; k += 1) {
+      const x = Math.floor(rand() * W);
+      const y = 2 + Math.floor(rand() * 76);
+      if (Math.abs(x - 160) < 46 && y > 24 && y < 74) continue;
+      stars.push({ x, y, k, bright: rand() < 0.3 });
+    }
+    return stars;
+  });
+
+  // Little floating screens tuned to the other fighters' home stages.
+  const COSMIC_SCREENS = [[62, 50], [242, 46], [20, 40], [286, 54]];
+
+  function channel(ctx, h, ch, x, y, now) {
+    const R = painter(ctx, h);
+    const blink = Math.floor(now / 300) % 2;
+    if (ch === 0) { // Neon District
+      R(x, y, 16, 7, "#3a1a5a");
+      R(x, y + 7, 16, 5, "#ff7a5a");
+      R(x + 1, y + 5, 3, 7, "#120a1a");
+      R(x + 5, y + 2, 4, 10, "#120a1a");
+      R(x + 11, y + 6, 4, 6, "#120a1a");
+      R(x + 6, y + 4 + blink * 2, 1, 1, "#ff5fc8");
+      R(x + 2, y + 7, 1, 1, "#5af0ff");
+    } else if (ch === 1) { // Data Center
+      R(x, y, 16, 12, "#06140e");
+      [1, 6, 11].forEach(dx => {
+        R(x + dx, y + 1, 4, 11, "#1a2a24");
+        for (let dy = 2; dy < 11; dy += 3) R(x + dx + 1 + ((dy + blink) % 2), y + dy, 1, 1, "#3aff6a");
+      });
+    } else if (ch === 2) { // Macalanger Gym
+      R(x, y, 16, 12, "#3a2418");
+      R(x, y + 9, 16, 3, "#6a4428");
+      R(x, y + 4, 16, 1, "#e83a3a");
+      R(x, y + 7, 16, 1, "#f0f0f0");
+      R(x + 11, y, 1, 2, "#888888");
+      R(x + 10, y + 2 + blink, 3, 6, "#a02a2a");
+    } else if (ch === 3) { // Lab 7, bull-shaped hole included
+      R(x, y, 16, 12, "#c8d4d8");
+      R(x, y + 10, 16, 2, "#8a989c");
+      R(x + 5, y + 4, 6, 6, "#1a1a1a");
+      R(x + 4, y + 3, 1, 2, "#1a1a1a");
+      R(x + 11, y + 3, 1, 2, "#1a1a1a");
+    } else if (ch === 4) { // Hidden Dojo
+      R(x, y, 16, 12, "#1a1028");
+      h.disc(ctx, x + 11, y + 4, 2, "#f0e8d0");
+      R(x, y + 10, 16, 2, "#3a2418");
+      [[2, 3], [4, 6], [7, 2], [3, 8]].forEach(([dx, dy]) => R(x + dx, y + dy + blink, 1, 1, "#ffa8c8"));
+    } else if (ch === 5) { // Night Safari
+      R(x, y, 16, 12, "#0a1813");
+      h.disc(ctx, x + 8, y + 4, 2, "#e4ecc4");
+      R(x, y + 9, 16, 3, "#1b2f17");
+      R(x + 3, y + 8, 1, 1, blink ? "#ffe85a" : "#0a1813");
+      R(x + 5, y + 8, 1, 1, blink ? "#ffe85a" : "#0a1813");
+    } else { // Fruit Aisle 7
+      R(x, y, 16, 12, "#c4d2bc");
+      R(x, y, 16, 2, "#2f8a46");
+      R(x, y + 9, 16, 3, "#a3ad9b");
+      h.disc(ctx, x + 8, y + 6 - blink, 3, "#e8701c");
+      R(x + 7, y + 5 - blink, 1, 1, "#4aa0ff");
+      R(x + 9, y + 5 - blink, 1, 1, "#4aa0ff");
+    }
+  }
+
+  const prophet = {
+    name: "Cosmic Throne",
+    build(ctx, h) {
+      const R = painter(ctx, h);
+      const rand = h.seeded(4242);
+
+      // Deep space and nebula bands.
+      bands(ctx, h, [[0, "#04020c"], [18, "#080418"], [36, "#0d0624"], [54, "#130830"], [70, "#190a3a"]], 0, 84);
+      haze(ctx, h, 50, 54, 74, 16, "#1c0a34", 0.5);
+      haze(ctx, h, 60, 50, 44, 8, "#2a0e44", 0.3);
+      haze(ctx, h, 268, 30, 66, 14, "#0a1838", 0.5);
+      haze(ctx, h, 258, 32, 40, 7, "#0f2648", 0.3);
+      haze(ctx, h, 160, 66, 150, 6, "#200c3a", 0.6);
+      // Softer glow behind each fighter so dark silhouettes (his galaxy skin) still read.
+      haze(ctx, h, 98, 56, 46, 26, "#26103e", 0.6);
+      haze(ctx, h, 98, 58, 30, 18, "#341656", 0.5);
+      haze(ctx, h, 222, 54, 50, 28, "#10284c", 0.6);
+      haze(ctx, h, 222, 56, 34, 20, "#173a66", 0.5);
+      haze(ctx, h, 222, 58, 20, 12, "#1e4878", 0.4);
+      for (let i = 0; i < 120; i += 1) {
+        const x = Math.floor(rand() * W);
+        const y = Math.floor(rand() * 80);
+        const roll = rand();
+        R(x, y, 1, 1, roll < 0.15 ? "#fff0fa" : roll < 0.5 ? "#8a7ab8" : "#3a3060");
+      }
+
+      // Planets: a huge dark one off the corner, a ringed giant and a red dwarf.
+      h.disc(ctx, 6, 8, 22, "#4a2a6a");
+      h.disc(ctx, 3, 5, 21, "#140a24");
+      for (let x = -9; x <= 9; x += 1) {
+        const dy = Math.round(2 * Math.sqrt(1 - (x / 9.5) ** 2));
+        if (Math.abs(x) > 5) R(72 + x, 33 - dy, 1, 1, "#a8884a");
+      }
+      h.disc(ctx, 72, 33, 6, "#1a4a6a");
+      h.disc(ctx, 71, 32, 5, "#3a90b0");
+      R(67, 31, 9, 1, "#5ab0c8");
+      R(66, 34, 11, 1, "#2a6a8a");
+      R(69, 29, 2, 1, "#a8e0f0");
+      for (let x = -9; x <= 9; x += 1) {
+        const dy = Math.round(2 * Math.sqrt(1 - (x / 9.5) ** 2));
+        R(72 + x, 33 + dy, 1, 1, "#e8c87a");
+      }
+      h.disc(ctx, 252, 28, 4, "#5a1a2a");
+      h.disc(ctx, 251, 27, 3, "#d0503a");
+      R(250, 26, 1, 1, "#ffb09a");
+      h.disc(ctx, 304, 72, 8, "#ff5fc8");
+      h.disc(ctx, 306, 71, 8, "#190a3a");
+
+      // The swirling galaxy behind the throne.
+      haze(ctx, h, GALAXY.x, GALAXY.y, 44, 13, "#2a1248", 0.4);
+      haze(ctx, h, GALAXY.x, GALAXY.y, 28, 8, "#4a1a70", 0.5);
+      haze(ctx, h, GALAXY.x, GALAXY.y, 12, 4, "#8a3aa0", 0.5);
+      [0, 1].forEach(arm => {
+        for (let i = 0; i <= 80; i += 1) {
+          const s = i / 80;
+          const [x, y] = galaxyPoint(arm, s, 0);
+          const color = s < 0.2 ? "#ffd6f4" : s < 0.45 ? "#ff8ad8" : s < 0.7 ? "#b04ac0" : "#6a2a9a";
+          R(x, y, s < 0.6 ? 2 : 1, 1, color);
+          if (s > 0.1) R(x, y + 1, 1, 1, s < 0.5 ? "#b04ac0" : "#4a2080");
+          if (rand() < 0.7) R(x + Math.round((rand() - 0.5) * 4), y + Math.round((rand() - 0.5) * 2), 1, 1, s < 0.5 ? "#c060d0" : "#4a2080");
+        }
+      });
+      h.disc(ctx, GALAXY.x, GALAXY.y, 4, "#ff8ad8");
+      h.disc(ctx, GALAXY.x, GALAXY.y, 2, "#fff0fa");
+
+      // Floating island with the (currently vacant) throne.
+      R(138, 70, 44, 3, "#5a4a72");
+      R(138, 70, 44, 1, "#9a88c0");
+      for (let i = 0; i < 9; i += 1) R(140 + i * 2, 73 + i, 40 - i * 4, 1, i % 2 ? "#2e2240" : "#261c36");
+      R(141, 67, 2, 3, "#ff5fc8");
+      R(141, 66, 1, 1, "#ffc0ec");
+      R(178, 68, 2, 2, "#ff5fc8");
+      const gold = "#e8b84a";
+      R(150, 47, 20, 15, "#2a0f4a");
+      R(151, 48, 18, 14, "#4a1a7a");
+      R(150, 47, 1, 15, gold);
+      R(169, 47, 1, 15, gold);
+      R(150, 47, 20, 1, gold);
+      R(150, 43, 2, 4, gold);
+      R(168, 43, 2, 4, gold);
+      R(159, 41, 2, 6, gold);
+      R(155, 45, 1, 2, gold);
+      R(164, 45, 1, 2, gold);
+      R(158, 50, 4, 4, "#ff5fc8");
+      R(158, 50, 1, 1, "#ffd0f0");
+      R(146, 57, 5, 6, "#3a1460");
+      R(169, 57, 5, 6, "#3a1460");
+      R(146, 57, 5, 1, gold);
+      R(169, 57, 5, 1, gold);
+      R(148, 62, 24, 4, "#3a1460");
+      R(148, 62, 24, 1, gold);
+      R(149, 66, 3, 4, "#2a0f4a");
+      R(168, 66, 3, 4, "#2a0f4a");
+      // A note on the seat: he will be right back.
+      R(154, 55, 13, 7, "#f0e6c8");
+      R(154, 61, 13, 1, "#a8987a");
+      h.text(ctx, "BRB", 155, 56, () => "#8a1a5a");
+
+      // The floating rock platform the fight happens on.
+      R(0, 82, W, 1, "#b0a0e0");
+      bands(ctx, h, [[83, "#4a3c62"], [90, "#41355a"], [100, "#3a2f52"], [114, "#34294a"], [128, "#2e2442"]], 83, H);
+      seams(ctx, h, 84, 34, 10, "#2a2038");
+      [89, 98, 111, 128].forEach(y => {
+        R(0, y, W, 1, "#2a2038");
+        R(0, y + 1, W, 1, "#54467a");
+      });
+      ring(ctx, h, 160, 106, 30, 6, "#6a2a7a", 64);
+      ring(ctx, h, 160, 106, 22, 4, "#4a2060", 48);
+      for (let i = 0; i < 50; i += 1) R(Math.floor(rand() * W), 84 + Math.floor(rand() * 56), 1, 1, rand() < 0.5 ? "#7a6aa8" : "#221a30");
+      // Glowing cracks.
+      line(ctx, h, 20, 120, 34, 112, "#7a2a7a");
+      line(ctx, h, 34, 112, 46, 116, "#7a2a7a");
+      line(ctx, h, 280, 132, 292, 122, "#7a2a7a");
+      line(ctx, h, 292, 122, 306, 126, "#7a2a7a");
+    },
+    animate(ctx, h, now, excitement) {
+      const R = painter(ctx, h);
+
+      // Twinkling stars: faster when the fight heats up.
+      const rate = 420 - excitement * 260;
+      cosmicStars(h).forEach(star => {
+        const on = hash(Math.floor((now + star.k * 131) / rate) * 17 + star.k) > 0.45;
+        if (!on) return;
+        R(star.x, star.y, 1, 1, "#ffffff");
+        if (star.bright) {
+          R(star.x - 1, star.y, 1, 1, "#a898e0");
+          R(star.x + 1, star.y, 1, 1, "#a898e0");
+          R(star.x, star.y - 1, 1, 1, "#a898e0");
+          R(star.x, star.y + 1, 1, 1, "#a898e0");
+        }
+      });
+
+      // Bright motes sliding along the galaxy arms.
+      const spin = now * 0.0004;
+      [0, 1].forEach(arm => {
+        for (let k = 0; k < 8; k += 1) {
+          const s = ((k / 8) + now * 0.00005) % 1;
+          const [x, y] = galaxyPoint(arm, s, spin * (1 - s));
+          R(x, y, 1, 1, "#fff0fa");
+        }
+      });
+
+      // Core pulse: a ring that grows and speeds up with excitement.
+      const period = 1800 - excitement * 900;
+      const p = (now % period) / period;
+      const reach = 6 + p * 40 * (0.6 + excitement * 0.7);
+      ctx.globalAlpha = (1 - p) * (0.25 + excitement * 0.6);
+      ring(ctx, h, GALAXY.x, GALAXY.y, reach, reach * 0.3, "#ff8ad8", 48);
+      ctx.globalAlpha = 0.25 + excitement * 0.5;
+      h.disc(ctx, GALAXY.x, GALAXY.y, 5 + Math.round(excitement * 3), "#ff8ad8");
+      ctx.globalAlpha = 1;
+      h.disc(ctx, GALAXY.x, GALAXY.y, 2, "#ffffff");
+
+      // Throne gem and floor runes glow with the pulse.
+      const glow = 0.5 + 0.5 * Math.sin(now / 400);
+      R(158, 50, 4, 4, glow > 0.5 || excitement > 0.4 ? "#ffa8e8" : "#ff5fc8");
+      R(158, 50, 1, 1, "#ffffff");
+      ctx.globalAlpha = 0.25 + glow * 0.2 + excitement * 0.5;
+      ring(ctx, h, 160, 106, 30, 6, "#ff5fc8", 64);
+      line(ctx, h, 20, 120, 34, 112, "#ff5fc8");
+      line(ctx, h, 34, 112, 46, 116, "#ff5fc8");
+      line(ctx, h, 280, 132, 292, 122, "#ff5fc8");
+      line(ctx, h, 292, 122, 306, 126, "#ff5fc8");
+      ctx.globalAlpha = 1;
+
+      // A moon orbiting the red planet, hidden while behind it.
+      const a = now / 1400;
+      const mx = 252 + Math.cos(a) * 9;
+      const my = 28 + Math.sin(a) * 3;
+      if (Math.sin(a) > 0 || Math.abs(mx - 252) > 5) R(mx, my, 2, 2, "#c8c0d8");
+
+      // Floating rocks bob, harder when things shake.
+      [[30, 66, 5, 0], [292, 60, 6, 1], [34, 30, 2, 2], [268, 78, 3, 3]].forEach(([x, y, w, k]) => {
+        const by = y + Math.round(Math.sin(now / 900 + k * 1.7) * (1 + excitement * 2));
+        R(x - w, by, w * 2, 3, "#3a2c4a");
+        R(x - w, by, w * 2, 1, "#7a6a9a");
+        R(x - w + 1, by + 3, w * 2 - 2, 2, "#2a1e36");
+        R(x - 1, by + 5, 2, 1, "#2a1e36");
+      });
+
+      // Screens showing the other fighters' worlds; they channel-surf when it gets loud.
+      COSMIC_SCREENS.forEach(([x, baseY], k) => {
+        const y = baseY + Math.round(Math.sin(now / 900 + k * 2));
+        const slot = excitement > 0.5 ? 400 : 3500;
+        const tick = now + k * 1300;
+        ctx.globalAlpha = 0.25 + excitement * 0.3;
+        R(x - 3, y - 3, 22, 18, "#ff5fc8");
+        ctx.globalAlpha = 1;
+        R(x - 2, y - 2, 20, 16, "#1a1028");
+        R(x - 2, y - 2, 20, 1, "#8a6ac0");
+        if (tick % slot < 90) {
+          R(x, y, 16, 12, "#2a2a3a");
+          for (let i = 0; i < 24; i += 1) R(x + Math.floor(hash(tick + i) * 16), y + Math.floor(hash(tick * 3 + i) * 12), 1, 1, "#d0d0e0");
+        } else {
+          channel(ctx, h, (k * 2 + Math.floor(tick / slot)) % 7, x, y, now);
+        }
+        R(x + 7, y + 14, 2, 3, "#3a2c4a");
+      });
+
+      // An occasional shooting star.
+      const st = now % 5200;
+      if (st < 500) {
+        const sx = 230 + st * 0.14;
+        const sy = 6 + st * 0.04;
+        line(ctx, h, sx - 8, sy - 2, sx, sy, "#a898e0");
+        R(sx, sy, 1, 1, "#ffffff");
+      }
+    }
+  };
+
+  return { rook, byte, bobbie, rocky, ninja, zoombie, bananas, prophet };
 })();

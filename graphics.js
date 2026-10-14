@@ -132,7 +132,10 @@ const Arena = (() => {
     fruitCharge: { head: [-2, -44], chest: [-1, -33], hip: [0, -19], fElbow: [0, -32], fHand: [0, -32], bElbow: [0, -32], bHand: [0, -32], fKnee: [11, -10], fFoot: [15, 0], bKnee: [-10, -10], bFoot: [-16, 0] },
     fruitRoll: { head: [13, -29], chest: [5, -27], hip: [-4, -24], fElbow: [0, -30], fHand: [0, -30], bElbow: [0, -30], bHand: [0, -30], fKnee: [10, -12], fFoot: [16, -1], bKnee: [-10, -12], bFoot: [-17, -1] },
     fruitLaunch: { head: [0, -63], chest: [0, -51], hip: [0, -39], fElbow: [0, -50], fHand: [0, -50], bElbow: [0, -50], bHand: [0, -50], fKnee: [12, -31], fFoot: [17, -23], bKnee: [-11, -29], bFoot: [-17, -22] },
-    fruitDizzy: { head: [3, -48], chest: [0, -36], hip: [0, -22], fElbow: [0, -35], fHand: [0, -35], bElbow: [0, -35], bHand: [0, -35], fKnee: [12, -9], fFoot: [17, 0], bKnee: [-8, -12], bFoot: [-14, 0] }
+    fruitDizzy: { head: [3, -48], chest: [0, -36], hip: [0, -22], fElbow: [0, -35], fHand: [0, -35], bElbow: [0, -35], bHand: [0, -35], fKnee: [12, -9], fFoot: [17, 0], bKnee: [-8, -12], bFoot: [-14, 0] },
+    palm: { head: [7, -55], chest: [4, -42], hip: [0, -28], fElbow: [18, -45], fHand: [30, -44], bElbow: [-6, -38], bHand: [-10, -44], fKnee: [8, -13], fFoot: [12, 0], bKnee: [-6, -14], bFoot: [-9, -1] },
+    gather: { head: [-1, -57], chest: [-1, -43], hip: [0, -29], fElbow: [7, -55], fHand: [3, -66], bElbow: [-8, -55], bHand: [-4, -66], fKnee: [6, -14], fFoot: [7, 0], bKnee: [-5, -14], bFoot: [-7, -1] },
+    gaze: { head: [6, -56], chest: [2, -42], hip: [-1, -28], fElbow: [10, -48], fHand: [8, -58], bElbow: [-8, -40], bHand: [-12, -46], fKnee: [7, -13], fFoot: [10, 0], bKnee: [-6, -14], bFoot: [-9, -1] }
   };
   const UPPER_BODY = ["head", "chest", "fElbow", "fHand", "bElbow", "bHand"];
 
@@ -142,9 +145,11 @@ const Arena = (() => {
     rocky: { fElbow: [12, -34], fHand: [16, -40], bElbow: [-4, -32], bHand: [2, -28], fKnee: [10, -14], fFoot: [16, 0], bKnee: [-10, -14], bFoot: [-17, 0] },
     ninja: { head: [4, -52], chest: [2, -39], hip: [-1, -25], fElbow: [12, -36], fHand: [20, -40], bElbow: [-4, -32], bHand: [-8, -26], fKnee: [11, -13], fFoot: [17, 0], bKnee: [-10, -12], bFoot: [-17, 0] },
     zoombie: { head: [9, -53], chest: [4, -41], hip: [-1, -27], fElbow: [11, -31], fHand: [14, -19], bElbow: [1, -31], bHand: [3, -19] },
-    bananas: { head: [0, -43], chest: [0, -33], hip: [0, -19], fKnee: [8, -11], fFoot: [13, 0], bKnee: [-8, -11], bFoot: [-14, 0] }
+    bananas: { head: [0, -43], chest: [0, -33], hip: [0, -19], fKnee: [8, -11], fFoot: [13, 0], bKnee: [-8, -11], bFoot: [-14, 0] },
+    // PROPHET hovers: arms open, legs hanging loose with the toes pointed down.
+    prophet: { head: [2, -56], chest: [1, -42], hip: [0, -28], fElbow: [12, -38], fHand: [19, -35], bElbow: [-8, -39], bHand: [-14, -35], fKnee: [6, -14], fFoot: [7, 0], bKnee: [-4, -14], bFoot: [-7, -1] }
   };
-  const SCALES = { rocky: 1.1, ninja: 0.93, zoombie: 1.06, bananas: 1.05 };
+  const SCALES = { rocky: 1.1, ninja: 0.93, zoombie: 1.06, bananas: 1.05, prophet: 1.04 };
 
   function blend(a, b, t) {
     if (t <= 0) return a;
@@ -191,6 +196,10 @@ const Arena = (() => {
       const feet = Math.sin(now / 55 + seed) > 0 ? 2 : -2;
       return shift(bounced, ["fKnee", "bKnee"], feet, 0);
     }
+    if (id === "prophet") {
+      const drift = Math.round(Math.sin(now / 520 + seed) * 2);
+      return shift(shift(pose, ["fHand", "bHand"], 0, drift), ["fFoot", "bFoot"], Math.round(Math.sin(now / 700 + seed)), 0);
+    }
     return shift(pose, UPPER_BODY, 0, Math.sin(now / 280 + seed) > 0 ? 1 : 0);
   }
 
@@ -199,6 +208,7 @@ const Arena = (() => {
     if (id === "rocky") return POSES.fortress;
     if (id === "ninja") return shift(POSES.flourish, UPPER_BODY, Math.round(Math.sin(now / 60)), 0);
     if (id === "zoombie") return Math.floor(now / 320) % 2 ? POSES.dance : POSES.dance2;
+    if (id === "prophet") return shift(POSES.gather, ["fHand", "bHand"], 0, Math.round(Math.sin(now / 200) * 2));
     if (id === "bananas") {
       const bounce = Math.abs(Math.sin(now / 130)) * 4;
       const pose = shift(STANCES.bananas, ["head", "chest", "hip"], 0, -bounce);
@@ -644,53 +654,158 @@ const Arena = (() => {
     }
   };
 
-  // BANANAS is a round orange with no arms, huge blue eyes and a wobbly leaf.
+  // BANANAS is a stolen supermarket orange: dimpled peel, a stem and leaf,
+  // real cartoon eyes and mouth (the serum made them real) and two thin orange legs.
   const BANANAS = {
-    peel: ["#b83d13", "#f47718", "#ffad32"],
-    gold: ["#d87818", "#ffcc4d"],
-    leg: ["#bd4d18", "#f47718", "#ffad32"],
+    peel: ["#c2410c", "#f77a18", "#ffb45a"],
+    pore: "#d85a10",
+    shine: "#fff1c8",
+    leg: ["#c2410c", "#f77a18", "#ffb45a"],
+    stem: "#5a3a1a",
     leaf: ["#286b2d", "#55a83e", "#9bd34b"],
-    eye: ["#174f9e", "#3286e8", "#8edcff"],
-    white: "#fff7db",
-    blush: "#e94d42",
-    mouth: "#71301e"
+    white: "#ffffff",
+    iris: ["#174f9e", "#3286e8"],
+    pupil: "#141014",
+    brow: "#8a2c0a",
+    lip: "#5a1a0c",
+    mouth: "#a8202a",
+    tongue: "#ff6f7a"
   };
+
+  // Peel dimples, fixed so they don't shimmer from frame to frame.
+  const ORANGE_PORES = [[-11, -6], [-7, -11], [-2, -14], [6, -12], [11, -7], [-14, 0], [-12, 6], [-8, 11], [-1, 14], [7, 12], [12, 7], [14, 1], [-5, 4], [3, 8], [9, -2], [-9, -1]];
 
   const bananasParts = {
     arm() {},
     leg(hip, knee, foot, back) {
+      // Thin orange legs ending in little rounded feet, no shoes.
       const tones = back ? dim(BANANAS.leg) : BANANAS.leg;
-      shaded(hip, knee, 2.8, 2.3, tones);
-      shaded(knee, at(foot, 0, -2), 2.3, 2, tones);
-      shaded(at(foot, -2, -1), at(foot, 3, -1), 3.2, 2.9, back ? dim(BANANAS.gold) : BANANAS.gold);
+      shaded(hip, knee, 2, 1.8, tones);
+      shaded(knee, at(foot, 0, -1.5), 1.8, 1.7, tones);
+      shaded(at(foot, -1, -1.2), at(foot, 2.5, -1.2), 1.9, 1.7, tones);
     },
     torso(j, time) {
       const center = j.chest;
-      shaded(at(center, 0, 1), center, 17.5, 17.5, BANANAS.peel);
-      shaded(at(center, 2, 0), at(center, 2, 0), 13.5, 13.5, BANANAS.gold);
-      shaded(at(center, 2.5, -1), at(center, 2.5, -1), 9.5, 9.5, BANANAS.peel);
-      [[-8, -5], [-12, 1], [-5, 7], [7, 8], [12, 2], [9, -8], [-2, -12]].forEach(([x, y], index) => {
-        px(center, x, y, index % 2 ? BANANAS.gold[0] : BANANAS.peel[0]);
-      });
-      px(center, -10, 4, BANANAS.blush, 3);
-      px(center, 8, 4, BANANAS.blush, 3);
+      disc(sg, center[0], center[1], 18, BANANAS.peel[0]);
+      disc(sg, center[0] + 0.6, center[1] - 0.8, 16, BANANAS.peel[1]);
+      // Light from the upper front: one soft patch and a glossy glint.
+      disc(sg, center[0] + 6, center[1] - 8, 5, BANANAS.peel[2]);
+      px(center, 7, -11, BANANAS.shine, 2);
+      px(center, 9, -10, BANANAS.shine);
+      ORANGE_PORES.forEach(([x, y]) => px(center, x, y, BANANAS.pore));
+      // Stem and a leaf that flaps when he moves.
       const wobble = Math.round(Math.sin(time / 90) * 2);
-      line(at(center, 0, -16), at(center, wobble, -22), BANANAS.leaf[0]);
-      shaded(at(center, wobble, -22), at(center, wobble + 5, -24), 3, 1.5, BANANAS.leaf);
+      px(center, 0, -18, BANANAS.stem, 2);
+      px(center, 0, -19, BANANAS.stem, 2);
+      shaded(at(center, 1, -19), at(center, 6 + wobble, -23), 2.6, 1.4, BANANAS.leaf);
     },
     head(j, time) {
       const h = j.head;
-      const wideEyes = Math.floor(time / 1900) % 5 === 0;
-      const eyeSize = wideEyes ? 4 : 3;
-      [-4, 4].forEach((dx, index) => {
-        const eye = at(h, dx, -1);
-        shaded(eye, eye, eyeSize, eyeSize, ["#c94718", BANANAS.white]);
-        shaded(at(eye, index ? 1 : -1, 0), at(eye, index ? 1 : -1, 0), 2.3, 2.3, BANANAS.eye);
-        px(eye, index ? 1 : -1, -1, BANANAS.eye[2]);
-        px(eye, index ? 1 : -1, 0, "#10294f");
+      // Two eyes with blue irises, looking ahead, that blink now and then.
+      const blink = time % 3400 < 130;
+      [-3, 5].forEach(dx => {
+        const eye = at(h, dx, -2);
+        px(eye, -2, -4, BANANAS.brow, 4);
+        if (blink) {
+          px(eye, -2, 0, BANANAS.lip, 4);
+          return;
+        }
+        for (let dy = -2; dy <= 2; dy += 1) px(eye, Math.abs(dy) === 2 ? -1 : -2, dy, BANANAS.white, Math.abs(dy) === 2 ? 3 : 4);
+        px(eye, 0, -1, BANANAS.iris[1], 2);
+        px(eye, 0, 0, BANANAS.iris[0]);
+        px(eye, 1, 0, BANANAS.pupil);
+        px(eye, 0, 1, BANANAS.iris[0], 2);
+        px(eye, 0, -1, BANANAS.white);
       });
-      px(h, -1, 5, BANANAS.mouth, 3);
-      px(h, 0, 6, BANANAS.mouth);
+      // A wide, open smile.
+      const mouth = at(h, 1, 5);
+      px(mouth, -4, -1, BANANAS.lip);
+      px(mouth, 4, -1, BANANAS.lip);
+      px(mouth, -3, 0, BANANAS.lip, 7);
+      px(mouth, -2, 1, BANANAS.mouth, 5);
+      px(mouth, -1, 2, BANANAS.tongue, 3);
+      px(mouth, -2, 2, BANANAS.lip);
+      px(mouth, 2, 2, BANANAS.lip);
+      px(mouth, -1, 3, BANANAS.lip, 3);
+    }
+  };
+
+  // PROPHET: a floating man whose skin is a living galaxy, with glowing eyes,
+  // a crown of stars and gold cosmic bands.
+  const PROPHET = {
+    void: ["#120a2e", "#2e1a6b", "#5a3bb0"],
+    nebula: ["#ff5fc8", "#5fe0ff"],
+    star: "#ffffff",
+    gold: ["#a8741a", "#f1c95a", "#fff0a0"],
+    eye: ["#5fe0ff", "#e8fdff"]
+  };
+
+  // Twinkling stars across a limb from `a` to `b`, offset by `seed`.
+  function starfield(a, b, count, seed, time) {
+    for (let k = 0; k < count; k += 1) {
+      const t = ((k * 0.618 + seed) % 1);
+      const side = ((k * 37 + seed * 10) % 5) - 2;
+      const point = mix(a, b, t);
+      const twinkle = Math.floor(time / 180 + k * 1.7 + seed * 7) % 4;
+      if (twinkle === 0) continue;
+      px(point, side * 0.6, (k % 3) - 1, twinkle === 3 ? PROPHET.nebula[k % 2] : PROPHET.star);
+    }
+  }
+
+  const prophetParts = {
+    behind(j, time) {
+      // A slow ring of orbiting stars behind the head.
+      const h = j.head;
+      for (let k = 0; k < 10; k += 1) {
+        const angle = time / 900 + (k * Math.PI) / 5;
+        const point = at(h, -1 + Math.cos(angle) * 10, -1 + Math.sin(angle) * 4);
+        px(point, 0, 0, k % 3 ? PROPHET.gold[1] : PROPHET.nebula[k % 2]);
+      }
+    },
+    arm(shoulder, elbow, hand, back) {
+      const skin = back ? dim(PROPHET.void) : PROPHET.void;
+      shaded(shoulder, elbow, 3.5, 2.8, skin);
+      shaded(elbow, hand, 2.8, 2.4, skin);
+      shaded(mix(elbow, hand, 0.62), mix(elbow, hand, 0.8), 2.7, 2.6, back ? dim(PROPHET.gold) : PROPHET.gold);
+      shaded(hand, hand, 2.8, 2.8, skin);
+      if (!back) starfield(shoulder, hand, 6, 0.3, performance.now());
+    },
+    leg(hip, knee, foot, back) {
+      const skin = back ? dim(PROPHET.void) : PROPHET.void;
+      shaded(hip, knee, 4.4, 3.5, skin);
+      shaded(knee, foot, 3.5, 2.2, skin);
+      if (!back) starfield(hip, foot, 7, 0.7, performance.now());
+    },
+    torso(j, time) {
+      shaded(j.hip, j.neck, 6, 7.4, PROPHET.void);
+      // Nebula streaks swirling across the chest.
+      line(along(j, j.hip, -4, 4), along(j, j.chest, 4, 3), PROPHET.nebula[0]);
+      line(along(j, j.hip, -2, 8), along(j, j.neck, 5, -2), PROPHET.nebula[1]);
+      starfield(j.hip, j.neck, 14, 0.11, time);
+      const core = along(j, j.chest, 2, 2);
+      px(core, 0, 0, Math.floor(time / 240) % 2 ? PROPHET.star : PROPHET.nebula[1]);
+      // Gold sash and belt.
+      shaded(along(j, j.hip, 0, 1), along(j, j.hip, 0, 3), 6.4, 6.4, PROPHET.gold);
+      line(along(j, j.hip, -5, 3), along(j, j.neck, 5, -1), PROPHET.gold[2]);
+    },
+    head(j, time) {
+      const h = j.head;
+      shaded(at(j.neck, 0, 1), at(h, 0, 4), 2.9, 2.6, PROPHET.void);
+      shaded(at(h, 0, -0.5), at(h, 0.5, 1.5), 5.4, 4.6, PROPHET.void);
+      starfield(at(h, -4, -2), at(h, 3, 2), 4, 0.5, time);
+      // Gold circlet with a crown of three stars.
+      line(at(h, -5, -3), at(h, 4, -4), PROPHET.gold[1]);
+      [[-3, -8], [0, -10], [3, -8]].forEach(([dx, dy], k) => {
+        const blink = Math.floor(time / 300 + k) % 3 === 0;
+        px(h, dx, dy, blink ? PROPHET.star : PROPHET.gold[2]);
+        px(h, dx, dy + 1, PROPHET.gold[1]);
+      });
+      // Bright eyes that leave a little glow beside them.
+      px(h, 1, -1, PROPHET.eye[1], 2);
+      px(h, 4, -1, PROPHET.eye[1], 2);
+      px(h, 3, 0, PROPHET.eye[0]);
+      px(h, 6, -1, PROPHET.eye[0]);
+      px(h, 2, 3, PROPHET.void[0], 3);
     }
   };
 
@@ -706,7 +821,8 @@ const Arena = (() => {
     rocky: { parts: rockyParts, palette: paletteOf(ROCKY) },
     ninja: { parts: ninjaParts, palette: paletteOf(NINJA) },
     zoombie: { parts: zoombieParts, palette: paletteOf(ZOO) },
-    bananas: { parts: bananasParts, palette: paletteOf(BANANAS) }
+    bananas: { parts: bananasParts, palette: paletteOf(BANANAS) },
+    prophet: { parts: prophetParts, palette: paletteOf(PROPHET) }
   };
 
   // Snaps the anti-aliased drawing to the palette and adds a 1px outline.
@@ -802,6 +918,10 @@ const Arena = (() => {
     orangeBounce: {},
     peelOut: { lead: 250, melee: "fruitRoll", windup: "fruitCharge", reach: 31, jerky: true },
     fruitNuclear: { lead: 540, fruitNuclear: true },
+    novaPalm: { lead: 180, melee: "palm", windup: "charge", reach: 30 },
+    wormhole: {},
+    prophecy: { lead: 330, projectile: "beam" },
+    bigBang: { lead: 620, bigBang: true },
     vanish: { lead: 560, vanish: true, reach: 31 },
     block: {},
     dash: {},
@@ -876,6 +996,11 @@ const Arena = (() => {
       if (e >= H + 130) pose = shift(pose, ["head", "chest"], Math.round(Math.sin(e / 30) * 3), 0);
     } else if (anim.projectile === "stampede") {
       pose = blend(idle, POSES.roar, phase(e, start, start + 200) * (1 - phase(e, H + 250, H + 500)));
+    } else if (anim.projectile === "beam") {
+      pose = blend(idle, POSES.gaze, phase(e, start, start + 160) * (1 - phase(e, H + 200, H + 420)));
+    } else if (anim.bigBang) {
+      pose = blend(idle, POSES.charge, phase(e, start, start + 260));
+      pose = blend(pose, POSES.release, phase(e, H - 120, H - 40) * (1 - phase(e, H + 260, H + 480)));
     } else if (anim.projectile === "shuriken") {
       const release = start + anim.lead * 0.55;
       pose = blend(blend(idle, POSES.charge, phase(e, start, release - 60)), POSES.throw, phase(e, release - 60, release));
@@ -924,6 +1049,11 @@ const Arena = (() => {
       pose = blend(idle, POSES.fruitLaunch, t);
       frame.lift = Math.round(27 * Math.sin(Math.PI * clamp01((e - (H - 220)) / 440)));
       if (t > 0.1 && t < 0.95) frame.ghosts = 2;
+    } else if (move.anim === "wormhole") {
+      // Sinks into a portal before the hit and comes back out after it.
+      const gone = phase(e, H - 160, H - 70) * (1 - phase(e, H + 160, H + 260));
+      frame.alpha = 1 - gone;
+      pose = blend(idle, POSES.crouch, gone);
     } else if (move.anim === "fortress") {
       pose = blend(idle, POSES.fortress, phase(e, H - 220, H - 90) * (1 - phase(e, H + 420, H + 640)));
     } else if (move.anim === "smoke") {
@@ -945,6 +1075,14 @@ const Arena = (() => {
     if (guard && guard !== "shuffle" && guard !== "vanish") ({ pose, offset } = guardMotion(frame, mine.move, c, idle));
     if (guard === "vanish" && theirs.result === "evaded" && e >= H - 70 && e < H + 200) frame.alpha = 0;
     if (guard === "shuffle" && theirs.result === "evaded") offset -= 12 * phase(e, H - 60, H) * (1 - phase(e, H + 200, H + 400));
+    if (mine.move.anim === "wormhole" && theirs.result === "evaded" && theirs.counter > 0) {
+      const counter = phase(e, H + 160, H + 220) * (1 - phase(e, H + 380, H + 560));
+      if (counter > 0) {
+        frame.alpha = 1;
+        pose = blend(pose, POSES.palm, counter);
+        offset += (plan.gap - 30 * frame.scale - 12) * counter;
+      }
+    }
     if (mine.move.anim === "dash" && theirs.result === "evaded" && theirs.counter > 0) {
       const counter = phase(e, H + 60, H + 140) * (1 - phase(e, H + 260, H + 450));
       pose = blend(pose, POSES.attack, counter);
@@ -973,7 +1111,9 @@ const Arena = (() => {
     const baseX = side === "player" ? PLAYER_X : BOT_X;
     const scale = SCALES[id] || 1;
     const idle = idlePose(id, now, side);
-    const frame = { side, id, dir, x: baseX, lift: 0, pose: idle, flash: false, alpha: 1, ghosts: 0, scale };
+    // PROPHET never touches the floor, until he is knocked out of the sky.
+    const hover = id === "prophet" ? 9 + Math.round(Math.sin(now / 340 + (side === "bot" ? 2 : 0)) * 2) : 0;
+    const frame = { side, id, dir, x: baseX, lift: hover, pose: idle, flash: false, alpha: 1, ghosts: 0, scale };
     if (!animation) return frame;
 
     const mine = animation.report[side];
@@ -989,6 +1129,7 @@ const Arena = (() => {
 
     if (dead) {
       const fall = phase(elapsed, plan.koAt, plan.koAt + 300 * SLOW);
+      frame.lift -= Math.round(hover * fall);
       pose = blend(pose, POSES.ko, fall);
       offset -= 16 * fall;
       frame.alpha = Math.max(frame.alpha, fall);
@@ -1108,7 +1249,59 @@ const Arena = (() => {
     disc(g, x, y, Math.max(1, Math.round([3, 2, 1][frame] * size)), colors[2]);
   }
 
+  // Horizontal speed streaks trailing behind a fighter.
+  function speedLines(x, y, dir, color, count = 4) {
+    for (let k = 0; k < count; k += 1) {
+      const length = 5 + ((k * 5) % 7);
+      const back = x - dir * (4 + (k % 2) * 5);
+      rect(g, dir > 0 ? back - length : back, y + k * 5, length, 1, color);
+    }
+  }
+
+  // A crescent of pixels: the swish of a fist, kick or swing.
+  function swoosh(cx, cy, radius, from, to, dir, colors) {
+    for (let a = from; a <= to; a += 0.12) {
+      const x = cx + dir * Math.cos(a) * radius;
+      const y = cy + Math.sin(a) * radius;
+      rect(g, x, y, 1, 1, colors[0]);
+      rect(g, x - dir, y, 1, 1, colors[1]);
+    }
+  }
+
+  // Droplets or chips flung out from a point, falling under gravity.
+  function droplets(x, y, age, colors, count = 8, spread = 1) {
+    const t = age / 16;
+    for (let k = 0; k < count; k += 1) {
+      const vx = Math.cos(k * 2.39 + 0.5) * (0.8 + (k % 3) * 0.35) * spread;
+      const vy = -1.1 - (k % 4) * 0.3;
+      rect(g, x + vx * t, y + vy * t + 0.06 * t * t, k % 3 ? 1 : 2, 1, colors[k % colors.length]);
+    }
+  }
+
+  // A swirling oval portal, pink and cyan dots spinning around a dark core.
+  function portal(x, y, radius, spin) {
+    g.globalAlpha = 0.8;
+    for (let dy = -1; dy <= 1; dy += 1) rect(g, x - radius + 2, y + dy, radius * 2 - 3, 1, "#120a2e");
+    g.globalAlpha = 1;
+    for (let k = 0; k < 18; k += 1) {
+      const angle = spin + (k * Math.PI) / 9;
+      rect(g, x + Math.cos(angle) * radius, y + Math.sin(angle) * radius * 0.35, k % 3 ? 2 : 1, 1, ["#ff5fc8", "#5fe0ff", "#ffffff"][k % 3]);
+    }
+  }
+
+  // Concentric shock rings expanding from a point.
+  function shockRings(x, y, age, colors, squash = 0.5) {
+    colors.forEach((color, ring) => {
+      const radius = age * 0.12 - ring * 6;
+      if (radius <= 0) return;
+      for (let a = 0; a < Math.PI * 2; a += 0.09) rect(g, x + Math.cos(a) * radius, y + Math.sin(a) * radius * squash, 2, 1, color);
+    });
+  }
+
   const HIT_COLORS = ["#ff7a2a", "#ffe36a", "#ffffff"];
+  const NEBULA_COLORS = ["#ff5fc8", "#5fe0ff", "#ffffff"];
+  const JUICE_COLORS = ["#ff8a1e", "#ffcc4d", "#fff2a8"];
+  const SLIME_COLORS = ["#7fa83a", "#b8e05a", "#3e6a2a"];
   const GUARD_COLORS = ["#3a8cff", "#9fe8ff", "#ffffff"];
 
   // Effects for `side`'s move. In "act" mode the move is being performed in its
@@ -1137,6 +1330,37 @@ const Arena = (() => {
         const angle = k * 0.7;
         const radius = 4 + Math.min(14, age / 18) + (k % 3) * 2;
         puff(me.x + Math.cos(angle) * radius, floorY - 26 + Math.sin(angle) * radius * 0.8 - age / 60, 4 + (k % 3), Math.min(0.9, 1.1 - age / 520));
+      }
+    }
+    if (mine.move.guard === "block" && e >= H - 90 && e < H + 360) {
+      // An energy guard flickers up in front of the raised arms.
+      const x = me.x + dir * 16;
+      const top = floorY - me.lift - 58 * me.scale;
+      g.globalAlpha = 0.45 + (Math.floor(e / 70) % 2) * 0.25;
+      for (let y = 0; y < 30; y += 1) rect(g, x + Math.round(Math.abs(y - 15) / 6) * -dir, top + y, 2, 1, y % 4 ? "#3a8cff" : "#9fe8ff");
+      g.globalAlpha = 1;
+      if (e >= H - 90 && e < H - 30) drawSpark(x, top + 4, e - (H - 90), GUARD_COLORS, 0.5);
+    }
+    if (mine.move.anim === "dash" && e >= H - 140 && e < H + 260) {
+      speedLines(me.x, floorY - me.lift - 40 * me.scale, dir, "#e8e4f0");
+      const age = e - (H - 140);
+      for (let k = 0; k < 3; k += 1) puff(me.x + dir * (6 - k * 6), floorY - 2 - k, 2 + (k % 2), Math.max(0, 0.5 - age / 700));
+    }
+    if (mine.move.anim === "orangeBounce" && e >= H - 220 && e < H + 420) {
+      const age = e - (H - 220);
+      // Launch and landing dust, plus juice shaken off at the top of the bounce.
+      if (age < 260) for (let k = 0; k < 4; k += 1) puff(me.x + (k - 1.5) * 7, floorY - 2, 2 + (k % 2), 0.55 - age / 520);
+      if (e >= H - 40 && e < H + 260) droplets(me.x, floorY - me.lift - 30, e - (H - 40), JUICE_COLORS, 8);
+      if (e >= H + 200) shockRings(me.x, floorY - 1, (e - (H + 200)) * 2, ["#ffcc4d", "#ff8a1e"], 0.25);
+    }
+    if (mine.move.anim === "wormhole" && e >= H - 220 && e < H + 320) {
+      const spin = e / 60;
+      const grow = phase(e, H - 220, H - 120) * (1 - phase(e, H + 200, H + 320));
+      portal(me.x, floorY - me.lift - 8, Math.round(14 * grow), spin);
+      // Countering: a second portal opens right beside the attacker.
+      if (mode === "react" && theirs.counter > 0 && e >= H + 100) {
+        const other = frames[opposite(side)];
+        portal(other.x - dir * 14, floorY - 30, Math.round(10 * phase(e, H + 100, H + 170)), -spin);
       }
     }
     if (mine.move.anim === "fortress" && e >= H - 90 && e < H + 420) {
@@ -1255,6 +1479,118 @@ const Arena = (() => {
       if (e > H) text(g, "!", target.x - 1, floorY - 74 * target.scale, () => "#ffe36a", 2);
     }
 
+    // Every melee strike: speed lines on the lunge and a swish ahead of the blow.
+    const color = Rules.character(me.id).color;
+    if (anim.melee && e >= H - 130 && e < H + 40) speedLines(me.x, floorY - me.lift - 44 * me.scale, dir, color);
+    if ((anim.melee === "attack" || anim.melee === "palm") && e >= H - 70 && e < H + 50) {
+      swoosh(me.x + dir * 14, chestY - 8, 13, -0.9, 0.5, dir, ["#ffffff", color]);
+    }
+    if (mine.move.anim === "combo" && e >= H && e < H + 260) {
+      const jab = Math.floor((e - H) / 100);
+      swoosh(me.x + dir * 16, chestY - 8 + jab * 3, 11, -0.6, 0.6, dir, ["#ff8a6a", "#e0302a"]);
+    }
+    if (mine.move.anim === "punch" && me.id === "rocky" && e >= H - 40 && e < H + 80) {
+      // Steel Fist: a hard metallic glint at the knuckles.
+      const glint = me.x + dir * 30;
+      rect(g, glint - 3, chestY - 8, 7, 1, "#c8f4ff");
+      rect(g, glint, chestY - 11, 1, 7, "#c8f4ff");
+      rect(g, glint, chestY - 8, 1, 1, "#ffffff");
+    }
+    if (mine.move.anim === "uppercut" && e >= start && e < H) {
+      const age = e - start;
+      for (let k = 0; k < 4; k += 1) puff(me.x + (k - 1.5) * 6, floorY - 2, 2 + (k % 2), Math.max(0, 0.5 - age / 900));
+    }
+    if (mine.move.anim === "swing" && e >= H - 90 && e < H + 80) {
+      swoosh(me.x + dir * 10, chestY - 4, 22, -1.2, 1, dir, ["#b8e05a", "#3e6a2a"]);
+    }
+    if (mine.move.anim === "swing" && e >= H && e < H + 400 && LANDED.includes(mine.result)) {
+      droplets(toX - dir * 8, chestY - 6, e - H, SLIME_COLORS, 7, 0.8);
+    }
+    if (mine.move.anim === "shuffle" && e >= start && e < H + 300) {
+      // Undead stink: wavy green lines rising off the lurching body.
+      for (let k = 0; k < 3; k += 1) {
+        const rise = ((e - start) / 12 + k * 9) % 26;
+        const x = me.x - dir * (6 - k * 6) + Math.round(Math.sin((e + k * 90) / 70) * 2);
+        rect(g, x, floorY - 56 * me.scale - rise, 1, 2, k % 2 ? "#7fa83a" : "#b8e05a");
+      }
+      if (e < H) puff(me.x - dir * 8, floorY - 2, 2, 0.35);
+    }
+    if (mine.move.anim === "citrusKick") {
+      // A spinning juice arc on the wind-up, then a splash on contact.
+      if (e >= start && e < H) swoosh(me.x, floorY - me.lift - 34, 20, -2.4 + phase(e, start, H) * 3, -1.2 + phase(e, start, H) * 3, dir, ["#ffcc4d", "#ff8a1e"]);
+      if (e >= H && e < H + 420 && LANDED.includes(mine.result)) droplets(toX - dir * 10, floorY - 50, e - H, JUICE_COLORS, 10);
+    }
+    if (mine.move.anim === "peelOut" && e >= start && e < H + 220) {
+      // Curls of peel spun off the roll.
+      for (let k = 0; k < 5; k += 1) {
+        const age = (e - start - k * 40) / 10;
+        if (age < 0) continue;
+        const x = me.x - dir * (6 + age * 1.4);
+        const y = floorY - 10 - Math.abs(Math.sin(age / 3 + k)) * 10 + age * 0.4;
+        rect(g, x, y, 2, 1, k % 2 ? "#f77a18" : "#fff1c8");
+        rect(g, x + dir, y + 1, 1, 1, "#c2410c");
+      }
+      if (e < H) puff(me.x - dir * 10, floorY - 2, 3, 0.35);
+    }
+    if (mine.move.anim === "novaPalm" && e >= start && e < H) {
+      // Stars spiral into the palm before the strike.
+      for (let k = 0; k < 8; k += 1) {
+        const angle = k * 0.8 + e / 50;
+        const radius = 14 * (1 - phase(e, start, H - 40));
+        rect(g, me.x + dir * 20 + Math.cos(angle) * radius, chestY - 6 + Math.sin(angle) * radius * 0.7, 1, 1, NEBULA_COLORS[k % 3]);
+      }
+    }
+    if (mine.move.anim === "prophecy") {
+      const eyes = [me.x + dir * 6, floorY - me.lift - 58 * me.scale];
+      if (e >= start && e < start + 200) shockRings(eyes[0], eyes[1], (e - start) * 1.4, ["#5fe0ff"], 1);
+      if (e >= start + 160 && e < H + 140 && !["evaded", "missed"].includes(mine.result)) {
+        // A beam from the all-seeing eyes straight to the target.
+        const endX = toX - dir * 6;
+        const endY = floorY - 44 * target.scale;
+        const steps = Math.abs(endX - eyes[0]);
+        const reach = Math.min(1, (e - (start + 160)) / Math.max(1, H - start - 160));
+        for (let k = 0; k <= steps * reach; k += 1) {
+          const t = k / steps;
+          const y = eyes[1] + (endY - eyes[1]) * t;
+          rect(g, eyes[0] + dir * k, y - 1, 1, 1, "#ff5fc8");
+          rect(g, eyes[0] + dir * k, y, 1, 1, Math.floor(e / 50) % 2 ? "#ffffff" : "#e8fdff");
+          rect(g, eyes[0] + dir * k, y + 1, 1, 1, "#5fe0ff");
+        }
+      }
+      if (e > H) text(g, "!", target.x - 1, floorY - 68 * target.scale, () => "#5fe0ff", 2);
+    }
+    if (anim.bigBang && e >= start && e < H + 600) {
+      // The galaxy gathers in front of the chest, where the desktop crop keeps it in view.
+      const hands = [me.x + dir * 16, floorY - me.lift - 40 * me.scale];
+      if (e < H - 120) {
+        // A galaxy gathers above the raised hands.
+        const size = Math.round(2 + 9 * phase(e, start, H - 160));
+        disc(g, hands[0], hands[1], size, "#2e1a6b");
+        disc(g, hands[0], hands[1], Math.max(1, size - 3), "#5a3bb0");
+        for (let k = 0; k < 12; k += 1) {
+          const angle = k * 0.52 + e / 40;
+          const radius = size + 2 + (k % 3) * 3;
+          rect(g, hands[0] + Math.cos(angle) * radius, hands[1] + Math.sin(angle) * radius * 0.45, 1, 1, NEBULA_COLORS[k % 3]);
+        }
+        disc(g, hands[0], hands[1], 1, "#ffffff");
+      } else if (e < H) {
+        const t = phase(e, H - 120, H);
+        const x = hands[0] + (toX - hands[0]) * t;
+        const y = hands[1] + (floorY - 40 - hands[1]) * t;
+        disc(g, x, y, 8, "#5a3bb0");
+        disc(g, x, y, 4, "#ff5fc8");
+        disc(g, x, y, 2, "#ffffff");
+      } else {
+        const age = e - H;
+        shockRings(toX, floorY - 36, age * 1.6, ["#ffffff", "#5fe0ff", "#ff5fc8", "#5a3bb0"], 0.8);
+        for (let k = 0; k < 16; k += 1) {
+          const angle = k * 0.39;
+          const radius = age * 0.14 + (k % 4) * 3;
+          rect(g, toX + Math.cos(angle) * radius, floorY - 36 + Math.sin(angle) * radius * 0.8, 2, 1, NEBULA_COLORS[k % 3]);
+        }
+      }
+    }
+
     // Contact.
     const age = e - H;
     if (age >= 0 && age < 420) {
@@ -1268,7 +1604,8 @@ const Arena = (() => {
         const count = multi ? mine.landed : 1;
         for (let k = 0; k < count; k += 1) {
           const local = age - k * spacing;
-          if (local >= 0 && local < 180) drawSpark(contactX + (k % 2) * 3 * dir, contactY + (k - 1) * 4 + (mine.move.anim === "stampede" ? 30 : 0), local, mine.result === "chipped" ? GUARD_COLORS : HIT_COLORS, multi ? 0.75 : 1);
+          const colors = mine.result === "chipped" ? GUARD_COLORS : me.id === "prophet" ? NEBULA_COLORS : HIT_COLORS;
+          if (local >= 0 && local < 180) drawSpark(contactX + (k % 2) * 3 * dir, contactY + (k - 1) * 4 + (mine.move.anim === "stampede" ? 30 : 0), local, colors, multi ? 0.75 : 1);
         }
       }
     }
@@ -1325,14 +1662,16 @@ const Arena = (() => {
     });
   }
 
-  // Safari Senses: the CPU's next move hangs over its head in rotten, dripping letters.
+  // Safari Senses / Prophecy: the CPU's next move hangs between the fighters in
+  // small dripping letters, low enough to stay clear of the HUD at the top.
   function drawReveal(state, frames, now, floorY) {
     const move = Rules.move(state.bot, state.revealed);
     const label = move.name.toUpperCase();
-    const scale = 2;
+    const scale = 1;
     const width = label.length * 4 * scale - scale;
-    const left = Math.round(Math.max(4 + width / 2, Math.min(WIDTH - 4 - width / 2, frames.bot.x)) - width / 2);
-    const top = Math.max(30, Math.round(floorY - 92 * frames.bot.scale));
+    const center = Math.round((frames.player.x + frames.bot.x) / 2);
+    const left = Math.round(Math.max(4 + width / 2, Math.min(WIDTH - 4 - width / 2, center)) - width / 2);
+    const top = Math.round(floorY - 50);
     const wobble = Math.round(Math.sin(now / 260));
     outlinedText("NEXT MOVE", left + width / 2, top - 9, "#c8e85a");
     const rot = row => (row < 1 ? "#d8f07a" : row < 3 ? "#8ab83a" : "#4a6a22");

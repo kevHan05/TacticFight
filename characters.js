@@ -129,6 +129,22 @@ const ROSTER = [
       { id: "peel", name: "Peel Out", damage: 12, guard: "shuffle", risky: true, momentum: true, anim: "peelOut", detail: "12 + 50% EVADE, RISKY", info: "Roll forward for 12 damage with a 50% chance to evade a single-target strike. If it misses, is blocked, or is evaded, you take 1.5x damage next round." },
       { id: "nuclear", name: "FRUIT NUCLEAR!", ultimate: true, damage: 7, hits: 4, area: true, anim: "fruitNuclear", detail: "4x7, CAN'T BE DODGED", info: "Launch into a four-hit ground-slam shockwave for 28 damage and yell, 'BANANAS HAS ARRIVED!' Can't be dodged, and a block only halves it. Unlocks after 3 rounds, then recharges for 3." }
     ]
+  },
+  {
+    id: "prophet",
+    name: "PROPHET",
+    title: "Ruler of the TacticFight Universe",
+    role: "Cosmic overlord",
+    color: "#ff5fc8",
+    hp: 100,
+    voice: "prophetHurt",
+    secret: true,
+    moves: [
+      { id: "nova", name: "Nova Palm", damage: 14, interrupt: true, anim: "novaPalm", detail: "14, INTERRUPTS", info: "A palm strike packed with starlight for 14 damage. If both fighters strike, the opponent's hit is weakened by 30%." },
+      { id: "warp", name: "Wormhole Warp", guard: "dodge", counter: 6, anim: "wormhole", detail: "DODGE + 6 COUNTER", info: "Slip through a wormhole to dodge a single-target strike, then pop out behind them for 6 damage. Area attacks still hit." },
+      { id: "foresight", name: "Prophecy", damage: 8, track: true, cooldown: 2, anim: "prophecy", detail: "8 + READ NEXT MOVE", info: "Fire a beam from the all-seeing eyes for 8 damage and see the opponent's next move. Your next strike can't be evaded. Recharges for 2 rounds." },
+      { id: "bigbang", name: "BIG BANG", ultimate: true, damage: 28, area: true, breaksGuard: true, anim: "bigBang", detail: "28, UNSTOPPABLE", info: "Collapse a galaxy and set it off for 28 damage. Can't be blocked or dodged. Unlocks after 3 rounds, then recharges for 3." }
+    ]
   }
 ];
 

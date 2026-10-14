@@ -500,11 +500,11 @@ They are designed to be visually distinct, mechanically varied, and flexible eno
 
 ## Backstory
 
-Nobody knows where BANANAS came from. He claims he was born when an orange ate a banana in a suspicious fruit salad. Before becoming a fruit warrior, he sat ignored in a supermarket produce section while customers picked everything but him. One night he rolled off the shelf, hit a cart, bounced off cereal and landed in a box of toy sneakers. There he discovered his talent for bouncing. Now he travels in search of fame, adventure and an answer to his name. His official explanation is that "ORANGES" sounded too normal; unofficially, he forgot his original name.
+BANANAS started life as a perfectly ordinary orange in the fruit aisle of a grocery store. A boy stole him, glued on a pair of googly eyes, drew a mouth with a marker, stuck on two little homemade legs and named him after the funniest word he knew. On a school field trip to Lab 7 the boy found a syringe in a glass case marked "DO NOT TOUCH" (it belonged to PROPHET), and injected it straight into the orange. The googly eyes and marker mouth turned into a real face, BANANAS grew to human size, said his first word ("BANANAS!") and ran out of the lab before the teacher finished counting heads. He now travels in search of fame, adventure and the boy, who still owes him a better mouth.
 
 ## Appearance and Personality
 
-BANANAS is a bright, slightly bumpy, almost spherical orange with oversized blue eyes, a tiny expressive mouth, blush marks, two short orange legs and rounded feet. He has no arms. A little green leaf on his head wiggles when he gets excited. His silhouette is round, orange and unmistakable.
+BANANAS is a bright, round, dimpled orange with a stem and a wobbly green leaf, two real cartoon eyes with blue irises and eyebrows (they blink), a wide open smile, and two thin orange legs with little rounded feet (no shoes). He has no arms. His silhouette is round, orange and unmistakable: an orange, not a cinnamon bun.
 
 He is friendly, optimistic, brave and convinced he is the greatest fruit hero alive. He announces his moves, celebrates tiny victories and refers to himself in the third person. He acts before thinking, but will throw himself into danger to help a friend.
 
@@ -532,4 +532,29 @@ He is mobile, difficult to predict and can disrupt opponents with a wide ultimat
 
 Idle BANANAS looks around, bounces, tries to scratch his head with a foot and falls over before pretending nothing happened. His body squashes on landing and stretches in the air; his eyes widen when surprised. Victory is three higher bounces, a dramatic spin, a perfect landing, then a sideways roll out of the pose. In defeat he falls over, tries to stand, rolls onto his back and sighs, "Maybe BANANAS needs a nap."
 
-Future ideas include fruit power-ups, cosmetic skins, bounce challenges, collectibles, a serious banana rival and a quest to find the legendary fruit salad. BANANAS refuses to accept that a child may simply have switched the fruit-basket labels.
+Future ideas include fruit power-ups, cosmetic skins, bounce challenges, collectibles, a serious banana rival and a quest to find the boy who made him.
+
+---
+
+# 9. PROPHET (secret fighter)
+
+## Basic Information
+
+- **Name:** PROPHET (always written in capitals)
+- **Title:** Ruler of the TacticFight Universe
+- **Role:** Cosmic overlord, final boss of every campaign
+- **Unlock:** clear every other fighter's campaign, or enter the code `PROPHET` on the title screen. Until then his select-screen box shows "???" and can't be picked.
+
+## Backstory and Appearance
+
+PROPHET controls the whole TacticFight universe and had a hand in every fighter's origin. He looks like a man whose skin is a living galaxy: deep violet space with twinkling stars and pink and cyan nebula streaks, bright glowing eyes, a crown of three stars and gold bands. He never walks; he floats above the ground and only touches the floor when he is knocked out.
+
+## Abilities and Turn-Based Translation
+
+- **Nova Palm:** a starlight palm strike for 14 damage that interrupts a simultaneous strike.
+- **Wormhole Warp:** he sinks into a portal to dodge a single-target strike, then pops out of a second portal beside the attacker for a 6-damage counter. Area attacks still hit.
+- **Prophecy:** a beam from his eyes for 8 damage that also reads the opponent's next move, and his next strike can't be evaded (the Safari Senses tracking rule on a strike). Recharges for 2 rounds.
+- **BIG BANG (ultimate):** he gathers a galaxy and sets it off for 28 damage. It can't be blocked or dodged.
+
+He is meant to be strong: about 58% against the field in the CPU-vs-CPU simulation, above the 45–55% target for the regular roster.
+

@@ -1,6 +1,6 @@
 // Smoke driver: walks title -> mode -> fighter detail -> dialogue -> fight and
 // plays a few rounds through the real buttons. Query parameters:
-//   mode=quick|endless|campaign   fighter=<index 0-5>   rounds=<n>
+//   mode=quick|endless|campaign   fighter=<index 0-7>   rounds=<n>
 //   stop=title|select|detail|dialogue|fight|turn   wait=<ms to linger at stop>
 // Results go to document.body.dataset.log and dataset.errors.
 (async () => {
