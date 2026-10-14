@@ -482,7 +482,7 @@ body:not([data-screen="fight"]):not([data-screen="result"]) .hud-center { visibi
 
 /* Pause menu: opened with MENU or Escape during a fight. */
 .pause-menu { z-index: 35; background: #0d1a1dd9; }
-.pause-box { display: grid; justify-items: center; gap: 18px; width: min(420px, 100%); padding: 26px 22px; border: 3px solid #f1c95a; background: #140e16f2; box-shadow: 0 0 0 3px #140e16, 8px 8px 0 3px #0008; animation: pop-in 200ms ease-out both; }
+.pause-box { display: grid; justify-items: center; gap: 18px; width: min(420px, 100%); padding: 26px 22px; border: 3px solid #f1c95a; background: #140e16f2; box-shadow: 0 0 0 3px #140e16, 8px 8px 0 3px #0008; }
 .pause-box h2 { margin: 0; color: #ffe36a; font: 400 26px/1 "Press Start 2P", var(--mono); text-shadow: 3px 3px 0 #c8321c; }
 .pause-actions { display: grid; gap: 12px; width: 100%; }
 .pause-actions .big-button { width: 100%; min-width: 0; font-size: 22px; }

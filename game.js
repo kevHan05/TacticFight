@@ -877,6 +877,7 @@ function openPause() {
   if (screenName !== "fight") return;
   hideTooltip();
   setPaused(true);
+  updateUI();
   ui.pauseResume.focus();
 }
 
