@@ -3,7 +3,8 @@
 #
 #   make-harness.sh <out-dir> <driver.js> [page-name]
 #
-# Copies the game's top-level .html/.js/.css files into <out-dir> (never test
+# Copies the game's top-level .html/.js/.css files (from ROOT=<dir> if set, e.g. a
+# worktree of main, otherwise this repo) into <out-dir> (never test
 # inside the repo), then writes <out-dir>/<page-name>.html (default
 # "harness"): index.html with window.onerror capture injected before the
 # first script and the driver loaded after game.js. Drivers report through
@@ -12,7 +13,7 @@ set -euo pipefail
 [ $# -ge 2 ] || { echo "usage: make-harness.sh <out-dir> <driver.js> [page-name]" >&2; exit 2; }
 
 here="$(cd "$(dirname "$0")" && pwd)"
-root="$(git -C "$here" rev-parse --show-toplevel)"
+root="${ROOT:-$(git -C "$here" rev-parse --show-toplevel)}"
 out="$1"
 driver="$2"
 name="${3:-harness}"

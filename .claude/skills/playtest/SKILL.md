@@ -15,10 +15,10 @@ All paths below are relative to the repo root. Keep test output in your scratch 
   - `shot <page> <out.png> [WxH] [virtual-ms]` takes a screenshot.
   - `dom <page> [virtual-ms]` prints the `data-*` attributes on `<body>`. Test pages report through `document.body.dataset.log`, `.errors` and `.result`.
   - It finds Edge or Chrome on Windows Git Bash, Linux or macOS (override with `BROWSER=`). It uses a **fresh profile per run**, because reused profiles make headless Edge hang. Raise the default 120 s timeout with `TIMEOUT=`.
-- `.claude/skills/playtest/scripts/make-harness.sh <out-dir> <driver.js> [name]` copies the game to `<out-dir>`, injects `window.onerror` capture, and loads a driver after `game.js`. Drivers can call game internals (`screenName`, `state`, `ui`, `busy()`, `advanceDialogue()`, `goToTitle()`, `Rules`, `Arena`).
+- `.claude/skills/playtest/scripts/make-harness.sh <out-dir> <driver.js> [name]` copies the game to `<out-dir>` (or the copy at `ROOT=<dir>`, for example a `git worktree` of `main` when comparing), injects `window.onerror` capture, and loads a driver after `game.js`. Drivers can call game internals (`screenName`, `state`, `ui`, `busy()`, `advanceDialogue()`, `goToTitle()`, `Rules`, `Arena`).
 - Drivers in `.claude/skills/playtest/drivers/`:
   - `smoke.js` walks title → mode → detail → dialogue → fight and plays rounds. It takes `?mode=&fighter=&rounds=&stop=title|select|detail|dialogue|fight|turn&wait=`.
-  - `modes.js` plays a full campaign, a campaign loss with retry, and an Endless run, with rendering stubbed for speed. Use `dom` with a budget of about 150000.
+  - `modes.js` plays a full campaign, a campaign loss with retry, and an Endless run, with rendering stubbed for speed. Use `dom` with a budget of about 250000.
 - Pages in `.claude/skills/playtest/pages/` (open them in place; they load the repo's scripts):
   - `round.html` is a filmstrip of one round through the real renderer. It takes `?a=&ma=&b=&mb=&stage=&frames=&columns=&finished=1&crop=1`.
   - `stages.html` shows every stage (or `?only=<id>`) with fighters mid-round.
@@ -39,7 +39,7 @@ $P/scripts/browser.sh dom  "$T/harness.html?mode=quick&rounds=6" 30000     # rea
 
 # Every mode end to end
 $P/scripts/make-harness.sh "$T" $P/drivers/modes.js modes
-TIMEOUT=300 $P/scripts/browser.sh dom "$T/modes.html" 150000
+TIMEOUT=400 $P/scripts/browser.sh dom "$T/modes.html" 250000
 
 # Animation of a specific move or matchup, and the stages
 $P/scripts/browser.sh shot "$P/pages/round.html?a=bobbie&ma=combo&b=ninja&mb=shuriken&crop=1" "$T/round.png" 1600x900
