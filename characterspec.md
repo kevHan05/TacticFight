@@ -500,7 +500,7 @@ They are designed to be visually distinct, mechanically varied, and flexible eno
 
 ## Backstory
 
-BANANAS started life as a perfectly ordinary orange in the fruit aisle of a grocery store. A boy stole him, glued on a pair of googly eyes, drew a mouth with a marker, stuck on two little homemade legs and named him after the funniest word he knew. On a school field trip to Lab 7 the boy found a syringe in a glass case marked "DO NOT TOUCH" (it belonged to PROPHET), and injected it straight into the orange. The googly eyes and marker mouth turned into a real face, BANANAS grew to human size, said his first word ("BANANAS!") and ran out of the lab before the teacher finished counting heads. He now travels in search of fame, adventure and the boy, who still owes him a better mouth.
+BANANAS started life as a perfectly ordinary orange in the fruit aisle of a grocery store. A boy stole him, glued on a pair of googly eyes, drew a mouth with a marker, stuck on two little homemade legs and named him after the funniest word he knew. On a school field trip to Lab 7 the boy found an unlabelled syringe of "Experimental Growth Serum #9" in a glass case, and injected it straight into the orange. The googly eyes and marker mouth turned into a real face, BANANAS grew to human size, said his first word ("BANANAS!") and ran out of the lab before the teacher finished counting heads. He now travels in search of fame, adventure and the boy, who still owes him a better mouth.
 
 ## Appearance and Personality
 
@@ -541,13 +541,15 @@ Future ideas include fruit power-ups, cosmetic skins, bounce challenges, collect
 ## Basic Information
 
 - **Name:** PROPHET (always written in capitals)
-- **Title:** Ruler of the TacticFight Universe
-- **Role:** Cosmic overlord, final boss of every campaign
+- **Title:** The Traveling Fortune Teller
+- **Role:** Mysterious challenger, final opponent of every campaign
 - **Unlock:** clear every other fighter's campaign, or enter the code `PROPHET` on the title screen. Until then his select-screen box shows "???" and can't be picked.
 
 ## Backstory and Appearance
 
-PROPHET controls the whole TacticFight universe and had a hand in every fighter's origin. He looks like a man whose skin is a living galaxy: deep violet space with twinkling stars and pink and cyan nebula streaks, bright glowing eyes, a crown of three stars and gold bands. He never walks; he floats above the ground and only touches the floor when he is knocked out.
+PROPHET runs a tiny traveling fortune-telling wagon with a striped canopy, a crystal ball (it may be a snow globe) and a sign reading "$1 PROPHECIES". It turns up at every fight venue. His prophecies are always technically correct and completely useless ("You will be punched. Soon."), and he never gives refunds because he saw them coming. He only steps into the ring when his own prophecy says he will win. No other fighter's backstory involves him; he is the running gag that links the campaigns.
+
+In public he wears a dark hooded cloak, so nobody has seen his face, only two glowing eyes. In the ring he throws the cloak off: he is a lean, athletic figure whose skin is a living galaxy (a Milky Way band, constellations, a small spiral galaxy and a glowing all-seeing triangle), with a blazing golden halo with rays around his whole head, one furious slanted eye with a red glow, no mouth, and a bright white aura around his outline. He floats upright with his arms at his sides and never touches the floor until he is knocked out. Every stage hides a small cameo of him: a poster, his booth, or the hooded figure in the background.
 
 ## Abilities and Turn-Based Translation
 

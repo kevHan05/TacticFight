@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f3ead5">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1a1d">
+  <!-- Home-screen app mode: on iPhone this is the only way to hide Safari's bars. -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TacticFight">
+  <link rel="manifest" href="manifest.webmanifest">
   <title>Tactic Fight</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
   <link rel="stylesheet" href="style.css">
@@ -30,7 +36,8 @@
           <strong id="round-number">01</strong>
         </div>
         <div class="corner-controls">
-          <button class="menu-button" id="home-button" type="button" aria-label="Back to the start screen" title="Main menu">MENU</button>
+          <button class="menu-button" id="home-button" type="button" aria-label="Open the menu" aria-haspopup="dialog" title="Menu (Esc)">MENU</button>
+          <button class="menu-button fullscreen-toggle" id="fullscreen-toggle" type="button" aria-label="Full screen" aria-pressed="false" title="Full screen (F)" hidden>FULL</button>
           <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Mute sound" aria-pressed="true" title="Mute sound (M)">
             <svg class="speaker-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path class="speaker-shape" d="M4 9v6h4l5 4V5L8 9H4Z"></path>
@@ -73,6 +80,16 @@
     <p id="announcement-text"></p>
   </div>
 
+  <section class="pause-menu" id="pause-menu" aria-labelledby="pause-title" hidden>
+    <div class="pause-box">
+      <h2 id="pause-title">PAUSED</h2>
+      <div class="pause-actions">
+        <button class="big-button" id="pause-resume" type="button">RESUME</button>
+        <button class="big-button secondary" id="pause-title-button" type="button">BACK TO TITLE SCREEN</button>
+      </div>
+    </div>
+  </section>
+
   <section class="result-panel" id="result-panel" aria-labelledby="result-title" hidden>
     <div class="result-box">
       <p class="panel-kicker" id="result-kicker"></p>
@@ -100,7 +117,7 @@
       <p class="panel-kicker">16-BIT TURN-BASED ARCADE FIGHTER</p>
       <h2 class="game-logo" id="title-heading">TACTIC<span>FIGHT</span></h2>
       <div class="mode-list">
-        <button class="mode-button" type="button" data-mode="campaign"><strong>Campaign</strong><span>Each fighter's story. Beat every rival on their home turf, then face the one behind it all.</span></button>
+        <button class="mode-button" type="button" data-mode="campaign"><strong>Campaign</strong><span>Each fighter's story. Beat every rival on their home turf, then face the hooded fortune teller.</span></button>
         <button class="mode-button" type="button" data-mode="endless"><strong>Endless</strong><span>New opponent every fight, full health each time. How long can you last?</span><em id="endless-best"></em></button>
         <button class="mode-button" type="button" data-mode="quick"><strong>Quick Fight</strong><span>Pick a fighter and take on a random opponent.</span></button>
       </div>
@@ -110,7 +127,8 @@
         <button class="code-submit" type="submit">OK</button>
         <p class="code-message" id="code-message" aria-live="polite"></p>
       </form>
-      <p class="title-hint">Click or press 1-3. Press M to mute.</p>
+      <p class="title-hint">Click or press 1-3. Press M to mute. Turn your phone sideways for full screen.</p>
+      <p class="install-hint" id="install-hint" hidden>iPhone: tap Share, then "Add to Home Screen" to play full screen.</p>
     </div>
   </section>
 

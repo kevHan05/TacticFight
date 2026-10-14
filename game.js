@@ -54,7 +54,12 @@ const ui = {
   detailProgress: $("#detail-progress"),
   detailBack: $("#detail-back"),
   detailFight: $("#detail-fight"),
-  sound: $("#sound-toggle")
+  sound: $("#sound-toggle"),
+  fullscreen: $("#fullscreen-toggle"),
+  pause: $("#pause-menu"),
+  pauseResume: $("#pause-resume"),
+  pauseTitle: $("#pause-title-button"),
+  installHint: $("#install-hint")
 };
 
 const STATUS_LABELS = {
@@ -83,6 +88,7 @@ let timers = [];
 let dialogueState = null;
 let lastPortraitDraw = 0;
 let pendingFinish = null;
+let paused = false;
 
 // ---------------------------------------------------------------------------
 // Helpers.
@@ -144,7 +150,10 @@ function newMatch(playerId, botId) {
     history: [],
     revealed: null,
     finished: false,
-    stage: botId
+    stage: botId,
+    // Fighters stay off screen during dialogue and walk on in `startFight`.
+    hideFighters: true,
+    entrance: null
   };
 }
 
@@ -152,6 +161,7 @@ function newMatch(playerId, botId) {
 // Screens.
 function showScreen(name) {
   screenName = name;
+  setPaused(false);
   ui.title.hidden = name !== "title";
   ui.select.hidden = name !== "select" && name !== "detail";
   ui.detail.hidden = name !== "detail";
@@ -167,6 +177,9 @@ function goToTitle() {
   animation = null;
   pendingFinish = null;
   run = null;
+  // A clean scene behind the title, so nothing from the last fight lingers.
+  state = newMatch("rook", "byte");
+  updateUI();
   ui.codeMessage.textContent = "";
   const best = load(ENDLESS_KEY, 0);
   ui.endlessBest.textContent = best ? `BEST STREAK: ${best}` : "";
@@ -347,11 +360,17 @@ function beginMatch(playerId, botId, lines) {
 function startFight() {
   showScreen("fight");
   music(state.stage);
-  Sound.play("bell");
-  busyUntil = performance.now() + 600;
+  // Both fighters make their entrance, then the bell rings.
+  state.hideFighters = false;
+  state.entrance = { start: performance.now() };
+  busyUntil = performance.now() + Arena.ENTRANCE + 600;
   updateUI();
-  later(600, unlockInput);
-  announce("Start Fight!", "start", 3000);
+  later(Arena.ENTRANCE, () => {
+    state.entrance = null;
+    Sound.play("bell");
+    announce("Start Fight!", "start", 3000);
+  });
+  later(Arena.ENTRANCE + 600, unlockInput);
 }
 
 // ---------------------------------------------------------------------------
@@ -361,6 +380,7 @@ function playDialogue(lines, leftId, rightId, done) {
   // A post-fight talk must not keep the K.O. banner and "YOU WIN!" up behind it.
   clearAnnouncement();
   animation = null;
+  state.hideFighters = true;
   dialogueState = { lines, index: -1, leftId, rightId, done, typed: 0, full: "" };
   showScreen("dialogue");
   music("story");
@@ -461,7 +481,7 @@ function updateUI() {
     tags.parentElement.hidden = labels.length === 0;
   });
 
-  const locked = state.finished || busy() || screenName !== "fight";
+  const locked = state.finished || busy() || paused || screenName !== "fight";
   playerMoves().forEach((move, index) => {
     const button = moveButtons[index];
     if (!button) return;
@@ -665,7 +685,7 @@ function playRoundSounds(report, plan, ultimateWasReady) {
 // ---------------------------------------------------------------------------
 // A round: both fighters commit, then the turns play out one at a time.
 function resolveRound(moveId) {
-  if (screenName !== "fight" || state.finished || busy()) return;
+  if (screenName !== "fight" || state.finished || busy() || paused) return;
   if (!Rules.available(state.player, moveId)) return;
   clearAnnouncement();
   hideTooltip();
@@ -845,7 +865,33 @@ function drawArena(now) {
   requestAnimationFrame(drawArena);
 }
 
-ui.home.addEventListener("click", goToTitle);
+// Pause menu. Timers keep running underneath, so a K.O. still moves on to the
+// result screen (which closes the menu) instead of getting stuck.
+function setPaused(value) {
+  paused = value;
+  ui.pause.hidden = !value;
+  document.body.classList.toggle("is-paused", value);
+}
+
+function openPause() {
+  if (screenName !== "fight") return;
+  hideTooltip();
+  setPaused(true);
+  updateUI();
+  ui.pauseResume.focus();
+}
+
+function closePause() {
+  setPaused(false);
+  updateUI();
+}
+
+ui.home.addEventListener("click", openPause);
+ui.pauseResume.addEventListener("click", closePause);
+ui.pauseTitle.addEventListener("click", goToTitle);
+ui.pause.addEventListener("click", event => {
+  if (event.target === ui.pause) closePause();
+});
 ui.title.querySelectorAll(".mode-button").forEach(button => {
   button.addEventListener("click", () => chooseMode(button.dataset.mode));
   button.addEventListener("mouseenter", () => Sound.playIfUnlocked("hover"));
@@ -894,6 +940,102 @@ ui.sound.addEventListener("click", () => {
   updateSoundToggle();
 });
 
+// ---------------------------------------------------------------------------
+// Full screen. Turning a phone sideways goes full screen on the next tap
+// (browsers only allow it after a tap); turning it back upright leaves it.
+// iPhone Safari has no fullscreen API, so there the hint suggests adding the
+// game to the home screen, which opens it without browser bars.
+const touchScreen = window.matchMedia("(pointer: coarse)");
+const landscape = window.matchMedia("(orientation: landscape)");
+let autoFullscreen = true;
+let enteredAutomatically = false;
+
+function fullscreenElement() {
+  return document.fullscreenElement || document.webkitFullscreenElement || null;
+}
+
+function canFullscreen() {
+  const root = document.documentElement;
+  return Boolean((document.fullscreenEnabled || document.webkitFullscreenEnabled) && (root.requestFullscreen || root.webkitRequestFullscreen));
+}
+
+function enterFullscreen(automatic = false) {
+  if (!canFullscreen() || fullscreenElement()) return;
+  const root = document.documentElement;
+  try {
+    const request = root.requestFullscreen ? root.requestFullscreen({ navigationUI: "hide" }) : root.webkitRequestFullscreen();
+    enteredAutomatically = automatic;
+    if (request && request.catch) request.catch(() => { enteredAutomatically = false; });
+  } catch {
+    enteredAutomatically = false;
+  }
+}
+
+function exitFullscreen() {
+  if (!fullscreenElement()) return;
+  try {
+    const exit = document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen();
+    if (exit && exit.catch) exit.catch(() => {});
+  } catch {
+    // Already leaving full screen.
+  }
+}
+
+function updateFullscreenToggle() {
+  const active = Boolean(fullscreenElement());
+  ui.fullscreen.hidden = !canFullscreen();
+  ui.fullscreen.setAttribute("aria-pressed", String(active));
+  ui.fullscreen.textContent = active ? "EXIT" : "FULL";
+  ui.fullscreen.setAttribute("aria-label", active ? "Exit full screen" : "Full screen");
+  document.body.classList.toggle("is-fullscreen", active);
+}
+
+ui.fullscreen.addEventListener("click", () => {
+  autoFullscreen = false;
+  if (fullscreenElement()) exitFullscreen();
+  else enterFullscreen();
+});
+["fullscreenchange", "webkitfullscreenchange"].forEach(name => document.addEventListener(name, () => {
+  // Leaving full screen by hand while sideways means "stop doing that".
+  if (!fullscreenElement() && enteredAutomatically && landscape.matches) autoFullscreen = false;
+  if (!fullscreenElement()) enteredAutomatically = false;
+  updateFullscreenToggle();
+}));
+window.addEventListener("pointerup", event => {
+  if (event.target.closest && event.target.closest("#fullscreen-toggle, input")) return;
+  if (autoFullscreen && touchScreen.matches && landscape.matches) enterFullscreen(true);
+});
+landscape.addEventListener("change", () => {
+  if (landscape.matches) autoFullscreen = true;
+  else if (enteredAutomatically) exitFullscreen();
+});
+
+// iPhone and iPad Safari: offer the home-screen route, and give it a pixel-art icon drawn in code.
+function setUpHomeScreenApp() {
+  const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const standalone = window.navigator.standalone === true || window.matchMedia("(display-mode: fullscreen), (display-mode: standalone)").matches;
+  ui.installHint.hidden = !(ios && !standalone && !canFullscreen());
+  const icon = document.createElement("canvas");
+  icon.width = 180;
+  icon.height = 180;
+  const ctx = icon.getContext("2d");
+  ctx.fillStyle = "#0d1a1d";
+  ctx.fillRect(0, 0, 180, 180);
+  ctx.fillStyle = "#ec5139";
+  ctx.fillRect(22, 22, 136, 136);
+  ctx.fillStyle = "#f3ead5";
+  // "TF" in chunky pixels, 11px per pixel on a 16x16 grid.
+  [[4, 5, 4, 1], [5.5, 6, 1, 5], [9, 5, 3, 1], [9, 6, 1, 5], [10, 7.5, 1.5, 1]].forEach(([x, y, w, h]) => ctx.fillRect(x * 11 + 2, y * 11 + 2, w * 11, h * 11));
+  try {
+    const link = document.createElement("link");
+    link.rel = "apple-touch-icon";
+    link.href = icon.toDataURL("image/png");
+    document.head.append(link);
+  } catch {
+    // No icon: the home screen falls back to a page snapshot.
+  }
+}
+
 // Browsers only start audio after a user gesture; start the music on the first one.
 function unlockAudio() {
   if (typeof Music !== "undefined") Music.unlock();
@@ -909,6 +1051,10 @@ document.addEventListener("keydown", event => {
   if (event.target instanceof HTMLInputElement) return;
   if (event.key === "m" || event.key === "M") {
     ui.sound.click();
+    return;
+  }
+  if ((event.key === "f" || event.key === "F") && canFullscreen()) {
+    ui.fullscreen.click();
     return;
   }
   const number = Number(event.key);
@@ -927,7 +1073,10 @@ document.addEventListener("keydown", event => {
       advanceDialogue();
     }
     if (event.key === "Escape") finishDialogue();
-  } else if (screenName === "fight" && digit) {
+  } else if (screenName === "fight" && event.key === "Escape") {
+    if (paused) closePause();
+    else openPause();
+  } else if (screenName === "fight" && digit && !paused) {
     const move = playerMoves()[digit - 1];
     if (!move || state.finished || busy()) return;
     if (Rules.available(state.player, move.id)) resolveRound(move.id);
@@ -936,6 +1085,8 @@ document.addEventListener("keydown", event => {
 });
 
 updateSoundToggle();
+updateFullscreenToggle();
+setUpHomeScreenApp();
 buildMoveButtons();
 updateUI();
 requestAnimationFrame(drawArena);

@@ -4,7 +4,7 @@ A turn-based 1v1 arcade fighter. Pick one of seven fighters (plus a secret eight
 
 ## Modes
 
-- **Campaign:** each fighter has a story. Beat the other fighters, in order, on their home stages, then face PROPHET, the ruler of the TacticFight universe, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
+- **Campaign:** each fighter has a story. Beat the other fighters, in order, on their home stages, then face PROPHET, the hooded traveling fortune teller who has been lurking at every fight, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
 - **Endless:** fight until you are defeated. Every fight is against a new opponent and both fighters start at full health. Your best streak is saved.
 - **Quick Fight:** pick a fighter and take on a random opponent.
 
@@ -15,6 +15,12 @@ Every fight starts with some pre-fight trash talk. Each fighter has a home stage
 ## Run
 
 Open `index.html` in a browser. No install or build step is required.
+
+### Playing on a phone
+
+- **Turn the phone sideways** for a full-screen, handheld-style layout: the arena fills the screen, the life bars sit in a thin strip at the top and the moves run along the bottom.
+- **Android (Chrome, Samsung Internet):** the game goes full screen and hides the browser bars on your first tap after turning sideways, and leaves full screen when you turn the phone upright again. The `FULL` button (or `F` on a keyboard) toggles it by hand.
+- **iPhone:** Safari doesn't let websites go full screen. Tap Share, then **Add to Home Screen**, and the game opens like an app without browser bars.
 
 ## Combat
 

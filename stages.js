@@ -78,8 +78,104 @@ const Stages = (() => {
     return h => value || (value = make(h));
   }
 
+  // ---------------------------------------------------------------------------
+  // PROPHET cameos. The traveling fortune teller turns up on every stage: the
+  // hooded figure himself (only his eyes show), his flyer, or his little booth.
+  const CLOAK = "#1c1430";
+  const CLOAK_LIT = "#2a1f48";
+  const CLOAK_RIM = "#463872";
+  const SEER_PINK = "#ff5fc8";
+  const SEER_CYAN = "#5fe0ff";
+  const SEER_GOLD = "#f1c95a";
+
+  // Cloaked figure seen from the front, feet on footY. Returns where the eyes go.
+  function hooded(R, x, footY, tall) {
+    const top = footY - tall;
+    R(x - 1, top, 3, 1, CLOAK_LIT);
+    R(x - 2, top + 1, 5, 1, CLOAK);
+    R(x - 3, top + 2, 7, 5, CLOAK);
+    R(x - 2, top + 1, 1, 1, CLOAK_RIM);
+    R(x - 3, top + 2, 1, 5, CLOAK_RIM);
+    // The shadow where a face should be.
+    R(x - 1, top + 3, 3, 3, "#06030c");
+    for (let y = top + 7; y < footY; y += 1) {
+      const half = 3 + Math.floor((y - top - 7) / 4);
+      R(x - half, y, half * 2 + 1, 1, CLOAK);
+      R(x - half, y, 1, 1, CLOAK_LIT);
+    }
+    R(x, top + 7, 1, tall - 8, "#120c22");
+    R(x + 2, top + 9, 1, Math.max(1, tall - 10), "#120c22");
+    return [x, top + 4];
+  }
+
+  // Two glowing eyes that blink now and then, and flash pink when the crowd roars.
+  function seerEyes(ctx, h, x, y, now, seed, excitement = 0) {
+    if ((now + seed * 1237) % (2900 + seed * 530) < 150) return;
+    const color = excitement > 0.5 ? SEER_PINK : SEER_CYAN;
+    ctx.globalAlpha = 0.3;
+    h.rect(ctx, x - 2, y - 1, 5, 3, color);
+    ctx.globalAlpha = 1;
+    h.rect(ctx, x - 1, y, 1, 1, color);
+    h.rect(ctx, x + 1, y, 1, 1, color);
+  }
+
+  // The pixel font has no "$", so it is drawn by hand: 3 wide, y-1 to y+5.
+  function dollar(R, x, y, color) {
+    [[1, -1, 1], [0, 0, 3], [0, 1, 1], [0, 2, 3], [2, 3, 1], [0, 4, 3], [1, 5, 1]].forEach(([dx, dy, w]) => R(x + dx, y + dy, w, 1, color));
+  }
+
+  // "$1 PROPHECIES" flyer, 21 px wide: hooded portrait, price and crystal ball.
+  // The tall version (31 px) spells out the pitch. Eyes sit at (x + 7, y + 8).
+  function seerPoster(ctx, h, x, y, tall) {
+    const R = painter(ctx, h);
+    const hh = tall ? 31 : 18;
+    R(x, y, 21, hh, "#e8d6ac");
+    R(x, y, 21, 1, SEER_PINK);
+    R(x, y + hh - 1, 21, 1, "#a8946a");
+    R(x + 20, y, 1, hh, "#a8946a");
+    R(x + 2, y + 2, 11, 14, "#3a2a6a");
+    R(x + 3, y + 4, 1, 1, SEER_CYAN);
+    R(x + 11, y + 3, 1, 1, SEER_GOLD);
+    R(x + 10, y + 13, 1, 1, SEER_PINK);
+    hooded(R, x + 7, y + 16, 12);
+    dollar(R, x + 13, y + 4, "#c0287e");
+    h.text(ctx, "1", x + 17, y + 4, () => "#c0287e");
+    h.disc(ctx, x + 16, y + 13, 2, "#2a8ab8");
+    R(x + 15, y + 12, 2, 2, SEER_CYAN);
+    R(x + 15, y + 12, 1, 1, "#ffffff");
+    R(x + 14, y + 15, 5, 1, "#b8902a");
+    if (tall) {
+      h.text(ctx, "PROPH", x + 1, y + 19, () => "#7a1a6a");
+      h.text(ctx, "ECIES", x + 1, y + 25, () => "#7a1a6a");
+    }
+    // Tape.
+    R(x + 1, y - 1, 3, 2, "#d8dcd0");
+    R(x + 17, y - 1, 3, 2, "#d8dcd0");
+  }
+
+  // His traveling booth in miniature (19 x 15): canopy, wheels, a lit window.
+  // animate() adds the crystal ball glow at (x + 9, footY - 7).
+  function seerBooth(ctx, h, x, footY) {
+    const R = painter(ctx, h);
+    const top = footY - 15;
+    R(x + 3, top, 13, 1, "#2a1810");
+    R(x + 2, top + 1, 15, 2, "#3a2216");
+    for (let i = 0; i < 19; i += 1) R(x + i, top + 3, 1, 3, Math.floor(i / 2) % 2 ? "#d8c8a0" : "#b8287e");
+    for (let i = 0; i < 19; i += 2) R(x + i, top + 6, 1, 1, Math.floor(i / 2) % 2 ? "#d8c8a0" : "#b8287e");
+    R(x + 1, top + 6, 17, 6, "#5a3420");
+    for (let i = x + 3; i < x + 18; i += 3) R(i, top + 7, 1, 5, "#3e2216");
+    R(x + 6, top + 7, 7, 4, "#120a1c");
+    R(x, top + 12, 19, 1, "#2a1810");
+    [x + 4, x + 14].forEach(cx => {
+      h.disc(ctx, cx, footY - 2, 2, "#1a100c");
+      R(cx, footY - 2, 1, 1, SEER_GOLD);
+    });
+    R(x + 18, top + 6, 1, 6, "#2a1810");
+  }
+
   // ===========================================================================
   // ROOK - "Neon District": the dusk street, ported unchanged from graphics.js.
+  const ROOK_POSTER = [58, 37];
   const NEAR_TOWERS = [[-2, 24, 58], [30, 20, 40], [54, 26, 48], [80, 34, 76], [124, 22, 34], [150, 28, 62], [236, 30, 70], [270, 22, 46], [294, 28, 60]];
 
   const rookCrowd = lazy(h => {
@@ -178,6 +274,8 @@ const Stages = (() => {
       // Antenna mast.
       rect(b, 164, 4, 1, 14, "#1a1426");
       rect(b, 162, 9, 5, 1, "#1a1426");
+      // Somebody fly-posted the tower wall.
+      seerPoster(b, h, ROOK_POSTER[0], ROOK_POSTER[1], false);
 
       // Storefronts at street level.
       rect(b, 0, 58, WIDTH, 26, "#2a1f35");
@@ -236,6 +334,7 @@ const Stages = (() => {
         }
       });
       if (Math.floor(now / 600) % 2) rect(g, 164, 3, 1, 1, "#ff5a4f");
+      seerEyes(g, h, ROOK_POSTER[0] + 7, ROOK_POSTER[1] + 8, now, 1, excitement);
 
       // Crowd.
       rookCrowd(h).forEach(person => {
@@ -273,6 +372,7 @@ const Stages = (() => {
   const RACK_W = 23;
   const SCREEN = { x: 124, y: 18, w: 72, h: 46 };
   const VENTS = [[55, 96, -1], [265, 96, 1]];
+  const BYTE_POSTER = [57, 40];
 
   const byteLeds = lazy(h => {
     const rand = h.seeded(303);
@@ -282,13 +382,17 @@ const Stages = (() => {
         const count = 1 + Math.floor(rand() * 3);
         for (let k = 0; k < count; k += 1) {
           const roll = rand();
-          leds.push({
-            x: x + RACK_W - 5 - k * 2,
+          const lx = x + RACK_W - 5 - k * 2;
+          const led = {
+            x: lx,
             y: y + 1,
             color: roll < 0.6 ? "#4cff7a" : roll < 0.85 ? "#5fe0e8" : roll < 0.95 ? "#ffb43a" : "#ff4a4a",
             rate: 120 + Math.floor(rand() * 900),
             seed: Math.floor(rand() * 100000)
-          });
+          };
+          // No LEDs under the flyer taped to the left rack.
+          const covered = lx >= BYTE_POSTER[0] && lx < BYTE_POSTER[0] + 21 && y + 1 < BYTE_POSTER[1] + 31 && y + 1 >= BYTE_POSTER[1] - 1;
+          if (!covered) leds.push(led);
         }
       }
     });
@@ -397,6 +501,8 @@ const Stages = (() => {
         R(x + 5, 13, 2, RACK_TOP - 13, "#0e1a2a");
         R(x + 13, 13, 1, RACK_TOP - 13, "#2a5a7a");
       });
+      // A "$1 PROPHECIES" flyer taped to a rack. Nobody knows who let him in.
+      seerPoster(ctx, h, BYTE_POSTER[0], BYTE_POSTER[1], true);
 
       // Big wall screen (content animates).
       const S = SCREEN;
@@ -467,6 +573,8 @@ const Stages = (() => {
         const threshold = led.color === "#ff4a4a" ? 0.75 : 0.35;
         if (hash(led.seed + Math.floor(now / rate)) > threshold) R(led.x, led.y, 1, 1, led.color);
       });
+
+      seerEyes(ctx, h, BYTE_POSTER[0] + 7, BYTE_POSTER[1] + 8, now, 2, excitement);
 
       // Scrolling code.
       const scroll = Math.floor(now / 70);
@@ -752,6 +860,18 @@ const Stages = (() => {
         if (excitement > 0.4) R(x, top + 3, 1, 1, "#3a1010");
       });
 
+      // A hooded stranger in the back row. When it gets loud he holds up his price.
+      const [ex, ey] = hooded(R, 160, 78, 18);
+      seerEyes(ctx, h, ex, ey, now, 3, excitement);
+      if (excitement > 0.3) {
+        const lift = Math.round(Math.abs(Math.sin(now / 160)) * 2);
+        R(165, 50 - lift, 1, 10, "#5a3a20");
+        R(160, 44 - lift, 11, 9, "#f0e8d0");
+        R(160, 52 - lift, 11, 1, "#a89878");
+        dollar(R, 162, 46 - lift, "#c0287e");
+        h.text(ctx, "1", 166, 46 - lift, () => "#c0287e");
+      }
+
       // Back ropes (they buzz after a hit) and back corner posts.
       const buzz = excitement > 0.3 ? Math.round(Math.sin(now / 30) * excitement) : 0;
       [[58, "#d8302a", "#ff7a6a", "#7a1612"], [66, "#e8e4d8", "#ffffff", "#9a968a"], [74, "#2a5ad8", "#6a9aff", "#14307a"]].forEach(([y, c, hi, lo], i) => {
@@ -1027,6 +1147,18 @@ const Stages = (() => {
         if (excitement > 0.3) R(x, top + 4, 1, 1, "#3a1010");
         ctx.restore();
       });
+      // A hooded visitor in the observation room, calmly watching his crystal ball.
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(40, 26, 44, 24);
+      ctx.clip();
+      const [ex, ey] = hooded(R, 67, 50, 21);
+      seerEyes(ctx, h, ex, ey, now, 4, excitement);
+      const orb = Math.sin(now / 300) > 0 || excitement > 0.3;
+      R(64, 40, 7, 2, CLOAK_LIT);
+      h.disc(ctx, 67, 38, 2, orb ? SEER_CYAN : "#2a8ab8");
+      R(66, 37, 1, 1, "#ffffff");
+      ctx.restore();
       ctx.globalAlpha = 0.14;
       LAB_WINDOWS.forEach(x => {
         for (let k = 0; k < 10; k += 1) R(x + 6 + k * 2, 47 - k * 2, 2, 2, "#ffffff");
@@ -1188,6 +1320,8 @@ const Stages = (() => {
       roof(R, 160, 61, 34, "#0a0816", "#120e22", false);
       roof(R, 140, 69, 26, "#06050f", "#0c0a18", true);
       roof(R, 186, 67, 24, "#06050f", "#0c0a18", false);
+      // A hooded traveler watching from the rooftops, outlined by the moon.
+      hooded(R, 168, 57, 14);
 
       // Shoji walls left and right of the opening.
       [[0, 112], [208, 112]].forEach(([wx, ww]) => {
@@ -1300,6 +1434,8 @@ const Stages = (() => {
     },
     animate(ctx, h, now, excitement) {
       const R = painter(ctx, h);
+
+      seerEyes(ctx, h, 168, 47, now, 5, excitement);
 
       // Students' shadows cast on the shoji paper, bouncing with excitement.
       ctx.globalAlpha = 0.32;
@@ -1433,6 +1569,8 @@ const Stages = (() => {
     for (let i = 0; i < 8 * s; i += 1) R(x - 14 * s + rand() * 28 * s, gy - 25 * s, 1, 1 + Math.floor(rand() * 2), c);
   }
 
+  const ZOO_BOOTH = [184, 72];
+
   const zoombie = {
     name: "Night Safari",
     build(ctx, h) {
@@ -1540,6 +1678,9 @@ const Stages = (() => {
         h.text(ctx, ch, x, tilt(Math.floor((x - 140) / 4)) + 8, () => "#b8a878");
       });
       h.text(ctx, "O", 185, 82, () => "#8a7a58");
+
+      // A traveling fortune teller's booth parked on the far hill.
+      seerBooth(ctx, h, ZOO_BOOTH[0], ZOO_BOOTH[1]);
 
       // Savanna ground.
       bands(ctx, h, [[80, "#0b170e"], [84, "#0f1d11"], [90, "#132313"], [98, "#172915"], [110, "#1b2f17"], [124, "#1f3519"]], 84, 140);
@@ -1649,6 +1790,19 @@ const Stages = (() => {
         R(x + 4, y + 2, w - 8, 1, "#6aff96");
       }
       ctx.globalAlpha = 1;
+
+      // The booth's crystal ball and lantern glow through the fog.
+      const [bx, by] = ZOO_BOOTH;
+      const pulse = 0.5 + 0.5 * Math.sin(now / 420);
+      ctx.globalAlpha = 0.2 + pulse * 0.15 + excitement * 0.3;
+      h.disc(ctx, bx + 9, by - 7, 3 + Math.round(excitement * 2), SEER_CYAN);
+      ctx.globalAlpha = 0.25 + 0.08 * Math.sin(now / 90);
+      h.disc(ctx, bx + 20, by - 9, 3, SEER_PINK);
+      ctx.globalAlpha = 1;
+      R(bx + 8, by - 8, 3, 2, pulse > 0.5 ? SEER_CYAN : "#2a8ab8");
+      R(bx + 8, by - 8, 1, 1, "#ffffff");
+      R(bx + 19, by - 10, 3, 3, hash(Math.floor(now / 120)) < 0.1 ? "#a8287e" : SEER_PINK);
+      R(bx + 20, by - 9, 1, 1, "#ffd8f0");
 
       // Fireflies.
       fireflies(h).forEach(f => {
@@ -1946,6 +2100,15 @@ const Stages = (() => {
       }
       for (let x = 163; x < 194; x += 11) fruit(ctx, h, "melon", x, 59);
 
+      // A hooded shopper reading a melon's future. The melons in front hide his feet.
+      const [ex, ey] = hooded(R, 134, 66, 18);
+      seerEyes(ctx, h, ex, ey, now, 6, excitement);
+      const raise = excitement > 0.3 ? Math.round(Math.abs(Math.sin(now / 150)) * 3) : 0;
+      R(137, 55 - raise, 4, 3, CLOAK);
+      fruit(ctx, h, "melon", 144, 53 - raise);
+      [130, 141].forEach(x => fruit(ctx, h, "melon", x, 59));
+      [135, 146].forEach(x => fruit(ctx, h, "melon", x, 63));
+
       // Shoppers.
       fruitShoppers(h).forEach(p => shopper(ctx, h, p, now, excitement));
 
@@ -1959,311 +2122,307 @@ const Stages = (() => {
   };
 
   // ===========================================================================
-  // PROPHET - "Cosmic Throne": the edge of everything, where he runs the
-  // TacticFight universe. His throne is empty because he is busy fighting you.
+  // PROPHET - "The Crossroads": a misty night crossroads where the traveling
+  // fortune teller parks his booth wagon. The booth is unattended because he is
+  // busy fighting you. The signpost points to everybody else's venue.
+  const CROSS_SIGNS = [["GYM", 1], ["NEON", -1], ["DOJO", 1], ["LAB 7", -1], ["ZOO", 1], ["FRUIT", -1], ["DATA", 1]];
+  const CROSS_LANTERNS = [[124, 46, 0, SEER_PINK], [196, 46, 1.3, SEER_CYAN], [247, 36, 2.1, SEER_GOLD]];
+  const BALL = { x: 160, y: 65 };
 
-  // Dithered oval: solid in the middle, checkerboard toward the rim.
-  function haze(ctx, h, cx, cy, rx, ry, color, solid) {
-    for (let dy = -ry; dy <= ry; dy += 1) {
-      const half = Math.floor(rx * Math.sqrt(Math.max(0, 1 - (dy / (ry + 0.5)) ** 2)));
-      const inner = Math.floor(half * solid);
-      const y = cy + dy;
-      if (inner > 0) h.rect(ctx, cx - inner, y, inner * 2 + 1, 1, color);
-      for (let x = cx - half; x <= cx + half; x += 1) {
-        if (Math.abs(x - cx) > inner && (x + y) % 2 === 0) h.rect(ctx, x, y, 1, 1, color);
-      }
-    }
-  }
-
-  // Ring of points around (cx, cy), used for orbits, pulses and floor runes.
-  function ring(ctx, h, cx, cy, rx, ry, color, count) {
-    for (let i = 0; i < count; i += 1) {
-      const a = (i / count) * Math.PI * 2;
-      h.rect(ctx, cx + Math.cos(a) * rx, cy + Math.sin(a) * ry, 1, 1, color);
-    }
-  }
-
-  const GALAXY = { x: 160, y: 38 };
-
-  function galaxyPoint(arm, s, spin) {
-    const r = 2 + s * 24;
-    const a = arm * Math.PI + s * 4.4 + spin;
-    return [GALAXY.x + Math.cos(a) * r * 1.55, GALAXY.y + Math.sin(a) * r * 0.45];
-  }
-
-  const cosmicStars = lazy(h => {
-    const rand = h.seeded(9191);
+  const crossStars = lazy(h => {
+    const rand = h.seeded(1313);
     const stars = [];
     for (let k = 0; k < 40; k += 1) {
       const x = Math.floor(rand() * W);
-      const y = 2 + Math.floor(rand() * 76);
-      if (Math.abs(x - 160) < 46 && y > 24 && y < 74) continue;
-      stars.push({ x, y, k, bright: rand() < 0.3 });
+      const y = 2 + Math.floor(rand() * 56);
+      if (x > 122 && x < 198 && y > 22) continue;
+      stars.push({ x, y, k, big: rand() < 0.25 });
     }
     return stars;
   });
 
-  // Little floating screens tuned to the other fighters' home stages.
-  const COSMIC_SCREENS = [[62, 50], [242, 46], [20, 40], [286, 54]];
+  // Tarot cards caught in the wind.
+  const tarot = lazy(h => {
+    const rand = h.seeded(2121);
+    const cards = [];
+    for (let k = 0; k < 6; k += 1) cards.push({ x0: rand() * 360, y0: 26 + rand() * 46, speed: 0.01 + rand() * 0.012, phase: rand() * 6.28, mark: [SEER_PINK, SEER_CYAN, SEER_GOLD][k % 3] });
+    return cards;
+  });
 
-  function channel(ctx, h, ch, x, y, now) {
+  // Wooden arrow board nailed to the post at x, pointing left (-1) or right (1).
+  function arrowSign(ctx, h, label, dir, x, y) {
     const R = painter(ctx, h);
-    const blink = Math.floor(now / 300) % 2;
-    if (ch === 0) { // Neon District
-      R(x, y, 16, 7, "#3a1a5a");
-      R(x, y + 7, 16, 5, "#ff7a5a");
-      R(x + 1, y + 5, 3, 7, "#120a1a");
-      R(x + 5, y + 2, 4, 10, "#120a1a");
-      R(x + 11, y + 6, 4, 6, "#120a1a");
-      R(x + 6, y + 4 + blink * 2, 1, 1, "#ff5fc8");
-      R(x + 2, y + 7, 1, 1, "#5af0ff");
-    } else if (ch === 1) { // Data Center
-      R(x, y, 16, 12, "#06140e");
-      [1, 6, 11].forEach(dx => {
-        R(x + dx, y + 1, 4, 11, "#1a2a24");
-        for (let dy = 2; dy < 11; dy += 3) R(x + dx + 1 + ((dy + blink) % 2), y + dy, 1, 1, "#3aff6a");
-      });
-    } else if (ch === 2) { // Macalanger Gym
-      R(x, y, 16, 12, "#3a2418");
-      R(x, y + 9, 16, 3, "#6a4428");
-      R(x, y + 4, 16, 1, "#e83a3a");
-      R(x, y + 7, 16, 1, "#f0f0f0");
-      R(x + 11, y, 1, 2, "#888888");
-      R(x + 10, y + 2 + blink, 3, 6, "#a02a2a");
-    } else if (ch === 3) { // Lab 7, bull-shaped hole included
-      R(x, y, 16, 12, "#c8d4d8");
-      R(x, y + 10, 16, 2, "#8a989c");
-      R(x + 5, y + 4, 6, 6, "#1a1a1a");
-      R(x + 4, y + 3, 1, 2, "#1a1a1a");
-      R(x + 11, y + 3, 1, 2, "#1a1a1a");
-    } else if (ch === 4) { // Hidden Dojo
-      R(x, y, 16, 12, "#1a1028");
-      h.disc(ctx, x + 11, y + 4, 2, "#f0e8d0");
-      R(x, y + 10, 16, 2, "#3a2418");
-      [[2, 3], [4, 6], [7, 2], [3, 8]].forEach(([dx, dy]) => R(x + dx, y + dy + blink, 1, 1, "#ffa8c8"));
-    } else if (ch === 5) { // Night Safari
-      R(x, y, 16, 12, "#0a1813");
-      h.disc(ctx, x + 8, y + 4, 2, "#e4ecc4");
-      R(x, y + 9, 16, 3, "#1b2f17");
-      R(x + 3, y + 8, 1, 1, blink ? "#ffe85a" : "#0a1813");
-      R(x + 5, y + 8, 1, 1, blink ? "#ffe85a" : "#0a1813");
-    } else { // Fruit Aisle 7
-      R(x, y, 16, 12, "#c4d2bc");
-      R(x, y, 16, 2, "#2f8a46");
-      R(x, y + 9, 16, 3, "#a3ad9b");
-      h.disc(ctx, x + 8, y + 6 - blink, 3, "#e8701c");
-      R(x + 7, y + 5 - blink, 1, 1, "#4aa0ff");
-      R(x + 9, y + 5 - blink, 1, 1, "#4aa0ff");
-    }
+    const w = label.length * 4 + 2;
+    const x0 = dir > 0 ? x : x - w;
+    for (let i = 0; i < 4; i += 1) R(dir > 0 ? x0 + w + i : x0 - 1 - i, y + i, 1, 7 - i * 2, "#7a5434");
+    R(x0, y, w, 7, "#8a6440");
+    R(x0, y, w, 1, "#b08a5a");
+    R(x0, y + 6, w, 1, "#4a301c");
+    h.text(ctx, label, x0 + 2, y + 1, () => "#2a1a10");
   }
 
   const prophet = {
-    name: "Cosmic Throne",
+    name: "The Crossroads",
     build(ctx, h) {
       const R = painter(ctx, h);
       const rand = h.seeded(4242);
 
-      // Deep space and nebula bands.
-      bands(ctx, h, [[0, "#04020c"], [18, "#080418"], [36, "#0d0624"], [54, "#130830"], [70, "#190a3a"]], 0, 84);
-      haze(ctx, h, 50, 54, 74, 16, "#1c0a34", 0.5);
-      haze(ctx, h, 60, 50, 44, 8, "#2a0e44", 0.3);
-      haze(ctx, h, 268, 30, 66, 14, "#0a1838", 0.5);
-      haze(ctx, h, 258, 32, 40, 7, "#0f2648", 0.3);
-      haze(ctx, h, 160, 66, 150, 6, "#200c3a", 0.6);
-      // Softer glow behind each fighter so dark silhouettes (his galaxy skin) still read.
-      haze(ctx, h, 98, 56, 46, 26, "#26103e", 0.6);
-      haze(ctx, h, 98, 58, 30, 18, "#341656", 0.5);
-      haze(ctx, h, 222, 54, 50, 28, "#10284c", 0.6);
-      haze(ctx, h, 222, 56, 34, 20, "#173a66", 0.5);
-      haze(ctx, h, 222, 58, 20, 12, "#1e4878", 0.4);
-      for (let i = 0; i < 120; i += 1) {
-        const x = Math.floor(rand() * W);
-        const y = Math.floor(rand() * 80);
-        const roll = rand();
-        R(x, y, 1, 1, roll < 0.15 ? "#fff0fa" : roll < 0.5 ? "#8a7ab8" : "#3a3060");
-      }
+      // Night sky clearing to a misty blue horizon. Blue rather than purple, so
+      // his dark cloak still reads against it.
+      bands(ctx, h, [[0, "#05071a"], [12, "#0a0f28"], [24, "#101a38"], [36, "#172848"], [48, "#1f3656"], [58, "#2a4664"], [66, "#365670"], [74, "#46667e"]], 0, 84);
 
-      // Planets: a huge dark one off the corner, a ringed giant and a red dwarf.
-      h.disc(ctx, 6, 8, 22, "#4a2a6a");
-      h.disc(ctx, 3, 5, 21, "#140a24");
-      for (let x = -9; x <= 9; x += 1) {
-        const dy = Math.round(2 * Math.sqrt(1 - (x / 9.5) ** 2));
-        if (Math.abs(x) > 5) R(72 + x, 33 - dy, 1, 1, "#a8884a");
-      }
-      h.disc(ctx, 72, 33, 6, "#1a4a6a");
-      h.disc(ctx, 71, 32, 5, "#3a90b0");
-      R(67, 31, 9, 1, "#5ab0c8");
-      R(66, 34, 11, 1, "#2a6a8a");
-      R(69, 29, 2, 1, "#a8e0f0");
-      for (let x = -9; x <= 9; x += 1) {
-        const dy = Math.round(2 * Math.sqrt(1 - (x / 9.5) ** 2));
-        R(72 + x, 33 + dy, 1, 1, "#e8c87a");
-      }
-      h.disc(ctx, 252, 28, 4, "#5a1a2a");
-      h.disc(ctx, 251, 27, 3, "#d0503a");
-      R(250, 26, 1, 1, "#ffb09a");
-      h.disc(ctx, 304, 72, 8, "#ff5fc8");
-      h.disc(ctx, 306, 71, 8, "#190a3a");
-
-      // The swirling galaxy behind the throne.
-      haze(ctx, h, GALAXY.x, GALAXY.y, 44, 13, "#2a1248", 0.4);
-      haze(ctx, h, GALAXY.x, GALAXY.y, 28, 8, "#4a1a70", 0.5);
-      haze(ctx, h, GALAXY.x, GALAXY.y, 12, 4, "#8a3aa0", 0.5);
-      [0, 1].forEach(arm => {
-        for (let i = 0; i <= 80; i += 1) {
-          const s = i / 80;
-          const [x, y] = galaxyPoint(arm, s, 0);
-          const color = s < 0.2 ? "#ffd6f4" : s < 0.45 ? "#ff8ad8" : s < 0.7 ? "#b04ac0" : "#6a2a9a";
-          R(x, y, s < 0.6 ? 2 : 1, 1, color);
-          if (s > 0.1) R(x, y + 1, 1, 1, s < 0.5 ? "#b04ac0" : "#4a2080");
-          if (rand() < 0.7) R(x + Math.round((rand() - 0.5) * 4), y + Math.round((rand() - 0.5) * 2), 1, 1, s < 0.5 ? "#c060d0" : "#4a2080");
+      // A faint galaxy band sweeping across the sky.
+      for (let x = 0; x < W; x += 1) {
+        const cy = 42 - x * 0.09 + Math.round(Math.sin(x * 0.05) * 2);
+        for (let dy = -7; dy <= 7; dy += 1) {
+          const y = Math.round(cy + dy);
+          const a = Math.abs(dy);
+          if (a < 3 && (x + y) % 2 === 0) R(x, y, 1, 1, "#2e3c6c");
+          else if (a < 6 && (x + y) % 4 === 0) R(x, y, 1, 1, "#26325e");
+          if (a < 5 && rand() < 0.04) R(x, y, 1, 1, rand() < 0.5 ? "#9a8ad0" : "#7aa0d8");
         }
-      });
-      h.disc(ctx, GALAXY.x, GALAXY.y, 4, "#ff8ad8");
-      h.disc(ctx, GALAXY.x, GALAXY.y, 2, "#fff0fa");
+      }
+      for (let i = 0; i < 110; i += 1) {
+        const x = Math.floor(rand() * W);
+        const y = Math.floor(rand() * 62);
+        const roll = rand();
+        R(x, y, 1, 1, roll < 0.15 ? "#f0f4ff" : roll < 0.5 ? "#8a9ac8" : "#3a4878");
+      }
 
-      // Floating island with the (currently vacant) throne.
-      R(138, 70, 44, 3, "#5a4a72");
-      R(138, 70, 44, 1, "#9a88c0");
-      for (let i = 0; i < 9; i += 1) R(140 + i * 2, 73 + i, 40 - i * 4, 1, i % 2 ? "#2e2240" : "#261c36");
-      R(141, 67, 2, 3, "#ff5fc8");
-      R(141, 66, 1, 1, "#ffc0ec");
-      R(178, 68, 2, 2, "#ff5fc8");
-      const gold = "#e8b84a";
-      R(150, 47, 20, 15, "#2a0f4a");
-      R(151, 48, 18, 14, "#4a1a7a");
-      R(150, 47, 1, 15, gold);
-      R(169, 47, 1, 15, gold);
-      R(150, 47, 20, 1, gold);
-      R(150, 43, 2, 4, gold);
-      R(168, 43, 2, 4, gold);
-      R(159, 41, 2, 6, gold);
-      R(155, 45, 1, 2, gold);
-      R(164, 45, 1, 2, gold);
-      R(158, 50, 4, 4, "#ff5fc8");
-      R(158, 50, 1, 1, "#ffd0f0");
-      R(146, 57, 5, 6, "#3a1460");
-      R(169, 57, 5, 6, "#3a1460");
-      R(146, 57, 5, 1, gold);
-      R(169, 57, 5, 1, gold);
-      R(148, 62, 24, 4, "#3a1460");
-      R(148, 62, 24, 1, gold);
-      R(149, 66, 3, 4, "#2a0f4a");
-      R(168, 66, 3, 4, "#2a0f4a");
-      // A note on the seat: he will be right back.
-      R(154, 55, 13, 7, "#f0e6c8");
-      R(154, 61, 13, 1, "#a8987a");
-      h.text(ctx, "BRB", 155, 56, () => "#8a1a5a");
+      // Gold crescent moon with a dithered halo.
+      for (let y = 18; y <= 42; y += 1) {
+        for (let x = 238; x <= 262; x += 1) {
+          const d = Math.hypot(x - 250, y - 30);
+          if (d > 8 && d < 12 && (x + y) % 2 === 0) R(x, y, 1, 1, d < 10 ? "#2a3a62" : "#1e2c50");
+          if (d <= 7 && Math.hypot(x - 253, y - 28) > 6) R(x, y, 1, 1, d > 6 ? "#c89a3a" : SEER_GOLD);
+        }
+      }
 
-      // The floating rock platform the fight happens on.
-      R(0, 82, W, 1, "#b0a0e0");
-      bands(ctx, h, [[83, "#4a3c62"], [90, "#41355a"], [100, "#3a2f52"], [114, "#34294a"], [128, "#2e2442"]], 83, H);
-      seams(ctx, h, 84, 34, 10, "#2a2038");
-      [89, 98, 111, 128].forEach(y => {
-        R(0, y, W, 1, "#2a2038");
-        R(0, y + 1, W, 1, "#54467a");
+      // Rolling hills, a crooked far-off tree, and the fog bank on the horizon.
+      for (let x = 0; x < W; x += 1) {
+        const far = 68 + Math.round(Math.sin(x * 0.028 + 1) * 3 + Math.sin(x * 0.09) * 1);
+        R(x, far, 1, 84 - far, "#22344e");
+        const near = 75 + Math.round(Math.sin(x * 0.05 + 3) * 2 + Math.sin(x * 0.013) * 2);
+        R(x, near, 1, 84 - near, "#1a2840");
+      }
+      line(ctx, h, 292, 76, 290, 56, "#10182a", 2);
+      line(ctx, h, 291, 62, 282, 54, "#10182a");
+      line(ctx, h, 291, 60, 300, 50, "#10182a");
+      line(ctx, h, 296, 54, 302, 55, "#10182a");
+      for (let y = 72; y < 84; y += 1) {
+        for (let x = (y % 2); x < W; x += y < 76 ? 4 : y < 80 ? 2 : 1) R(x, y, 1, 1, y < 80 ? "#5a7090" : "#4e6482");
+      }
+
+      // Dirt crossroads.
+      bands(ctx, h, [[84, "#2e2a2c"], [88, "#3a322e"], [96, "#443a30"], [108, "#4e4232"], [124, "#564834"]], 84, H);
+      // Cobblestones: the road to the horizon, crossed by the east-west road.
+      for (let y = 85, row = 0; y < H; row += 1) {
+        const rh = 2 + Math.floor((y - 84) / 10);
+        const sw = 4 + Math.floor((y - 84) / 5);
+        const shift = row % 2 ? Math.floor(sw / 2) : 0;
+        for (let x = -shift; x < W; x += sw) {
+          const mid = x + sw / 2;
+          const cross = y >= 98 && y < 116;
+          const road = mid > persX(112, y) && mid < persX(208, y);
+          if (!cross && !road) continue;
+          R(x + 1, y, sw - 1, rh - 1, ["#6a6258", "#5e574f", "#766c5e", "#645a4c"][Math.floor(hash(x * 7 + row * 131) * 4)]);
+          R(x + 1, y, sw - 1, 1, "#8a7e6c");
+        }
+        y += rh;
+      }
+      // Tufts of grass along the verges.
+      for (let i = 0; i < 40; i += 1) {
+        const x = Math.floor(rand() * W);
+        const y = 86 + Math.floor(rand() * 52);
+        R(x, y - 2, 1, 2, "#2e4030");
+        R(x + 1, y - 3, 1, 3, "#3a5038");
+      }
+      R(0, 84, W, 1, "#6a809a");
+      R(0, 85, W, 1, "#24202a");
+
+      // Signpost pointing to every other fighter's venue.
+      R(63, 26, 3, 60, "#4a301c");
+      R(63, 26, 1, 60, "#6a4a2c");
+      R(62, 25, 5, 2, "#3a2414");
+      CROSS_SIGNS.forEach(([label, dir], i) => arrowSign(ctx, h, label, dir, dir > 0 ? 66 : 63, 28 + i * 7));
+
+      // Shepherd's-crook lantern post and an open trunk of spare cards.
+      R(252, 34, 2, 52, "#3a2414");
+      R(252, 34, 1, 52, "#5a3a24");
+      R(246, 33, 8, 2, "#3a2414");
+      R(244, 77, 18, 8, "#5a3420");
+      R(244, 77, 18, 1, "#7a4a2c");
+      R(244, 80, 18, 1, SEER_GOLD);
+      R(244, 72, 18, 3, "#4a2a18");
+      R(244, 75, 18, 2, "#3a1c10");
+      [[247, 73], [251, 72], [255, 73]].forEach(([x, y]) => {
+        R(x, y, 3, 5, "#efe0bc");
+        R(x + 1, y + 2, 1, 1, SEER_PINK);
       });
-      ring(ctx, h, 160, 106, 30, 6, "#6a2a7a", 64);
-      ring(ctx, h, 160, 106, 22, 4, "#4a2060", 48);
-      for (let i = 0; i < 50; i += 1) R(Math.floor(rand() * W), 84 + Math.floor(rand() * 56), 1, 1, rand() < 0.5 ? "#7a6aa8" : "#221a30");
-      // Glowing cracks.
-      line(ctx, h, 20, 120, 34, 112, "#7a2a7a");
-      line(ctx, h, 34, 112, 46, 116, "#7a2a7a");
-      line(ctx, h, 280, 132, 292, 122, "#7a2a7a");
-      line(ctx, h, 292, 122, 306, 126, "#7a2a7a");
+
+      // The booth wagon: rounded roof and chimney.
+      R(181, 22, 3, 8, "#2a1a10");
+      R(180, 21, 5, 1, "#3a2414");
+      [[30, 138, 44], [31, 134, 52], [32, 132, 56], [33, 131, 58]].forEach(([y, x, w]) => R(x, y, w, 1, "#4a2a1a"));
+      R(138, 30, 44, 1, "#7a4a2c");
+      R(130, 34, 60, 3, "#3a2014");
+      // Plank body and chassis.
+      R(130, 46, 60, 30, "#6a3a22");
+      for (let x = 133; x < 190; x += 5) R(x, 46, 1, 30, "#4e2a18");
+      R(130, 46, 1, 30, "#8a5030");
+      R(189, 46, 1, 30, "#3a1c10");
+      R(126, 75, 68, 3, "#3a2014");
+      R(126, 75, 68, 1, "#5a3a24");
+      line(ctx, h, 126, 77, 112, 83, "#3a2014");
+      // Striped canopy with a scalloped edge, on two poles.
+      R(123, 36, 74, 1, "#2a1410");
+      for (let x = 124; x < 196; x += 6) {
+        const pink = Math.floor((x - 124) / 6) % 2 === 0;
+        const main = pink ? "#d8389a" : "#efe0bc";
+        const shade = pink ? "#a82478" : "#c8b890";
+        R(x, 37, 6, 6, main);
+        R(x, 43, 6, 2, shade);
+        R(x + 1, 45, 4, 1, shade);
+        R(x + 2, 46, 2, 1, shade);
+      }
+      R(124, 37, 72, 1, "#ffa8e0");
+      [124, 195].forEach(x => R(x, 46, 1, 38, "#3a2014"));
+      // Hand-painted sign.
+      R(133, 48, 54, 10, "#2a1410");
+      R(134, 49, 52, 8, "#efe0b8");
+      R(134, 56, 52, 1, "#c8b890");
+      R(135, 49, 1, 1, "#7a5434");
+      R(184, 49, 1, 1, "#7a5434");
+      dollar(R, 136, 51, "#1a7a9a");
+      h.text(ctx, "1", 140, 51, () => "#1a7a9a");
+      h.text(ctx, "PROPHECIES", 145, 51, () => "#b01e78");
+      // Counter window with velvet drapes; the ball itself is animated.
+      R(145, 59, 30, 13, "#2a1410");
+      R(146, 60, 28, 11, "#140a1e");
+      R(146, 60, 4, 11, "#5a1a5a");
+      R(170, 60, 4, 11, "#5a1a5a");
+      R(146, 60, 28, 2, "#7a2a7a");
+      R(150, 62, 1, 1, "#7a2a7a");
+      R(169, 62, 1, 1, "#7a2a7a");
+      R(143, 71, 34, 2, "#8a5030");
+      R(143, 71, 34, 1, "#b07040");
+      R(157, 69, 7, 2, SEER_GOLD);
+      R(156, 70, 9, 1, "#b8902a");
+      // Painted stars and a moon on the panels.
+      [[136, 62], [140, 67], [181, 63], [185, 68]].forEach(([x, y]) => {
+        R(x, y - 1, 1, 3, SEER_GOLD);
+        R(x - 1, y, 3, 1, SEER_GOLD);
+      });
+      // Wooden wheels.
+      [139, 181].forEach(cx => {
+        h.disc(ctx, cx, 79, 6, "#2a1810");
+        h.disc(ctx, cx, 79, 5, "#8a5a30");
+        h.disc(ctx, cx, 79, 4, "#1a100c");
+        line(ctx, h, cx - 4, 79, cx + 4, 79, "#8a5a30");
+        line(ctx, h, cx, 75, cx, 83, "#8a5a30");
+        line(ctx, h, cx - 3, 76, cx + 3, 82, "#8a5a30");
+        line(ctx, h, cx - 3, 82, cx + 3, 76, "#8a5a30");
+        R(cx - 1, 78, 3, 3, SEER_GOLD);
+      });
     },
     animate(ctx, h, now, excitement) {
       const R = painter(ctx, h);
 
-      // Twinkling stars: faster when the fight heats up.
-      const rate = 420 - excitement * 260;
-      cosmicStars(h).forEach(star => {
-        const on = hash(Math.floor((now + star.k * 131) / rate) * 17 + star.k) > 0.45;
-        if (!on) return;
+      // Twinkling stars, faster when the fight heats up.
+      const rate = 500 - excitement * 300;
+      crossStars(h).forEach(star => {
+        if (hash(Math.floor((now + star.k * 137) / rate) * 13 + star.k) < 0.5) return;
         R(star.x, star.y, 1, 1, "#ffffff");
-        if (star.bright) {
-          R(star.x - 1, star.y, 1, 1, "#a898e0");
-          R(star.x + 1, star.y, 1, 1, "#a898e0");
-          R(star.x, star.y - 1, 1, 1, "#a898e0");
-          R(star.x, star.y + 1, 1, 1, "#a898e0");
+        if (star.big) {
+          R(star.x - 1, star.y, 1, 1, "#8aa0d8");
+          R(star.x + 1, star.y, 1, 1, "#8aa0d8");
+          R(star.x, star.y - 1, 1, 1, "#8aa0d8");
+          R(star.x, star.y + 1, 1, 1, "#8aa0d8");
         }
-      });
-
-      // Bright motes sliding along the galaxy arms.
-      const spin = now * 0.0004;
-      [0, 1].forEach(arm => {
-        for (let k = 0; k < 8; k += 1) {
-          const s = ((k / 8) + now * 0.00005) % 1;
-          const [x, y] = galaxyPoint(arm, s, spin * (1 - s));
-          R(x, y, 1, 1, "#fff0fa");
-        }
-      });
-
-      // Core pulse: a ring that grows and speeds up with excitement.
-      const period = 1800 - excitement * 900;
-      const p = (now % period) / period;
-      const reach = 6 + p * 40 * (0.6 + excitement * 0.7);
-      ctx.globalAlpha = (1 - p) * (0.25 + excitement * 0.6);
-      ring(ctx, h, GALAXY.x, GALAXY.y, reach, reach * 0.3, "#ff8ad8", 48);
-      ctx.globalAlpha = 0.25 + excitement * 0.5;
-      h.disc(ctx, GALAXY.x, GALAXY.y, 5 + Math.round(excitement * 3), "#ff8ad8");
-      ctx.globalAlpha = 1;
-      h.disc(ctx, GALAXY.x, GALAXY.y, 2, "#ffffff");
-
-      // Throne gem and floor runes glow with the pulse.
-      const glow = 0.5 + 0.5 * Math.sin(now / 400);
-      R(158, 50, 4, 4, glow > 0.5 || excitement > 0.4 ? "#ffa8e8" : "#ff5fc8");
-      R(158, 50, 1, 1, "#ffffff");
-      ctx.globalAlpha = 0.25 + glow * 0.2 + excitement * 0.5;
-      ring(ctx, h, 160, 106, 30, 6, "#ff5fc8", 64);
-      line(ctx, h, 20, 120, 34, 112, "#ff5fc8");
-      line(ctx, h, 34, 112, 46, 116, "#ff5fc8");
-      line(ctx, h, 280, 132, 292, 122, "#ff5fc8");
-      line(ctx, h, 292, 122, 306, 126, "#ff5fc8");
-      ctx.globalAlpha = 1;
-
-      // A moon orbiting the red planet, hidden while behind it.
-      const a = now / 1400;
-      const mx = 252 + Math.cos(a) * 9;
-      const my = 28 + Math.sin(a) * 3;
-      if (Math.sin(a) > 0 || Math.abs(mx - 252) > 5) R(mx, my, 2, 2, "#c8c0d8");
-
-      // Floating rocks bob, harder when things shake.
-      [[30, 66, 5, 0], [292, 60, 6, 1], [34, 30, 2, 2], [268, 78, 3, 3]].forEach(([x, y, w, k]) => {
-        const by = y + Math.round(Math.sin(now / 900 + k * 1.7) * (1 + excitement * 2));
-        R(x - w, by, w * 2, 3, "#3a2c4a");
-        R(x - w, by, w * 2, 1, "#7a6a9a");
-        R(x - w + 1, by + 3, w * 2 - 2, 2, "#2a1e36");
-        R(x - 1, by + 5, 2, 1, "#2a1e36");
-      });
-
-      // Screens showing the other fighters' worlds; they channel-surf when it gets loud.
-      COSMIC_SCREENS.forEach(([x, baseY], k) => {
-        const y = baseY + Math.round(Math.sin(now / 900 + k * 2));
-        const slot = excitement > 0.5 ? 400 : 3500;
-        const tick = now + k * 1300;
-        ctx.globalAlpha = 0.25 + excitement * 0.3;
-        R(x - 3, y - 3, 22, 18, "#ff5fc8");
-        ctx.globalAlpha = 1;
-        R(x - 2, y - 2, 20, 16, "#1a1028");
-        R(x - 2, y - 2, 20, 1, "#8a6ac0");
-        if (tick % slot < 90) {
-          R(x, y, 16, 12, "#2a2a3a");
-          for (let i = 0; i < 24; i += 1) R(x + Math.floor(hash(tick + i) * 16), y + Math.floor(hash(tick * 3 + i) * 12), 1, 1, "#d0d0e0");
-        } else {
-          channel(ctx, h, (k * 2 + Math.floor(tick / slot)) % 7, x, y, now);
-        }
-        R(x + 7, y + 14, 2, 3, "#3a2c4a");
       });
 
       // An occasional shooting star.
-      const st = now % 5200;
+      const st = now % 6100;
       if (st < 500) {
-        const sx = 230 + st * 0.14;
-        const sy = 6 + st * 0.04;
-        line(ctx, h, sx - 8, sy - 2, sx, sy, "#a898e0");
+        const sx = 200 - st * 0.16;
+        const sy = 6 + st * 0.03;
+        line(ctx, h, sx, sy, sx + 8, sy - 2, "#8aa0d8");
         R(sx, sy, 1, 1, "#ffffff");
       }
+
+      // Crystal ball: it pulses, and blazes when the fight gets loud.
+      const pulse = 0.5 + 0.5 * Math.sin(now / (520 - excitement * 260));
+      ctx.globalAlpha = 0.1 + excitement * 0.18;
+      h.disc(ctx, BALL.x, BALL.y, 11 + Math.round(excitement * 8), SEER_PINK);
+      ctx.globalAlpha = 0.14 + pulse * 0.12 + excitement * 0.3;
+      h.disc(ctx, BALL.x, BALL.y, 6 + Math.round(pulse * 2 + excitement * 4), SEER_CYAN);
+      ctx.globalAlpha = 1;
+      h.disc(ctx, BALL.x, BALL.y, 4, "#1e6a98");
+      h.disc(ctx, BALL.x, BALL.y, 3, pulse > 0.5 || excitement > 0.4 ? SEER_CYAN : "#3ab0d8");
+      for (let k = 0; k < 3; k += 1) {
+        const a = now / (300 - excitement * 150) + k * 2.1;
+        R(BALL.x + Math.round(Math.cos(a) * 2), BALL.y + Math.round(Math.sin(a) * 2), 1, 1, k ? SEER_PINK : "#ffffff");
+      }
+      R(BALL.x - 2, BALL.y - 2, 1, 1, "#ffffff");
+
+      // Lanterns sway and flicker.
+      CROSS_LANTERNS.forEach(([ax, ay, phase, color], k) => {
+        const x = ax + Math.round(Math.sin(now / 900 + phase) * 0.8 + excitement * Math.sin(now / 140 + phase) * 1.5);
+        const dim = hash(Math.floor(now / 110) * 7 + k) < 0.1;
+        const glow = (0.16 + 0.05 * Math.sin(now / 80 + phase * 3)) * (dim ? 0.4 : 1);
+        ctx.globalAlpha = glow;
+        h.disc(ctx, x, ay + 6, 7, color);
+        ctx.globalAlpha = glow * 0.6;
+        h.disc(ctx, x, ay + 6, 11, color);
+        ctx.globalAlpha = 1;
+        line(ctx, h, ax, ay, x, ay + 2, "#2a1a10");
+        R(x - 1, ay + 2, 3, 1, "#2a1a10");
+        R(x - 2, ay + 3, 5, 6, color);
+        R(x - 2, ay + 3, 1, 6, "#2a1a10");
+        R(x + 2, ay + 3, 1, 6, "#2a1a10");
+        R(x - 1, ay + 4, 3, 4, dim ? color : "#fff4d8");
+        R(x - 1, ay + 9, 3, 1, "#2a1a10");
+        R(x, ay + 10, 1, 1, SEER_GOLD);
+      });
+
+      // His black cat keeps an eye on the booth from the roof.
+      const hop = excitement > 0.3 ? Math.round(Math.abs(Math.sin(now / 120)) * 3 * excitement) : 0;
+      const cy = 29 - hop;
+      R(170, cy - 3, 5, 4, "#07050c");
+      R(170, cy - 6, 4, 3, "#07050c");
+      R(170, cy - 7, 1, 1, "#07050c");
+      R(173, cy - 7, 1, 1, "#07050c");
+      if ((now % 3400) > 150) {
+        R(171, cy - 5, 1, 1, "#ffe85a");
+        R(173, cy - 5, 1, 1, "#ffe85a");
+      }
+      const tail = Math.round(Math.sin(now / 400) * 1.5);
+      R(175, cy - 2 + tail, 1, 3, "#07050c");
+      R(176, cy - 3 + tail, 1, 2, "#07050c");
+
+      // Tarot cards flutter past, flipping in the wind; the wind picks up with excitement.
+      tarot(h).forEach(card => {
+        const x = Math.round(((card.x0 + now * card.speed * (1 + excitement * 2.5)) % 360) - 20);
+        const y = Math.round(card.y0 + Math.sin(now / 700 + card.phase) * 6 + Math.sin(now / 200 + card.phase) * excitement * 3);
+        const turn = Math.cos(now / 260 + card.phase);
+        const w = Math.abs(turn) > 0.66 ? 3 : Math.abs(turn) > 0.25 ? 2 : 1;
+        R(x + Math.floor((3 - w) / 2), y, w, 5, turn > 0 ? "#efe0bc" : "#3a2a6a");
+        if (w === 3) R(x + 1, y + 2, 1, 1, turn > 0 ? card.mark : SEER_GOLD);
+      });
+
+      // Fog rolling over the crossroads.
+      ctx.globalAlpha = 0.15 + excitement * 0.04;
+      for (let k = 0; k < 8; k += 1) {
+        const speed = 0.003 + (k % 3) * 0.0015;
+        const w = 50 + ((k * 41) % 60);
+        const span = W + w + 40;
+        const x = ((k * 113 + now * speed) % span) - w - 20;
+        const y = 76 + ((k * 13) % 36);
+        R(x + 8, y - 1, w - 16, 1, "#b8c8e0");
+        R(x, y, w, 2, "#b8c8e0");
+        R(x + 5, y + 2, w - 10, 1, "#b8c8e0");
+      }
+      ctx.globalAlpha = 1;
     }
   };
 

@@ -251,8 +251,8 @@ button:focus-visible, a:focus-visible { outline: 3px solid var(--red); outline-o
 .big-button:active { transform: translateY(0); box-shadow: 0 2px 0 #0a1112; }
 
 /* Full-screen overlays. */
-.title-screen, .character-select, .fighter-detail, .result-panel, .dialogue { position: fixed; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 24px 16px; }
-.title-screen[hidden], .character-select[hidden], .fighter-detail[hidden], .result-panel[hidden], .dialogue[hidden] { display: none; }
+.title-screen, .character-select, .fighter-detail, .result-panel, .dialogue, .pause-menu { position: fixed; inset: 0; display: grid; place-items: center; overflow-y: auto; padding: 24px 16px; }
+.title-screen[hidden], .character-select[hidden], .fighter-detail[hidden], .result-panel[hidden], .dialogue[hidden], .pause-menu[hidden] { display: none; }
 .title-screen { z-index: 30; background: linear-gradient(180deg, #0d1a1dcc, #0d1a1d99 50%, #0d1a1dee); }
 .character-select { z-index: 30; background: #0d1a1de8; }
 .fighter-detail { z-index: 31; background: #0d1a1dcc; }
@@ -411,3 +411,84 @@ body:not([data-screen="fight"]):not([data-screen="result"]) .hud-center { visibi
 .fighter-card.locked:hover { transform: none; box-shadow: 0 5px 0 #0a1112; }
 .fighter-card.locked .card-name { color: #6e6680; }
 .fighter-card.locked .card-role { color: #6e6680; }
+
+.install-hint { margin: 8px 0 0; color: var(--lime); font-size: 10px; }
+.install-hint[hidden] { display: none; }
+.fullscreen-toggle[hidden] { display: none; }
+
+/* ---------------------------------------------------------------------------
+   Phone held sideways: a handheld-console layout. The arena fills the screen
+   edge to edge, the HUD is a thin strip at the top and the moves are a slim
+   row along the bottom, clear of the fighters. Safe-area padding keeps
+   everything out from under the notch. */
+@media (min-width: 621px) and (max-height: 500px) {
+  .game-shell { padding: 4px max(8px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); border: 0; }
+  .arena-wrap { inset: 0; border: 0; }
+  .matchup { gap: 10px; padding: 2px 4px 0; }
+  .health-track { height: 12px; border-width: 2px; box-shadow: 0 0 0 2px #f1c95a, 0 0 0 4px #140e16; }
+  .fighter-heading { margin-top: 6px; }
+  .name-plate { padding: 3px 5px 2px; border-width: 3px; font-size: 9px; }
+  .hp-number { font-size: 8px; }
+  .fighter-meta { margin-top: 3px; }
+  .boost-tag { padding: 2px 4px; font-size: 6px; }
+  .hud-center { grid-auto-flow: column; align-items: start; gap: 5px; }
+  .round-readout { min-width: 44px; padding: 3px 5px 4px; gap: 2px; }
+  .readout-label { font-size: 5px; }
+  .round-readout strong { font-size: 12px; }
+  .corner-controls { flex-direction: column; gap: 3px; }
+  .menu-button { padding: 4px 4px 3px; font-size: 6px; }
+  .corner-controls .sound-toggle { width: 22px; height: 18px; }
+  .corner-controls .speaker-icon { width: 16px; height: 16px; }
+  .fight-console { padding: 0 4px 4px; }
+  .action-row { gap: 6px; }
+  .move-button { min-height: 0; padding: 5px 8px; column-gap: 7px; border-width: 2px; box-shadow: 0 3px 0 #0a1112; background: linear-gradient(180deg, color-mix(in srgb, var(--fighter) 34%, #10191bdd) 0%, #10191bdd 100%); }
+  .move-button.ultimate { border-width: 4px; }
+  .move-icon { width: 28px; height: 28px; }
+  .move-name { font-size: 15px; }
+  .move-cooldown { font-size: 7px; }
+  .move-key { top: 2px; right: 4px; font-size: 7px; }
+  .screen-announcement p { font-size: 46px; }
+
+  /* Menus: smaller type and wider grids so they fit the short screen. */
+  .title-screen, .character-select, .fighter-detail, .result-panel { padding: 10px max(16px, env(safe-area-inset-right)) 10px max(16px, env(safe-area-inset-left)); }
+  .game-logo { margin: 4px 0 10px; font-size: 54px; }
+  .mode-list { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mode-button { padding: 10px 12px; }
+  .mode-button strong { font-size: 24px; }
+  .mode-button span { font-size: 9px; }
+  .code-entry { margin-top: 10px; }
+  .title-hint { margin-top: 8px; }
+  .select-panel h2 { margin: 2px 0 10px; font-size: 32px; }
+  .select-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 4px; }
+  .fighter-card { min-height: 64px; padding: 10px; }
+  .card-name { font-size: 24px; }
+  .card-role { font-size: 9px; }
+  .detail-box { grid-template-columns: 150px 1fr; gap: 14px; padding: 14px; }
+  .detail-portrait { width: 150px; height: 167px; }
+  .detail-info h2 { font-size: 36px; }
+  .detail-story { margin: 6px 0 8px; font-size: 10px; line-height: 1.4; }
+  .detail-move { padding: 6px; }
+  .detail-move p { display: none; }
+  .detail-actions { margin-top: 8px; }
+  .big-button { min-width: 150px; padding: 10px 18px; font-size: 20px; }
+  .result-box { padding: 16px; }
+  .result-box h2 { font-size: 46px; }
+  .dialogue { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .dialogue-portrait { bottom: 120px; width: min(17vw, 34vh); }
+  .dialogue-box { min-height: 104px; padding: 12px 16px 8px; }
+  .dialogue-speaker { margin-top: -28px; font-size: 18px; }
+  .dialogue-text { min-height: 40px; font-size: 13px; line-height: 1.45; }
+}
+
+/* Pause menu: opened with MENU or Escape during a fight. */
+.pause-menu { z-index: 35; background: #0d1a1dd9; }
+.pause-box { display: grid; justify-items: center; gap: 18px; width: min(420px, 100%); padding: 26px 22px; border: 3px solid #f1c95a; background: #140e16f2; box-shadow: 0 0 0 3px #140e16, 8px 8px 0 3px #0008; }
+.pause-box h2 { margin: 0; color: #ffe36a; font: 400 26px/1 "Press Start 2P", var(--mono); text-shadow: 3px 3px 0 #c8321c; }
+.pause-actions { display: grid; gap: 12px; width: 100%; }
+.pause-actions .big-button { width: 100%; min-width: 0; font-size: 22px; }
+@media (min-width: 621px) and (max-height: 500px) {
+  .pause-box { gap: 10px; padding: 14px; }
+  .pause-box h2 { font-size: 18px; }
+  .pause-actions { grid-template-columns: 1fr 1fr; }
+  .pause-actions .big-button { font-size: 16px; }
+}

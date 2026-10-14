@@ -146,8 +146,9 @@ const Arena = (() => {
     ninja: { head: [4, -52], chest: [2, -39], hip: [-1, -25], fElbow: [12, -36], fHand: [20, -40], bElbow: [-4, -32], bHand: [-8, -26], fKnee: [11, -13], fFoot: [17, 0], bKnee: [-10, -12], bFoot: [-17, 0] },
     zoombie: { head: [9, -53], chest: [4, -41], hip: [-1, -27], fElbow: [11, -31], fHand: [14, -19], bElbow: [1, -31], bHand: [3, -19] },
     bananas: { head: [0, -43], chest: [0, -33], hip: [0, -19], fKnee: [8, -11], fFoot: [13, 0], bKnee: [-8, -11], bFoot: [-14, 0] },
-    // PROPHET hovers: arms open, legs hanging loose with the toes pointed down.
-    prophet: { head: [2, -56], chest: [1, -42], hip: [0, -28], fElbow: [12, -38], fHand: [19, -35], bElbow: [-8, -39], bHand: [-14, -35], fKnee: [6, -14], fFoot: [7, 0], bKnee: [-4, -14], bFoot: [-7, -1] }
+    // PROPHET floats upright, arms loose at his sides with the palms open,
+    // legs together with the toes pointed down, turned slightly to the opponent.
+    prophet: { head: [1, -57], chest: [0, -43], hip: [0, -29], fElbow: [8, -36], fHand: [9, -27], bElbow: [-8, -36], bHand: [-9, -27], fKnee: [2, -14], fFoot: [2, 0], bKnee: [-2, -14], bFoot: [-2, -1] }
   };
   const SCALES = { rocky: 1.1, ninja: 0.93, zoombie: 1.06, bananas: 1.05, prophet: 1.04 };
 
@@ -197,8 +198,9 @@ const Arena = (() => {
       return shift(bounced, ["fKnee", "bKnee"], feet, 0);
     }
     if (id === "prophet") {
-      const drift = Math.round(Math.sin(now / 520 + seed) * 2);
-      return shift(shift(pose, ["fHand", "bHand"], 0, drift), ["fFoot", "bFoot"], Math.round(Math.sin(now / 700 + seed)), 0);
+      // The open hands drift gently outward and back while he floats.
+      const drift = Math.round(Math.sin(now / 600 + seed) * 2);
+      return shift(shift(pose, ["fHand"], drift, -drift), ["bHand"], -drift, -drift);
     }
     return shift(pose, UPPER_BODY, 0, Math.sin(now / 280 + seed) > 0 ? 1 : 0);
   }
@@ -730,14 +732,17 @@ const Arena = (() => {
     }
   };
 
-  // PROPHET: a floating man whose skin is a living galaxy, with glowing eyes,
-  // a crown of stars and gold cosmic bands.
+  // PROPHET: a ripped, flying figure whose skin is a living galaxy. No mouth,
+  // just two bright eyes, a golden halo and an aura (drawn in the effects).
   const PROPHET = {
-    void: ["#120a2e", "#2e1a6b", "#5a3bb0"],
+    void: ["#1a0f45", "#3f2aae", "#8a70f0"],
+    muscle: "#0c0626",
+    shine: "#c2b2ff",
     nebula: ["#ff5fc8", "#5fe0ff"],
     star: "#ffffff",
-    gold: ["#a8741a", "#f1c95a", "#fff0a0"],
-    eye: ["#5fe0ff", "#e8fdff"]
+    halo: ["#a8741a", "#f1c95a", "#fff6c8"],
+    eye: ["#ff3b5c", "#ffffff"],
+    line: "#d6ccff"
   };
 
   // Twinkling stars across a limb from `a` to `b`, offset by `seed`.
@@ -754,58 +759,119 @@ const Arena = (() => {
 
   const prophetParts = {
     behind(j, time) {
-      // A slow ring of orbiting stars behind the head.
-      const h = j.head;
-      for (let k = 0; k < 10; k += 1) {
-        const angle = time / 900 + (k * Math.PI) / 5;
-        const point = at(h, -1 + Math.cos(angle) * 10, -1 + Math.sin(angle) * 4);
-        px(point, 0, 0, k % 3 ? PROPHET.gold[1] : PROPHET.nebula[k % 2]);
+      // A blazing halo: a thick golden ring all the way around the head, with
+      // rays that pulse outward.
+      const h = at(j.head, -0.5, -0.5);
+      for (let a = 0; a < Math.PI * 2; a += 0.12) {
+        const shine = Math.floor(time / 90 + a * 4) % 9 === 0;
+        px(h, Math.cos(a) * 10, Math.sin(a) * 10, shine ? PROPHET.star : PROPHET.halo[1]);
+        px(h, Math.cos(a) * 9, Math.sin(a) * 9, PROPHET.halo[2]);
+        px(h, Math.cos(a) * 11, Math.sin(a) * 11, PROPHET.halo[0]);
+      }
+      const reach = 13 + Math.round((Math.sin(time / 160) + 1) * 1.5);
+      for (let k = 0; k < 12; k += 1) {
+        const a = (k * Math.PI) / 6 + time / 2400;
+        line(at(h, Math.cos(a) * 12, Math.sin(a) * 12), at(h, Math.cos(a) * (k % 2 ? reach - 2 : reach), Math.sin(a) * (k % 2 ? reach - 2 : reach)), k % 2 ? PROPHET.halo[1] : PROPHET.halo[2]);
       }
     },
     arm(shoulder, elbow, hand, back) {
       const skin = back ? dim(PROPHET.void) : PROPHET.void;
-      shaded(shoulder, elbow, 3.5, 2.8, skin);
-      shaded(elbow, hand, 2.8, 2.4, skin);
-      shaded(mix(elbow, hand, 0.62), mix(elbow, hand, 0.8), 2.7, 2.6, back ? dim(PROPHET.gold) : PROPHET.gold);
-      shaded(hand, hand, 2.8, 2.8, skin);
-      if (!back) starfield(shoulder, hand, 6, 0.3, performance.now());
+      // Square, front-on shoulders: each arm starts out at the edge of the
+      // chest and hangs straight down at his side.
+      const top = [shoulder[0] + (back ? -5 : 5), shoulder[1] + 1];
+      shaded(top, top, 3.2, 3.2, skin);
+      shaded(top, elbow, 2.8, 2.2, skin);
+      shaded(elbow, hand, 2.2, 1.8, skin);
+      // An open hand: palm, four fingers pointing down and a thumb.
+      shaded(hand, at(hand, 0, 1.5), 1.9, 1.9, skin);
+      [-1.5, -0.5, 0.5, 1.5].forEach((dx, k) => line(at(hand, dx, 3), at(hand, dx, k === 0 || k === 3 ? 4.5 : 5.5), k % 2 ? skin[2] : skin[1]));
+      line(at(hand, back ? 2.5 : -2.5, 1), at(hand, back ? 3 : -3, 3), skin[2]);
+      if (!back) {
+        starfield(top, hand, 4, 0.3, performance.now());
+        // A small constellation running down the arm.
+        const a = mix(top, elbow, 0.4);
+        const b = mix(elbow, hand, 0.2);
+        const c = mix(elbow, hand, 0.7);
+        line(a, b, PROPHET.line);
+        line(b, c, PROPHET.line);
+        [a, b, c].forEach(point => px(point, 0, 0, PROPHET.star));
+      }
     },
     leg(hip, knee, foot, back) {
       const skin = back ? dim(PROPHET.void) : PROPHET.void;
-      shaded(hip, knee, 4.4, 3.5, skin);
-      shaded(knee, foot, 3.5, 2.2, skin);
-      if (!back) starfield(hip, foot, 7, 0.7, performance.now());
+      // Long legs hanging straight, toes pointed down (he never stands on them).
+      shaded(hip, knee, 3.4, 2.5, skin);
+      shaded(knee, at(foot, 0, -2), 2.4, 1.8, skin);
+      // A foot with the toes pointed down, as he floats: heel, arch and toes.
+      const side = back ? -1 : 1;
+      shaded(at(foot, 0, -2), at(foot, side * 1.5, 1), 1.9, 1.5, skin);
+      shaded(at(foot, side * 1.5, 1), at(foot, side * 2.5, 2.5), 1.5, 1.1, skin);
+      if (!back) {
+        starfield(hip, foot, 5, 0.7, performance.now());
+        // A constellation down the thigh and a small galaxy swirl on the shin.
+        const a = mix(hip, knee, 0.2);
+        const b = mix(hip, knee, 0.7);
+        line(a, b, PROPHET.line);
+        [a, b].forEach(point => px(point, 0, 0, PROPHET.star));
+        const swirl = mix(knee, foot, 0.4);
+        px(swirl, 0, 0, PROPHET.star);
+        px(swirl, 1, 0, PROPHET.nebula[0]);
+        px(swirl, -1, 1, PROPHET.nebula[1]);
+      }
     },
     torso(j, time) {
-      shaded(j.hip, j.neck, 6, 7.4, PROPHET.void);
-      // Nebula streaks swirling across the chest.
-      line(along(j, j.hip, -4, 4), along(j, j.chest, 4, 3), PROPHET.nebula[0]);
-      line(along(j, j.hip, -2, 8), along(j, j.neck, 5, -2), PROPHET.nebula[1]);
-      starfield(j.hip, j.neck, 14, 0.11, time);
-      const core = along(j, j.chest, 2, 2);
-      px(core, 0, 0, Math.floor(time / 240) % 2 ? PROPHET.star : PROPHET.nebula[1]);
-      // Gold sash and belt.
-      shaded(along(j, j.hip, 0, 1), along(j, j.hip, 0, 3), 6.4, 6.4, PROPHET.gold);
-      line(along(j, j.hip, -5, 3), along(j, j.neck, 5, -1), PROPHET.gold[2]);
+      // A front-on athletic torso: broad shoulders tapering to a slim waist.
+      shaded(j.hip, j.chest, 4.6, 6.4, PROPHET.void);
+      shaded(at(j.chest, 0, -3), at(j.neck, 0, 2), 7.2, 6.4, PROPHET.void);
+      // Trapezius sloping from the shoulders up into the neck.
+      polygon(j.neck, [[-6, 3], [-2, -1], [2, -1], [6, 3]], PROPHET.void[1]);
+      // The Milky Way band sweeping diagonally across the chest.
+      const from = at(j.neck, -5, 1);
+      const to = at(j.hip, 4, -1);
+      line(from, to, PROPHET.shine);
+      line(at(from, 1, 0), at(to, 1, 0), PROPHET.nebula[0]);
+      line(at(from, -1, 1), at(to, -1, 1), PROPHET.void[2]);
+      for (let k = 0; k < 6; k += 1) {
+        const point = mix(from, to, (k + 0.5) / 6);
+        if (Math.floor(time / 200 + k) % 3) px(point, (k % 2) * 2 - 1, 0, PROPHET.star);
+      }
+      starfield(j.hip, j.neck, 10, 0.11, time);
+      // A constellation across the chest: bright stars joined by faint lines.
+      const stars = [[-5, -1], [-2, -4], [2, -2], [5, -5], [3, 2]].map(([dx, dy]) => at(j.chest, dx, dy));
+      stars.slice(1).forEach((star, k) => line(stars[k], star, PROPHET.line));
+      stars.forEach((star, k) => px(star, 0, 0, Math.floor(time / 300 + k) % 4 ? PROPHET.star : PROPHET.nebula[1]));
+      // A tiny spiral galaxy on the stomach.
+      const spiral = at(j.hip, -2, -6);
+      [[0, 0, PROPHET.star], [1, 0, PROPHET.nebula[0]], [1, 1, PROPHET.line], [0, 1, PROPHET.nebula[0]], [-1, 1, PROPHET.line], [-1, 0, PROPHET.nebula[1]], [-1, -1, PROPHET.line], [0, -1, PROPHET.nebula[0]], [2, -1, PROPHET.line], [-2, 2, PROPHET.line]].forEach(([dx, dy, color]) => px(spiral, dx, dy, color));
+      // A glowing all-seeing triangle below the collarbone.
+      const eye = at(j.chest, 0, -6);
+      line(at(eye, -3, 2), at(eye, 0, -2), PROPHET.halo[1]);
+      line(at(eye, 0, -2), at(eye, 3, 2), PROPHET.halo[1]);
+      line(at(eye, -3, 2), at(eye, 3, 2), PROPHET.halo[1]);
+      px(eye, 0, 0, PROPHET.star);
+      // A faint chest line for definition.
+      line(at(j.chest, -4, -3), at(j.chest, 4, -3), PROPHET.muscle);
     },
     head(j, time) {
       const h = j.head;
-      shaded(at(j.neck, 0, 1), at(h, 0, 4), 2.9, 2.6, PROPHET.void);
-      shaded(at(h, 0, -0.5), at(h, 0.5, 1.5), 5.4, 4.6, PROPHET.void);
-      starfield(at(h, -4, -2), at(h, 3, 2), 4, 0.5, time);
-      // Gold circlet with a crown of three stars.
-      line(at(h, -5, -3), at(h, 4, -4), PROPHET.gold[1]);
-      [[-3, -8], [0, -10], [3, -8]].forEach(([dx, dy], k) => {
-        const blink = Math.floor(time / 300 + k) % 3 === 0;
-        px(h, dx, dy, blink ? PROPHET.star : PROPHET.gold[2]);
-        px(h, dx, dy + 1, PROPHET.gold[1]);
-      });
-      // Bright eyes that leave a little glow beside them.
-      px(h, 1, -1, PROPHET.eye[1], 2);
-      px(h, 4, -1, PROPHET.eye[1], 2);
-      px(h, 3, 0, PROPHET.eye[0]);
-      px(h, 6, -1, PROPHET.eye[0]);
-      px(h, 2, 3, PROPHET.void[0], 3);
+      // A straight, solid neck from the shoulders up under the jaw.
+      capsule(at(j.neck, 0, 1), at(h, -0.5, 3.5), 2.4, 2.2, PROPHET.void[1]);
+      line(at(j.neck, 1.5, 0), at(h, 1, 4), PROPHET.void[2]);
+      // Head in profile, turned toward the opponent: skull, brow, nose and chin.
+      shaded(at(h, -0.5, -0.5), at(h, 0.5, 1.5), 4.6, 3.8, PROPHET.void);
+      px(h, 4, -1, PROPHET.void[1], 2);
+      px(h, 5, 1, PROPHET.void[1]);
+      px(h, 4, 3, PROPHET.void[1]);
+      // Short swept-back hair.
+      polygon(h, [[-5, -2], [-4, -6], [0, -7], [4, -6], [3, -4], [-2, -4]], PROPHET.void[0]);
+      starfield(at(h, -3, -2), at(h, 1, 2), 3, 0.5, time);
+      // A furious, slanted eye under a hard brow, burning white-hot with a red glow. No mouth.
+      line(at(h, -0.5, -3.5), at(h, 4, -1.5), PROPHET.muscle);
+      px(h, 1, -2, PROPHET.eye[1]);
+      px(h, 2, -1, PROPHET.eye[1], 2);
+      px(h, 4, -1, PROPHET.eye[0]);
+      px(h, 1, -1, PROPHET.eye[0]);
+      if (Math.floor(time / 300) % 2) px(h, 5, -2, PROPHET.eye[0]);
     }
   };
 
@@ -892,9 +958,40 @@ const Arena = (() => {
     g.restore();
   }
 
+  const glow = makeCanvas(SPRITE_W, SPRITE_H);
+  const glowG = glow.getContext("2d");
+
+  // PROPHET's aura: his silhouette in bright white, blitted around him so a
+  // soft glowing rim hugs the body.
+  function drawRimGlow(frame, now, floorY) {
+    glowG.clearRect(0, 0, SPRITE_W, SPRITE_H);
+    glowG.globalCompositeOperation = "source-over";
+    glowG.drawImage(sprite, 0, 0);
+    glowG.globalCompositeOperation = "source-in";
+    glowG.fillStyle = "#f4f0ff";
+    glowG.fillRect(0, 0, SPRITE_W, SPRITE_H);
+    glowG.globalCompositeOperation = "source-over";
+    const pulse = 0.5 + Math.sin(now / 300) * 0.5;
+    const y = Math.round(floorY - frame.lift) - FOOT_Y;
+    const x = Math.round(frame.x) + (frame.dir < 0 ? FOOT_X : -FOOT_X);
+    [[3, 0.12 + pulse * 0.1], [2, 0.3 + pulse * 0.12], [1, 0.7]].forEach(([reach, alpha]) => {
+      g.save();
+      g.globalAlpha = alpha * frame.alpha;
+      [[-reach, 0], [reach, 0], [0, -reach], [0, reach]].forEach(([dx, dy]) => {
+        g.save();
+        g.translate(x + dx, y + dy);
+        if (frame.dir < 0) g.scale(-1, 1);
+        g.drawImage(glow, 0, 0);
+        g.restore();
+      });
+      g.restore();
+    });
+  }
+
   function drawFighterSprite(frame, now, floorY) {
     if (frame.alpha <= 0) return;
     renderSprite(frame.id, frame.pose, now, frame.flash);
+    if (frame.id === "prophet" && !frame.down) drawRimGlow(frame, now, floorY);
     for (let k = frame.ghosts; k > 0; k -= 1) blitSprite(frame.x + frame.dir * k * 9, floorY - frame.lift, frame.dir, 0.22);
     blitSprite(frame.x, floorY - frame.lift, frame.dir, frame.alpha);
   }
@@ -1104,6 +1201,123 @@ const Arena = (() => {
     return { pose, offset };
   }
 
+  // Dust, smoke and sparkle that go with each entrance.
+  function drawEntranceEffects(frame, now, floorY) {
+    const t = frame.entrance;
+    if (frame.id === "rocky" && t < 0.8 && Math.floor(now / 120) % 2) puff(frame.x - frame.dir * 8, floorY - 2, 3, 0.45);
+    if (frame.id === "ninja" && t > 0.5 && t < 0.8) {
+      const age = (t - 0.5) * ENTRANCE;
+      for (let k = 0; k < 5; k += 1) puff(frame.x + Math.cos(k * 1.3) * (4 + age / 25), floorY - 6 - Math.sin(k * 1.3) * (3 + age / 40), 3, 0.7 - age / 800);
+    }
+    if (frame.id === "bananas" && frame.lift < 3 && t < 0.8) puff(frame.x, floorY - 2, 3, 0.4);
+    if (frame.id === "prophet" && t > 0.6 && t < 0.95) shockRings(frame.x, floorY - frame.lift - 34, (t - 0.6) * ENTRANCE * 1.2, ["#ffffff", "#5fe0ff", "#ff5fc8"], 0.9);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Entrances: after the pre-fight talk each fighter comes on in character.
+  const ENTRANCE = 1800;
+
+  function easeOut(t) {
+    return 1 - (1 - t) * (1 - t);
+  }
+
+  // Legs swing in opposite directions around the idle stance.
+  function walkPose(idle, cycle, stride) {
+    const swing = Math.sin(cycle) * stride;
+    let pose = shift(idle, ["fKnee", "fFoot"], swing, 0);
+    pose = shift(pose, ["bKnee", "bFoot"], -swing, 0);
+    pose = shift(pose, ["fFoot", "fKnee"], 0, -Math.max(0, Math.sin(cycle)) * 3);
+    return shift(pose, ["bFoot", "bKnee"], 0, -Math.max(0, -Math.sin(cycle)) * 3);
+  }
+
+  function entranceMotion(frame, t, now, idle) {
+    const { id, dir } = frame;
+    const travel = 1 - easeOut(Math.min(1, t / 0.8));
+    const settle = phase(t, 0.8, 1);
+    frame.entrance = t;
+    if (id === "ninja") {
+      // Drops in from above the screen and lands in a crouch.
+      const fall = Math.min(1, t / 0.55);
+      frame.lift = Math.round(110 * (1 - fall * fall));
+      frame.ghosts = fall < 1 ? 2 : 0;
+      const land = phase(t, 0.55, 0.65) * (1 - phase(t, 0.75, 0.95));
+      frame.pose = blend(blend(idle, POSES.flourish, 1 - fall), POSES.crouch, land);
+      return;
+    }
+    if (id === "bananas") {
+      // Three bouncy hops in from the side.
+      frame.x -= dir * 130 * travel;
+      frame.lift = Math.round(Math.abs(Math.sin(Math.min(1, t / 0.8) * Math.PI * 3)) * 26 * (1 - settle));
+      frame.pose = blend(POSES.fruitLaunch, idle, settle);
+      return;
+    }
+    if (id === "prophet") {
+      // Glides in under his fortune teller's cloak, then throws it off.
+      frame.x -= dir * 120 * travel;
+      frame.lift += Math.round(Math.sin(t * Math.PI) * 6);
+      frame.cloak = phase(t, 0.6, 0.9);
+      frame.pose = blend(idle, POSES.gather, phase(t, 0.6, 0.75) * (1 - phase(t, 0.85, 1)));
+      return;
+    }
+    const pace = { bobbie: 70, zoombie: 150, rocky: 120 }[id] || 95;
+    const stride = { zoombie: 4, rocky: 5, bobbie: 7 }[id] || 6;
+    frame.x -= dir * 130 * travel;
+    frame.pose = blend(walkPose(idle, now / pace, stride), idle, settle);
+    if (id === "bobbie") frame.lift = Math.round(Math.abs(Math.sin(now / pace)) * 2 * (1 - settle));
+    if (id === "zoombie") frame.pose = shift(frame.pose, ["head", "chest"], Math.round(Math.sin(now / 260) * 2), 0);
+    if (id === "bobbie" && t > 0.85) frame.pose = blend(frame.pose, POSES.jab, phase(t, 0.85, 0.92) * (1 - phase(t, 0.94, 1)));
+    if (id === "rocky" && t > 0.85) frame.pose = blend(frame.pose, POSES.fortress, phase(t, 0.85, 0.92) * (1 - phase(t, 0.95, 1)));
+  }
+
+  // The hooded cloak PROPHET wears as the fortune teller, thrown off as he
+  // enters: `off` runs from 0 (worn) to 1 (gone).
+  function drawCloak(frame, now, floorY, off) {
+    if (off >= 1) return;
+    const dir = frame.dir;
+    const top = floorY - frame.lift - 64 * frame.scale - off * 40;
+    const bottom = floorY - frame.lift - 2 - off * 40;
+    const cx = frame.x - dir * off * 34;
+    g.globalAlpha = 1 - off;
+    for (let y = Math.round(top + 10); y < bottom; y += 1) {
+      const depth = (y - top) / (bottom - top);
+      const flap = off > 0 ? Math.round(Math.sin(now / 40 + y / 3) * 3 * off) : Math.round(Math.sin(now / 300 + y / 9));
+      const half = Math.round(6 + depth * 9) + flap;
+      rect(g, cx - half, y, half * 2 + 1, 1, "#1c1430");
+      rect(g, cx - half, y, 2, 1, "#2a1f48");
+      if (y % 6 === 0) rect(g, cx - half + 4, y, 1, 1, "#3a2c5e");
+    }
+    // The hood: a dark opening with only the two glowing eyes showing.
+    disc(g, cx + dir, top + 8, 8, "#1c1430");
+    disc(g, cx + dir * 3, top + 9, 5, "#07040f");
+    if (off < 0.3) {
+      rect(g, cx + dir * 2 - (dir < 0 ? 1 : 0), top + 8, 1, 1, "#e8fdff");
+      rect(g, cx + dir * 5 - (dir < 0 ? 1 : 0), top + 8, 1, 1, "#e8fdff");
+    }
+    g.globalAlpha = 1;
+  }
+
+  // PROPHET's aura: a dithered glow behind him and sparks rising around him.
+  function drawAura(frame, now, floorY, behind) {
+    if (frame.id !== "prophet" || frame.alpha <= 0.3 || frame.down) return;
+    const centerY = floorY - frame.lift - 34 * frame.scale;
+    const pulse = 0.5 + Math.sin(now / 260) * 0.5;
+    if (behind) {
+      // A faint starry haze behind the glowing rim.
+      g.globalAlpha = 0.12 + pulse * 0.08;
+      for (let dy = -30; dy <= 30; dy += 1) {
+        const half = Math.round(Math.sqrt(Math.max(0, 1 - (dy / 31) ** 2)) * 12);
+        for (let dx = -half; dx <= half; dx += 1) if ((dx + dy) % 2 === 0) rect(g, frame.x + dx, centerY + dy, 1, 1, "#8a70f0");
+      }
+      g.globalAlpha = 1;
+      return;
+    }
+    for (let k = 0; k < 10; k += 1) {
+      const rise = (now / 900 + k / 10) % 1;
+      const ox = Math.round(Math.sin(k * 2.1 + now / 400) * (12 + (k % 3) * 3));
+      rect(g, frame.x + ox, centerY + 30 - rise * 64, 1, 2, k % 2 ? "#ff5fc8" : "#5fe0ff");
+    }
+  }
+
   function fighterFrame(side, state, animation, plan, elapsed, now) {
     const fighter = state[side];
     const id = fighter.id;
@@ -1112,8 +1326,13 @@ const Arena = (() => {
     const scale = SCALES[id] || 1;
     const idle = idlePose(id, now, side);
     // PROPHET never touches the floor, until he is knocked out of the sky.
-    const hover = id === "prophet" ? 9 + Math.round(Math.sin(now / 340 + (side === "bot" ? 2 : 0)) * 2) : 0;
+    const hover = id === "prophet" ? 10 + Math.round(Math.sin(now / 480 + (side === "bot" ? 2 : 0)) * 4) : 0;
     const frame = { side, id, dir, x: baseX, lift: hover, pose: idle, flash: false, alpha: 1, ghosts: 0, scale };
+    const intro = state.entrance ? (now - state.entrance.start) / ENTRANCE : 1;
+    if (intro < 1) {
+      entranceMotion(frame, Math.max(0, intro), now, idle);
+      return frame;
+    }
     if (!animation) return frame;
 
     const mine = animation.report[side];
@@ -1726,13 +1945,22 @@ const Arena = (() => {
       player: fighterFrame("player", state, animation, plan, elapsed, now),
       bot: fighterFrame("bot", state, animation, plan, elapsed, now)
     };
-    SIDES.forEach(side => { if (frames[side].alpha > 0.3) drawShadow(frames[side].x, floorY, frames[side].scale); });
-    drawFighterSprite(frames.bot, now, floorY);
-    drawFighterSprite(frames.player, now, floorY);
-    SIDES.forEach(side => {
-      drawAmbient(frames[side], now, floorY);
-      if (state[side].boost && frames[side].alpha > 0.3) drawBoost(frames[side], now, floorY);
-    });
+    // During dialogue only the portraits show; the fighters enter afterwards.
+    const fightersShown = !state.hideFighters;
+    if (fightersShown) {
+      SIDES.forEach(side => { if (frames[side].alpha > 0.3) drawShadow(frames[side].x, floorY, frames[side].scale); });
+      SIDES.forEach(side => drawAura(frames[side], now, floorY, true));
+      drawFighterSprite(frames.bot, now, floorY);
+      drawFighterSprite(frames.player, now, floorY);
+      SIDES.forEach(side => {
+        const frame = frames[side];
+        drawAura(frame, now, floorY, false);
+        drawAmbient(frame, now, floorY);
+        if (state[side].boost && frame.alpha > 0.3) drawBoost(frame, now, floorY);
+        if (frame.cloak !== undefined) drawCloak(frame, now, floorY, frame.cloak);
+        if (frame.entrance !== undefined) drawEntranceEffects(frame, now, floorY);
+      });
+    }
     if (animation) {
       plan.phases.forEach(p => {
         const side = p.actor;
@@ -1788,5 +2016,5 @@ const Arena = (() => {
     ctx.restore();
   }
 
-  return { draw, portrait, timing, SLOW };
+  return { draw, portrait, timing, SLOW, ENTRANCE };
 })();

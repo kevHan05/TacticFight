@@ -1,0 +1,19 @@
+{
+  "name": "Tactic Fight",
+  "short_name": "TacticFight",
+  "description": "A 16-bit turn-based arcade fighter.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0d1a1d",
+  "theme_color": "#0d1a1d",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%230d1a1d'/%3E%3Crect x='2' y='2' width='12' height='12' fill='%23ec5139'/%3E%3Cpath fill='%23f3ead5' d='M4 5h4v1H6.5v5h-1V6H4zM9 5h3v1h-2v1.5h1.5v1H10V11H9z'/%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
