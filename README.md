@@ -4,7 +4,7 @@ A turn-based 1v1 arcade fighter. Pick one of seven fighters (plus a secret eight
 
 ## Modes
 
-- **Campaign:** each fighter has a story. Beat the other fighters, in order, on their home stages, then face PROPHET, the ruler of the TacticFight universe, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
+- **Campaign:** each fighter has a story. Beat the other fighters, in order, on their home stages, then face PROPHET, the hooded traveling fortune teller who has been lurking at every fight, with dialogue before and after every fight. Lose and you can retry the fight. Progress is saved in the browser.
 - **Endless:** fight until you are defeated. Every fight is against a new opponent and both fighters start at full health. Your best streak is saved.
 - **Quick Fight:** pick a fighter and take on a random opponent.
 

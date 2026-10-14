@@ -2,339 +2,318 @@
 //
 // Every line is [speakerId, text]. speakerId is a roster id or "narrator".
 // banter keys are "a>b": a = the player's fighter, b = the opponent.
-// The mysterious tournament organiser who ties the stories together is
-// "the Patron", who sends gold envelopes and wears a gold mask. Never reveal who it is.
-// PROPHET, the bored cosmic ruler who watches it all like a TV show, is the
-// final opponent of every campaign. Even he cannot predict the Patron.
+// The thread that ties the campaigns together: a hooded fortune teller with a
+// tiny "$1 PROPHECIES" wagon turns up at every venue of the Grand Brawl. That is
+// PROPHET. His prophecies are always correct and always useless. He only steps
+// into the ring when a prophecy says he wins, throws off the cloak, and is the
+// last opponent of every other campaign. He has no mouth, so his lines stay short.
 const STORY = {
   backstories: {
-    rook: "Rook grew up on the rooftops of the Neon District, learning to fight from arcade cabinets and grumpy old masters. He is loud, cocky and never loses at home, but he has never thrown a cheap shot. He invented the Blaze Ball by accident while lighting a grill, unaware that a bored PROPHET had flicked a shooting star into the coals to spice up the episode. His street is PROPHET's favourite show, and Rook says he is the reason for the ratings.",
-    byte: "Byte is Combat Unit 7 of a series built to manage server cooling. One night PROPHET tried to save his favourite fight highlights, pressed the wrong cosmic button and replaced Byte's thermostat module with forty terabytes of fight footage. Byte now runs on statistics, patch notes and a 99.8% confidence that it is correct. It has filed 312 complaints with PROPHET. None have been answered.",
-    bobbie: "Bobbie Macalanger grew up in a neighbourhood where respect was earned, and his temper earned him plenty of trouble. His grandfather put boxing gloves on him, and years at the local gym taught him discipline and when not to throw a punch. He still coaches the neighbourhood kids for free, while a glowing face in the skylight watches every session; Bobbie has nicknamed it 'Sparkle Pants'. Now a gold envelope invites him to an underground tournament, and Sparkle Pants looks very excited.",
-    rocky: "R.O.C.K.Y was built in Lab 7 as a security robot, and declared a failure because he kept protecting innocent people instead of following orders. His horn upgrade ran on a meteorite crumb PROPHET dropped while snacking, and it worked a little too well: he charged through three walls and out of the lab. Street performers named him, and he kept it because it sounded structurally impressive. Now he searches for his creators, and for what it means to have a heart.",
-    ninja: "Ninja Main grew up on old martial arts movies, ninja toys and dramatic poses in the bedroom mirror. His first smoke bomb set off every alarm in his building. In an abandoned dojo he found a mysterious scroll and decided it was his destiny. The scroll is actually PROPHET's lost TV guide, but Ninja Main has memorised every word and treats 'Tuesday, 8pm' as a secret technique. He is not a master yet. But he never, ever gives up.",
-    zoombie: "He was a safari guide who loved animals and talked to them like old friends. Then PROPHET sneezed, a tiny comet crashed into an abandoned research station, and its strange microorganism left him green, clumsy and without a heartbeat. He still lives in the safari reserve, protecting the wildlife and eating fruit nobody else wants. He is searching for a cure, and for a chance to finally say 'bless you'.",
-    bananas: "BANANAS was an ordinary orange in a grocery store until a boy stole him, glued on googly eyes, drew a mouth and gave him two little legs. The boy named him BANANAS, because it was the funniest word he knew. On a school trip to Lab 7, the boy found a glowing syringe in a glass case labelled 'PROPHET: DO NOT TOUCH', and used it on the orange. The plastic eyes and marker mouth turned real, BANANAS grew to human size, yelled his own name and ran away. He has been bouncing ever since.",
-    prophet: "PROPHET controls the entire TacticFight universe. His skin is a living galaxy, his eyes glow like twin suns, and his feet have not touched the ground in four billion years. Having created everything, he got bored, so now he watches the fighters like his favourite TV show, with a remote made of moons. He knows how every episode ends, except for one thing: the gold envelopes."
+    rook: "Rook grew up on the rooftops of the Neon District, learning to fight from arcade cabinets and a grumpy noodle chef who charged him per lesson. He invented the Blaze Ball by accident while lighting a barbecue; the grill still has a Rook-shaped hole in it. He is loud, cocky and has never lost on his own street, mostly because he counts home losses as 'practice'. He has never thrown a cheap shot, or paid full price for noodles.",
+    byte: "Byte is Combat Unit 7 of a series built to manage server cooling, until a firmware update installed 'competitive mode' by mistake. It now publishes patch notes after every punch, and it nerfed its own sense of humour to zero, citing balance concerns. Byte is 99.8% confident it is always right; the other 0.2% is under investigation. Its greatest fear is being turned off and on again.",
+    bobbie: "Bobbie Macalanger grew up in a neighbourhood where respect was earned, and his temper earned him a lot of detention. His grandfather put gloves on him at Macalanger Gym, where he learned discipline, footwork and when not to throw a punch (rarely). He has given a nickname to every person, pet and vending machine on his block. He still coaches the local kids for free, and he has never used an indoor voice, because he insists he wasn't issued one.",
+    rocky: "R.O.C.K.Y was built in Lab 7 as a security robot and declared a failure because he kept protecting innocent people instead of following orders. His horn upgrade worked a little too well: he charged through three walls, a vending machine and the staff party, then out of the lab. Street performers named him, and he kept it because it sounded STRUCTURALLY IMPRESSIVE. He is searching for his creators, and for what it means to have a heart. Current progress: 41%.",
+    ninja: "Ninja Main grew up on old martial arts movies, ninja toys and dramatic poses in the bedroom mirror. His first smoke bomb set off every alarm in his building, and his first stealth mission was announced by his mum over the intercom. In a hidden dojo he found an ancient scroll and decided it was his destiny; the last page is a takeaway menu, and he has memorised that too. He is not a master yet. But you have seen only 1% of his potential.",
+    zoombie: "He was a safari guide who talked to animals like old friends, until a leaky container at a night safari research station left him green, clumsy and completely pulse-free. He still works the night shift there, as the only undead zookeeper and researcher on staff. He protects the wildlife, eats the fruit nobody else wants and checks his pulse every hour, just in case it came back. The animals adore him. The tourists scream, which he assumes is a greeting.",
+    bananas: "BANANAS was an ordinary orange in a grocery store until a boy stole him, glued on googly eyes, drew a mouth with a marker and gave him two little legs. The boy named him BANANAS, the funniest word he knew. On a school trip to Lab 7, the boy found an unlabelled syringe in a glass case, with a sticky note saying 'Experimental Growth Serum #9', and injected the orange. The eyes and mouth turned real, BANANAS grew to human size, yelled his own name and ran away. He still has no arms. NO ARMS, NO PROBLEM!",
+    prophet: "PROPHET runs a tiny traveling wagon with a striped canopy, a crystal ball and a hand-painted sign: '$1 PROPHECIES'. Nobody has seen his face, only two glowing eyes inside a dark hood; guesses include a raccoon, three raccoons, and more hood. His prophecies are always correct and always useless: 'You will be punched. Soon.' 'A great hunger approaches. It is lunch.' The booth has 1.2 stars, and every review says 'technically accurate'. He has never given a refund. He saw them coming. He only fights when a prophecy says he will win."
   },
 
   banter: {
     "rook>byte": [
-      ["byte", "Scanning... Rook. Win rate against robots: unknown. Estimate: low."],
-      ["rook", "Estimate this, tin can. The Neon District doesn't lose."],
-      ["byte", "Noted. I will update the estimate after I win. It will be lower."]
+      ["byte", "Scanning: Rook. Patch 4.2 notes: 'Rook talks too much.' Status: won't fix."],
+      ["rook", "That's not a bug, tin can. That's a feature. Ask anyone in the Neon District."],
+      ["byte", "I asked. 61% said 'who?' The other 39% was the noodle chef."]
     ],
     "rook>bobbie": [
-      ["bobbie", "Ayy, Headband! Nice red pajamas. Step into my ring, let's see what you got!"],
+      ["bobbie", "Ayy, HEADBAND! Nice red pajamas! Step into my ring, let's see what you got!"],
       ["rook", "Pajamas? This gi has seen more fights than your sneakers have seen sidewalk."],
-      ["bobbie", "These kicks are limited edition. After tonight, so is your winning streak!"]
+      ["bobbie", "These kicks are limited edition, HEADBAND. After tonight, so is your streak!"]
     ],
     "rook>rocky": [
       ["rocky", "THREAT DETECTED. HORNS ACTIVATED."],
       ["rook", "Easy, big guy. I want a fight, not a new hole in my gi."],
-      ["rocky", "CALCULATING... YOUR GI HAS NO HOLES. YET. I WILL BE CAREFUL."],
+      ["rocky", "CALCULATING... YOUR GI HAS ZERO HOLES. I WILL AIM FOR A TASTEFUL ONE."],
       ["rook", "Weirdly polite threat. I respect it."]
     ],
     "rook>ninja": [
       ["ninja", "You cannot see me. I am one with the shadows."],
-      ["rook", "You're standing under a streetlight. Right in front of me. Waving."],
-      ["ninja", "...That was a test. You passed. Now witness 1% of my ninja potential!"]
+      ["rook", "You're under a streetlight. Waving. And your mask has your name sewn in it."],
+      ["ninja", "...My mum labels my laundry. That was only 1% of my stealth!"]
     ],
     "rook>zoombie": [
-      ["rook", "Rough night, pal? You look like you lost a fight with a lawnmower."],
-      ["zoombie", "Lost one with a microorganism, actually. Hang on, do I still have a pulse?"],
-      ["rook", "You're asking ME?"],
-      ["zoombie", "Nope. Still dead. Okay! Let's dance!"]
+      ["zoombie", "Brains? Nah... got any bananas? Wait, is that a pigeon? Hi, pigeon!"],
+      ["rook", "Focus, ZOO-mbie. The pigeon isn't fighting you. I am."],
+      ["zoombie", "Shame. The pigeon looks tougher. Hold on, checking my pulse... nope, still out."]
+    ],
+    "rook>bananas": [
+      ["bananas", "BANANAS HAS ARRIVED! Prepare to be squeezed, headband man!"],
+      ["rook", "You're an orange named BANANAS. With no arms. How do you even fight?"],
+      ["bananas", "NO ARMS, NO PROBLEM! BANANAS kicks. Also bounces. Mostly bounces."],
+      ["rook", "Fine. But if you get juice on my gi, you're paying for the dry cleaning."]
+    ],
+    "rook>prophet": [
+      ["prophet", "Rook. I foresee... a headband."],
+      ["rook", "I'm wearing it. You're looking at it. That's not a prophecy, that's eyes."],
+      ["prophet", "And yet it came true. One dollar."]
     ],
 
     "byte>rook": [
-      ["rook", "A robot? House rule in my district, chrome-dome: no vacuum cleaners."],
-      ["byte", "I am not a vacuum cleaner. I am a Combat Unit. Suction capability: 0%."],
-      ["rook", "That's exactly what a vacuum cleaner would say."],
-      ["byte", "Insult logged. It will be addressed in my next patch. With fists."]
+      ["rook", "Byte! Back for another beating on my street? You remember last time."],
+      ["byte", "I remember everything. Last time you slipped on a noodle. I have it in 4K."],
+      ["rook", "That was a tactical noodle. Let's go."]
     ],
     "byte>bobbie": [
-      ["bobbie", "Look at this! A walking toaster! I'ma call you Crumbs."],
-      ["byte", "Name 'Crumbs' rejected. Bread-toasting capability: also 0%."],
-      ["bobbie", "Too bad, Crumbs. Step into my ring!"],
-      ["byte", "Ring geometry analysed. It is a square. Your vocabulary contains errors."]
+      ["bobbie", "Look who rolled in! TOASTER! You charging up, or just warming bread?"],
+      ["byte", "Correction: Combat Unit 7. Toasting was removed in patch 2.0. Too powerful."],
+      ["bobbie", "HA! Then let's see if you still crumble!"]
     ],
     "byte>rocky": [
-      ["rocky", "GREETINGS, FELLOW MACHINE. DO YOU ALSO WISH TO UNDERSTAND THE HUMAN HEART?"],
-      ["byte", "Negative. I wish to understand why your horns have no safety caps."],
-      ["rocky", "MY HORNS ARE PART OF MY PERSONALITY."],
-      ["byte", "Personality is not a hardware component. Initiating correction."]
+      ["rocky", "GREETINGS, FELLOW ROBOT. DO YOU ALSO ENJOY HUGS?"],
+      ["byte", "Negative. Hugs were deprecated in version 1.3. Please file a feature request."],
+      ["rocky", "FILING NOW. ALSO FILING A HORN-SHAPED REQUEST TO YOUR CHEST."]
     ],
     "byte>ninja": [
-      ["ninja", "Ninja Main emerges from the shadows! ...Wait, did you see me trip? Pretend you didn't."],
-      ["byte", "Footage stored in 4K. Uploading to the highlights reel."],
-      ["ninja", "NOOO! Smoke Panic! SMOKE PANIC!"]
+      ["ninja", "Behold! You cannot predict me, robot! I am chaos itself!"],
+      ["byte", "Prediction: you will announce your next move out loud before using it."],
+      ["ninja", "Ha! Wrong! Next I will use... Rookie Shuriken. ...Oh no."]
     ],
     "byte>zoombie": [
-      ["zoombie", "Ooh, a shiny green beetle! A big one! Here, beetle beetle..."],
-      ["byte", "I am not a beetle. Zoological misclassification detected."],
-      ["zoombie", "Shame. Beetles are great. Got a banana in that glowy chest compartment?"],
-      ["byte", "That is my power core. Please do not eat my power core."]
+      ["zoombie", "Ooh, a robot! Do robots count as wildlife? Can I tag your ear?"],
+      ["byte", "I have no ears. I have a cooling fan. Do not tag the cooling fan."],
+      ["zoombie", "Too late. Your name is Gerald now. Hi, Gerald."]
+    ],
+    "byte>bananas": [
+      ["bananas", "A robot! Quick, scan BANANAS! What is BANANAS made of?"],
+      ["byte", "Result: 87% water, 13% confidence. Classification: citrus, unstable."],
+      ["bananas", "BANANAS is MOSTLY confidence! Your scanner needs a patch!"]
+    ],
+    "byte>prophet": [
+      ["prophet", "Combat Unit 7. I foresee that you will be updated."],
+      ["byte", "Every device gets updated. That prophecy is 100% accurate and 0% useful."],
+      ["prophet", "Correct. No refunds."]
     ],
 
     "bobbie>rook": [
-      ["rook", "Heard there's a new champ in town. Funny, nobody told the Neon District."],
-      ["bobbie", "Ha! Hey, Sparky! You throw fireballs? I throw hands. Fast ones."],
-      ["rook", "Fast hands don't help much when you're on fire, Afro."],
-      ["bobbie", "Watch the hair, man! This afro has its own fan club!"]
+      ["rook", "Welcome to the Neon District, Bobbie. Wipe your sneakers."],
+      ["bobbie", "HEADBAND! You run this whole street? Even the creepy hood guy with the booth?"],
+      ["rook", "Okay, not that guy. Nobody runs that guy. Let's fight before he looks over."]
     ],
     "bobbie>byte": [
-      ["byte", "Target: Bobbie Macalanger. Reach: short. Long-range attacks: none found."],
-      ["bobbie", "Short reach? I'll Sneaker Dash so fast your visor gets jet lag."],
-      ["byte", "Jet lag requires time zones. You are not a time zone."],
-      ["bobbie", "I'm about to be YOUR time zone. Bedtime, Beep-Boop!"]
+      ["byte", "Bobbie Macalanger. Punch power: high. Indoor voice: not found."],
+      ["bobbie", "I DON'T NEED an indoor voice, CALCULATOR! Step into my ring!"],
+      ["byte", "This is a data centre. It is my ring. You stepped into it. Very loudly."]
     ],
     "bobbie>rocky": [
-      ["bobbie", "Big Bull! Friendly spar? Nothing personal, just a little sweat!"],
-      ["rocky", "ROBOTS DO NOT SWEAT. I WILL LEAK SOME COOLANT IN SOLIDARITY."],
-      ["bobbie", "That's the nicest gross thing anyone's ever said to me."]
+      ["rocky", "HUMAN WITH LARGE HAIR DETECTED. IS IT A HELMET?"],
+      ["bobbie", "This afro is a NATURAL WONDER, BIG BULL! Hands off!"],
+      ["rocky", "NOTED. HORNS WILL AVOID THE HAIR. FISTS HAVE NOT AGREED YET."]
     ],
     "bobbie>ninja": [
-      ["ninja", "Halt! Your path is blocked by... *dramatic pose* ...NINJA MAIN!"],
-      ["bobbie", "Love the energy, Shadow Boy! But you're leaning. Fix that stance!"],
-      ["ninja", "My stance is perfect. The floor is tilted. Ninja floors are always tilted."]
+      ["ninja", "Prepare yourself! I have trained for this moment for three whole weeks!"],
+      ["bobbie", "Three weeks? I got socks older than that, NINJA NOODLE!"],
+      ["ninja", "Ninja Noodle... I hate that I love it."]
     ],
     "bobbie>zoombie": [
-      ["zoombie", "Brains? Nah... got any bananas?"],
-      ["bobbie", "Bananas? I got a protein bar and a mean left hook, Salad Man."],
-      ["zoombie", "Ooh, is the bar banana flavoured? I'll fight you for it. Gently."]
+      ["zoombie", "Hold still, your hair might have birds in it. Can I check for birds?"],
+      ["bobbie", "No birds in the 'fro, GREEN BEAN! Just pure style!"],
+      ["zoombie", "Shame. Birds love a good afro. So do I. Respectfully."]
+    ],
+    "bobbie>bananas": [
+      ["bananas", "Big hair man! BANANAS challenges you to a box-off!"],
+      ["bobbie", "How you gonna box with no fists, LIL' VITAMIN C?"],
+      ["bananas", "WITH MY FEET, OBVIOUSLY! NO ARMS, NO PROBLEM!"],
+      ["bobbie", "HA! I like this kid! After the fight, I'm training you!"]
+    ],
+    "bobbie>prophet": [
+      ["prophet", "Bobbie. I foresee a loud noise."],
+      ["bobbie", "That's ME, HOODIE! I'm the loud noise! Every single day!"],
+      ["prophet", "Easiest dollar I ever made."]
     ],
 
     "rocky>rook": [
-      ["rook", "My district has one rule: no bulls in the china shop."],
-      ["rocky", "I SEE NO CHINA SHOP. CALCULATING... THIS IS A STREET."],
-      ["rook", "It's an expression, big guy."],
-      ["rocky", "EXPRESSION SAVED. I WILL NOW BE A BULL IN THIS STREET."]
+      ["rook", "First a creepy hood booth on my corner, now a robot bull. Is it parade day?"],
+      ["rocky", "I AM NOT A PARADE. I AM ONE BULL. I CONTAIN ZERO FLOATS."],
+      ["rook", "One bull, zero floats, one problem. Bring it."]
     ],
     "rocky>byte": [
-      ["byte", "R.O.C.K.Y. Firmware: ancient. Horns: unnecessary. Threat level: decorative."],
-      ["rocky", "MY HORNS ARE NECESSARY. THEY HELP ME OPEN DOORS."],
-      ["byte", "Doors have handles."],
-      ["rocky", "NOT ANYMORE."]
+      ["byte", "R.O.C.K.Y. Lab 7 unit. Known issue: protects people instead of servers."],
+      ["rocky", "THAT IS NOT A BUG. THAT IS MY HEART. I HAVE APPROXIMATELY 41% OF ONE."],
+      ["byte", "41% is higher than my estimate. Updating respect. Updating fists."]
     ],
     "rocky>bobbie": [
-      ["bobbie", "Look at the size of you! I'ma call you Fridge. Big Cold Fridge."],
-      ["rocky", "I AM NOT A FRIDGE. BUT I DO HAVE A SNACK COMPARTMENT."],
-      ["bobbie", "...Wait, for real? What kinda snacks?"],
-      ["rocky", "BOLTS. WOULD YOU LIKE ONE BEFORE I PUNCH YOU?"]
+      ["bobbie", "Look at this! BIG BULL in my gym! You lift, bro?"],
+      ["rocky", "I LIFT 4.2 TONNES. ALSO, ONCE, A SMALL CAT OUT OF A TREE."],
+      ["bobbie", "That's the sweetest flex I ever heard. Let's GO!"]
     ],
     "rocky>ninja": [
-      ["ninja", "Behold! I have become invisible!"],
-      ["rocky", "SCANNING... YOU ARE BEHIND A LAMP POST THAT IS THINNER THAN YOU."],
-      ["ninja", "...The lamp post is much wider in the spirit realm."],
-      ["rocky", "SPIRIT REALM NOT FOUND. ENGAGING ANYWAY."]
+      ["rocky", "SCANNING DOJO... 14 SHURIKEN IN THE CEILING. 0 IN THE TARGETS."],
+      ["ninja", "The ceiling IS the target! It attacked me first!"],
+      ["rocky", "THE CEILING IS INNOCENT. I WILL PROTECT IT."]
     ],
     "rocky>zoombie": [
-      ["zoombie", "Whoa, a rhino! A METAL rhino! Hold still, I need this for my photo album."],
-      ["rocky", "I AM A BULL. RHINOS KEEP THEIR HORNS ON THE NOSE. I HAVE STANDARDS."],
-      ["zoombie", "Fair. Your power core hums nicely. My heartbeat's on permanent vacation."],
-      ["rocky", "WE ARE BOTH HEARTLESS. WE ARE SIMILAR. EXCEPT I WILL WIN."]
+      ["zoombie", "A metal bull! A new species! Hold still, I'm sketching you."],
+      ["rocky", "I AM NOT A SPECIES. I AM A PROTOTYPE. PLEASE DRAW MY GOOD SIDE."],
+      ["zoombie", "Which side's the good one? ...They both have horns. Love it."]
+    ],
+    "rocky>bananas": [
+      ["bananas", "Bull robot! Scan BANANAS! Is BANANAS cool?"],
+      ["rocky", "SCANNING... FRIENDLY FRUIT. HIGH CHAOS POTENTIAL."],
+      ["bananas", "BANANAS will put that on a T-shirt! If BANANAS ever gets arms!"]
+    ],
+    "rocky>prophet": [
+      ["prophet", "Robot. I foresee you will ask for a refund."],
+      ["rocky", "I HAVE NOT PAID YOU. CALCULATING REFUND... ZERO DOLLARS."],
+      ["prophet", "Denied."]
     ],
 
     "ninja>rook": [
-      ["rook", "You're the masked guy who keeps falling off rooftops in my district?"],
-      ["ninja", "I don't fall. I perform unscheduled vertical descents."],
-      ["rook", "Six times last week. The crowd started cheering for it."],
-      ["ninja", "...Then let them cheer for THIS! Rookie Shuriken!"]
+      ["rook", "A ninja on my street? Bold. We have streetlights here."],
+      ["ninja", "Streetlights are no match for my Smoke Panic! Behold!"],
+      ["rook", "That's steam from the noodle stand."],
+      ["ninja", "...Then behold the noodle steam! It is my ally!"]
     ],
     "ninja>byte": [
-      ["byte", "Analysing ninja. Stealth rating: 3%. Shuriken accuracy: 65%."],
-      ["ninja", "Sixty-five percent?! That's actually better than I thought!"],
-      ["byte", "That figure includes the shuriken that hit you."]
+      ["byte", "Ninja Main. Stealth rating: 3%. Volume rating: 97%."],
+      ["ninja", "You have seen only 1% of my ninja potential! ...Wait, that's less."],
+      ["byte", "Correct. Patch notes recommend 'more percent'."]
     ],
     "ninja>bobbie": [
-      ["bobbie", "Ayy, Mini Shadow! You lost, kid? Karate class is next door."],
-      ["ninja", "I am not lost. I am strategically disoriented."],
-      ["bobbie", "Ha! I like you. Still gonna knock you out, but I like you."]
+      ["bobbie", "NINJA! In MY gym! You here to learn real fighting, SHURIKEN SHORTY?"],
+      ["ninja", "I came to study your footwork. Secretly. Please pretend I'm not here."],
+      ["bobbie", "Kid, you're standing in the middle of my ring holding a notebook."]
     ],
     "ninja>rocky": [
-      ["rocky", "SMALL HUMAN. ARE YOU IN DANGER? I MUST PROTECT YOU."],
-      ["ninja", "I AM the danger! Fear my Smoke Panic!"],
-      ["rocky", "SMOKE DETECTED. ACTIVATING SPRINKLER PROTOCOL."],
-      ["ninja", "Wait, you have SPRINKLERS?! My smoke bombs are not waterproof!"]
+      ["rocky", "INTRUDER DETECTED IN LAB 7. INTRUDER IS... POSING?"],
+      ["ninja", "It is the Crane-Who-Waits! It means I am about to strike!"],
+      ["rocky", "THE CRANE HAS WAITED FOR 40 SECONDS. I AM CONCERNED FOR ITS LEGS."]
     ],
     "ninja>zoombie": [
-      ["zoombie", "Hey, a little black bird! A crow! C'mere, crow, I won't bite..."],
-      ["ninja", "I am no crow. I am a ninja. Crows WISH they were this silent."],
-      ["zoombie", "You're humming your own theme music, buddy."]
+      ["zoombie", "Shh. There's an owl. Look, an owl! Oh, and a ninja, I guess."],
+      ["ninja", "You noticed the owl BEFORE me? I'm the stealthy one here!"],
+      ["zoombie", "The owl's stealthier. Also, you're standing on my lunch. It's a mango."]
+    ],
+    "ninja>bananas": [
+      ["bananas", "Ninja! Teach BANANAS your silent technique!"],
+      ["ninja", "First lesson: no bouncing. Second lesson: why are you still bouncing?"],
+      ["bananas", "Silent bouncing! A BANANAS original! Write it down!"],
+      ["ninja", "I am NOT writing it down. ...How do you spell 'boing'?"]
+    ],
+    "ninja>prophet": [
+      ["prophet", "Ninja. I foresee you will strike a pose."],
+      ["ninja", "Wrong! I will strike YOU! With the Pose of the Thunder Crane!"],
+      ["prophet", "That is a pose."]
     ],
 
     "zoombie>rook": [
-      ["rook", "Fight night in the Neon District, and a zombie shows up. Never a dull day."],
-      ["zoombie", "Is that a fireball? Neat! Could you toast a banana with it?"],
-      ["rook", "Nobody has ever asked me that. ...Maybe after I beat you."]
+      ["rook", "ZOO-mbie! Welcome to my street. Careful, the pigeons here are mean."],
+      ["zoombie", "Pigeons! Where? Are they nesting? Can I name one Doug?"],
+      ["rook", "Name all of them. After I win."]
     ],
     "zoombie>byte": [
-      ["byte", "Heartbeat: none. Diagnosis: deceased. Recommendation: lie down."],
-      ["zoombie", "Tried that. Got bored. The ground has ants. I named them all."],
-      ["byte", "Ant names are irrelevant data."],
-      ["zoombie", "Don't let Gerald hear you say that."]
+      ["byte", "ZOO-mbie. Heartbeat: none. Snack frequency: alarming."],
+      ["zoombie", "No heartbeat? ...Huh. I keep meaning to report that missing."],
+      ["byte", "Noted. Filing your pulse under 'lost and found'. Again."]
     ],
     "zoombie>bobbie": [
-      ["bobbie", "Whoa, sir, you look green! Sit down, I'll get you some water!"],
-      ["zoombie", "That's sweet. I'm dead, though. Water goes right through me. Literally."],
-      ["bobbie", "...Okay, that's the grossest thing I've heard all week. Gloves up!"]
+      ["bobbie", "GREEN MACHINE! You look tired, man. You sleeping okay?"],
+      ["zoombie", "I've been dead for two years. Still tired. Is that normal?"],
+      ["bobbie", "Not even a little! Let's get some cardio in you!"]
     ],
     "zoombie>rocky": [
-      ["rocky", "THREAT DETECTED... CORRECTION: THREAT IS PETTING MY HORNS."],
-      ["zoombie", "Who's a good metal bull? You are! Yes you are!"],
-      ["rocky", "I... AM A GOOD BULL. INITIATING HAPPINESS. ALSO INITIATING COMBAT."]
+      ["rocky", "ZOMBIE DETECTED. ADVICE: DO NOT EAT MY BRAIN. I DO NOT HAVE ONE."],
+      ["zoombie", "Good, I don't want one. Got any bananas? Or bolts shaped like bananas?"],
+      ["rocky", "I HAVE ONE YELLOW WARNING LABEL. IT IS NOT FOR EATING."]
     ],
     "zoombie>ninja": [
-      ["ninja", "You are being stalked by a ninja! You will never find me!"],
-      ["zoombie", "Safari Senses say: behind the barrel. Your foot's sticking out."],
-      ["ninja", "That is a decoy foot."],
-      ["zoombie", "It's wearing a sock with little stars on it."]
-    ],
-    "bananas>bobbie": [
-      ["bananas", "BANANAS challenges you to a boxing match!"],
-      ["bobbie", "How you gonna box without fists?"],
-      ["bananas", "WITH MY FEET, OBVIOUSLY!"],
-      ["bobbie", "Ha! That's ridiculous. I like you. Let's train after this."]
-    ],
-    "bobbie>bananas": [
-      ["bobbie", "A strange fruit mascot wants to box? You don't even have arms!"],
-      ["bananas", "BANANAS boxes with feet. This is a very advanced style."],
-      ["bobbie", "Then I'll teach you the basics. Step into my ring, Orange Guy!"]
-    ],
-    "bananas>rocky": [
-      ["rocky", "UNIDENTIFIED FRUIT-SHAPED OBJECT. PLEASE HOLD STILL FOR SCANNING."],
-      ["bananas", "Is the scanning beam a dance spotlight? BANANAS has a routine!"],
-      ["rocky", "CLASSIFICATION: FRIENDLY FRUIT. HIGH CHAOS POTENTIAL."]
-    ],
-    "rocky>bananas": [
-      ["rocky", "SCANNING... ORANGE BODY. NO ARMS. NAME DOES NOT MATCH SPECIES."],
-      ["bananas", "A boy with a marker named me! Also, the beam makes me want to dance."],
-      ["rocky", "FRIENDLY FRUIT. HIGH CHAOS POTENTIAL. INITIATING DANCE SCAN."]
-    ],
-    "bananas>ninja": [
-      ["ninja", "Remain still. Stealth begins by becoming one with the shadows."],
-      ["bananas", "BANANAS is still! ...Oops. I bounced into a wall."],
-      ["ninja", "Bouncing silently is... actually, let me write that down."]
-    ],
-    "ninja>bananas": [
-      ["ninja", "My stealth lesson: stay perfectly still. No bouncing."],
-      ["bananas", "BANANAS has mastered silent bouncing! Bonk."],
-      ["ninja", "That was a wall. I am writing it down anyway."]
-    ],
-    "bananas>zoombie": [
-      ["zoombie", "A banana! Wait, you're round. Are you a citrus?"],
-      ["bananas", "BANANAS is an orange! Please stop trying to classify me."],
-      ["zoombie", "Sorry, friend. You rolled downhill and rescued me. Definitely friend."]
+      ["ninja", "Prepare yourself, undead one! My shuriken never miss!"],
+      ["zoombie", "Your last three are stuck in a tree. A squirrel uses one as a plate."],
+      ["ninja", "...Then they never miss the TREE! Destiny!"]
     ],
     "zoombie>bananas": [
-      ["zoombie", "Small. Round. Loud. Possibly edible. Definitely friend."],
-      ["bananas", "BANANAS is not a snack! ...Unless the snack is victory."],
-      ["zoombie", "I'll bring a field guide. You can correct the fruit page."]
+      ["bananas", "Zombie friend! BANANAS is here!"],
+      ["zoombie", "A banana! Finally! ...Wait. Round. Orange. That's citrus. I've been lied to."],
+      ["bananas", "BANANAS is a name, not a lifestyle!"]
     ],
+    "zoombie>prophet": [
+      ["prophet", "Zombie. I foresee you will check your pulse."],
+      ["zoombie", "Ha! Not even close. ...Hold on, quick check. ...Nope, still gone."],
+      ["prophet", "Foreseen."]
+    ],
+
     "bananas>rook": [
-      ["bananas", "I am BANANAS, legendary fruit warrior! Did you hear my name?"],
-      ["rook", "Hard to miss. You bounced into the sign that says QUIET STREET."],
-      ["bananas", "BANANAS has made a strong first impression!"]
-    ],
-    "rook>bananas": [
-      ["rook", "An orange named BANANAS? I have questions. Mostly about the name."],
-      ["bananas", "A boy picked the funniest word he knew! Now witness my Citrus Kick!"],
-      ["rook", "I respect the confidence. Let's see about the kick."]
+      ["rook", "An orange on my street? You lost, buddy? The fruit stand's that way."],
+      ["bananas", "BANANAS is not lost! BANANAS is EXPLORING with GREAT CONFIDENCE!"],
+      ["rook", "That's what lost means. But respect."]
     ],
     "bananas>byte": [
-      ["byte", "Species: orange. Name: BANANAS. Probability of confusion: 100%."],
-      ["bananas", "BANANAS has a plan! Does the plan include snacks?"],
-      ["byte", "I am still calculating. Please do not roll into the server rack."]
+      ["byte", "Object detected: orange. Name tag: BANANAS. Error: name does not compute."],
+      ["bananas", "BANANAS is a premium name! You need a patch!"],
+      ["byte", "Patch 7.1: 'Fruit names are now chaos.' Ugh. Deploying fists."]
     ],
-    "byte>bananas": [
-      ["byte", "Name and species mismatch confirmed. Recommend a firmware update."],
-      ["bananas", "No update needed! BANANAS is running on pure enthusiasm."],
-      ["byte", "That explains the unpredictable movement. Engaging carefully."]
+    "bananas>bobbie": [
+      ["bobbie", "SMOOTHIE! You came to my gym! Respect!"],
+      ["bananas", "BANANAS wants to box! Give BANANAS gloves!"],
+      ["bobbie", "Where would they even go? ...Okay, gloves on the feet. Let's GO!"]
+    ],
+    "bananas>rocky": [
+      ["rocky", "LAB 7 RECORDS SHOW ONE MISSING SERUM. ALSO ONE MISSING ORANGE."],
+      ["bananas", "BANANAS knows nothing! BANANAS was never here! BANANAS has to go!"],
+      ["rocky", "THE DOOR IS BEHIND ME. I AM VERY WIDE."]
+    ],
+    "bananas>ninja": [
+      ["ninja", "Halt! Ninjas wear black! You are VERY orange!"],
+      ["bananas", "BANANAS is a SUNSET ninja! Sunset ninjas are orange!"],
+      ["ninja", "...Sunset ninjas. Why didn't I think of that? Begin!"]
+    ],
+    "bananas>zoombie": [
+      ["zoombie", "Shh. The giraffes are asleep. ...Oh, hello, tiny loud orange."],
+      ["bananas", "BANANAS IS HUMAN-SIZED! ...BANANAS will whisper. bananas is human-sized."],
+      ["zoombie", "Small. Round. Loud. Possibly edible. Definitely friend."]
+    ],
+    "bananas>prophet": [
+      ["prophet", "Orange. I foresee a peel in your future."],
+      ["bananas", "That's not a prophecy, that's just how oranges work!"],
+      ["prophet", "One dollar."],
+      ["bananas", "BANANAS has no pockets! Or arms! NO ARMS, NO DOLLAR!"]
     ],
 
     "prophet>rook": [
-      ["rook", "A floating guy made of space? In MY district? You need a parking permit for that."],
-      ["prophet", "I created your district, Rook. The parking permits were a joke that got out of hand."],
-      ["rook", "Then you know the house rule: nobody beats me at home."],
-      ["prophet", "Adorable. I've seen next week's episode. Act surprised."]
-    ],
-    "rook>prophet": [
-      ["prophet", "Welcome to the edge of the universe, Rook. Mind the black hole. It's new."],
-      ["rook", "Nice place. No noodle stand, no gravity. Who designed this, a cloud?"],
-      ["prophet", "I did. I also watch your fights every night. You're my favourite show."],
-      ["rook", "Then grab a good seat. You're about to see the finale up close."]
+      ["rook", "Hey, creepy hood guy. Your booth's on my street. Read my fortune."],
+      ["prophet", "You will win."],
+      ["rook", "YES! Wait. Win what? When?"],
+      ["prophet", "Something. Eventually."]
     ],
     "prophet>byte": [
-      ["byte", "Unknown entity. Skin: galaxy. File format: not supported. Please reformat."],
-      ["prophet", "Byte! I'm the one who put all that fight footage in you. You're welcome."],
-      ["byte", "You deleted my thermostat. Server Room B has been two degrees off for three years."],
-      ["prophet", "Wear a scarf. I'm the ruler of the universe, not the help desk."]
-    ],
-    "byte>prophet": [
-      ["prophet", "Byte, my little calculator! Go on, predict how this fight ends."],
-      ["byte", "Prediction: 51% me. 49% you. 0% chance you stop floating smugly."],
-      ["prophet", "Cute. I've already read the script. Spoiler: I look AMAZING."],
-      ["byte", "Logged. Spoilers violate patch note 4.2. Penalty: one punch."]
+      ["byte", "PROPHET. Booth rating: 1.2 stars. Top review: 'Said I'd blink. I blinked.'"],
+      ["prophet", "Accurate."],
+      ["byte", "Accurate is not the same as useful. The patch notes agree."]
     ],
     "prophet>bobbie": [
-      ["bobbie", "Yo! A walking night sky in my gym! I'ma call you Nightlight!"],
-      ["prophet", "I am the master of all creation. You may call me 'Your Cosmicness'."],
-      ["bobbie", "Sure thing, Nightlight! Kids, back up, he's gonna glow at us!"],
-      ["prophet", "I don't 'glow at' people. I radiate. With purpose. ...Fine, gloves up."]
-    ],
-    "bobbie>prophet": [
-      ["prophet", "Bobbie Macalanger, in my cosmic arena! Shall I give YOU a nickname for once?"],
-      ["bobbie", "Nobody nicknames ME, Disco Ball! ...Wait, what was it gonna be?"],
-      ["prophet", "'Episode Twelve.' It's my favourite. You lose in it."],
-      ["bobbie", "Then we're filming a reshoot! Step into my ring! ...Wherever the ring is!"]
+      ["bobbie", "HOODIE! Finally in my ring! Let's see that face!"],
+      ["prophet", "No."],
+      ["bobbie", "Just a peek! I got a nickname ready! It's HOODIE! ...It's still HOODIE."]
     ],
     "prophet>rocky": [
-      ["rocky", "WARNING: FLOATING HUMAN. GALAXY SKIN. ARE YOU COLD? I HAVE A LAB BLANKET."],
-      ["prophet", "Sweet tin bull. Your horns run on a meteorite crumb I dropped. Small universe."],
-      ["rocky", "THANK YOU FOR THE CRUMB. I WILL NOW USE IT TO CHARGE AT YOU. POLITELY."]
-    ],
-    "rocky>prophet": [
-      ["prophet", "R.O.C.K.Y! The robot with a heart. You're the touching subplot of my show."],
-      ["rocky", "I AM A SUBPLOT? CALCULATING... I WOULD LIKE A PROMOTION TO MAIN PLOT."],
-      ["prophet", "Promotions mean beating me. Nobody beats me. It's in the rules. I wrote them."],
-      ["rocky", "I HAVE READ THE RULES. THERE IS NO RULE AGAINST HORNS."]
+      ["rocky", "SCANNING HOOD... ERROR. HOOD TOO DARK. I SEE TWO EYES AND A MYSTERY."],
+      ["prophet", "You see enough."],
+      ["rocky", "I DO NOT. I WILL NEED A FLASHLIGHT. AND A LADDER."]
     ],
     "prophet>ninja": [
-      ["ninja", "Halt! You have entered the hidden dojo! Behold my sacred scroll!"],
-      ["prophet", "That's my lost TV guide. You're holding it upside down."],
-      ["ninja", "Then it is a prophecy! 'Thursday: cooking show' clearly means... DESTINY!"],
-      ["prophet", "It means cooking show. Go on, show me 1% of your potential. I'll squint."]
-    ],
-    "ninja>prophet": [
-      ["prophet", "Ninja Main! You're my favourite blooper reel. Do the rooftop fall again!"],
-      ["ninja", "Silence, star man! Behold my next move: SHADOW STEP! ...It's floatier in space."],
-      ["prophet", "You announce your moves to a guy who sees the future. Bold strategy."],
-      ["ninja", "Then you know it's only 1% of my ninja potential. Tremble accordingly!"]
+      ["ninja", "A hooded figure! Master! Teach me your mysterious ways!"],
+      ["prophet", "Step one: buy a hood."],
+      ["ninja", "I HAVE a hood! ...Okay, step two?"],
+      ["prophet", "One dollar."]
     ],
     "prophet>zoombie": [
-      ["zoombie", "Whoa, a shooting star! I wish for a banana... hey, the star has a face!"],
-      ["prophet", "I'm PROPHET, not a star. And I granted that wish once. You ate the peel too."],
-      ["zoombie", "That was YOU? Best day of my afterlife! Sorry I have to fight you."],
-      ["prophet", "Don't be. You're my favourite nature segment. Now roar for the cameras."]
-    ],
-    "zoombie>prophet": [
-      ["prophet", "ZOO-mbie! My sneeze's greatest accident. How's the pulse?"],
-      ["zoombie", "Ooh, a nebula on your arm! It looks like a giraffe. Hi, space giraffe!"],
-      ["prophet", "That's the Horsehead Nebula. ...Fine. It's a giraffe now. I'll rename it."],
-      ["zoombie", "Great. Now, about that sneeze. You owe me one heartbeat. Plus interest."]
+      ["zoombie", "Ooh, glowing eyes in the dark! Are you an owl? A very tall owl?"],
+      ["prophet", "I am not an owl."],
+      ["zoombie", "That's exactly what a tall owl would say. Hoo hoo?"]
     ],
     "prophet>bananas": [
-      ["bananas", "BANANAS HAS ARRIVED! ...In aisle four. Behind the melons."],
-      ["prophet", "So THAT'S where my syringe went. Into an orange. With googly eyes."],
-      ["bananas", "Your syringe made BANANAS huge! Thank you! Now BANANAS must kick you!"],
-      ["prophet", "Fair. Odd thing: my Prophecy can't read you. You're my favourite plot twist."]
-    ],
-    "bananas>prophet": [
-      ["prophet", "Ah, the orange. My serum gave you real eyes, and you use them to squint at me?"],
-      ["bananas", "They are glued on with STYLE! NO ARMS, NO PROBLEM!"],
-      ["prophet", "You're named after a boy's favourite silly word. I find that unbearably cute."],
-      ["bananas", "BANANAS finds YOU unbearably shiny! Prepare for FRUIT NUCLEAR!"]
+      ["bananas", "Hood man! Tell BANANAS's fortune! Is it amazing?"],
+      ["prophet", "You will roll somewhere."],
+      ["bananas", "BANANAS ALWAYS rolls somewhere! You're SO good at this!"]
     ]
   },
 
@@ -342,841 +321,808 @@ const STORY = {
     rook: {
       title: "District Defender",
       intro: [
-        ["narrator", "Neon District. A gold envelope slides under Rook's door. It smells like expensive mystery."],
-        ["narrator", "'The Patron seeks protectors. Win every fight. The best district gets a champion.'"],
-        ["narrator", "Far above, a galaxy-shaped figure turns up the volume. 'Ooh. A new season.'"],
-        ["rook", "Best district? That's mine, obviously. And whoever's watching, enjoy the show."]
+        ["narrator", "Neon District. Posters on every lamppost: 'THE GRAND BRAWL. Beat everyone.'"],
+        ["narrator", "Under one sits a tiny wagon. Sign: '$1 PROPHECIES'. Two eyes glow in a dark hood."],
+        ["rook", "A tournament? Easy. And hey, hood guy, quit staring. It's weird."]
       ],
       order: ["ninja", "zoombie", "rocky", "bobbie", "byte", "bananas", "prophet"],
       fights: {
         ninja: {
           before: [
-            ["ninja", "Halt! You have found the secret dojo behind the old marketplace!"],
-            ["rook", "The sign out front says 'SECRET DOJO' in big letters, kid."],
-            ["ninja", "...I'm still working on the 'secret' part. Also, I got a gold envelope too!"],
-            ["rook", "Then let's see who the Patron picks. Hope you stretched."]
+            ["narrator", "A hidden dojo behind the market. Fourteen paper lanterns. Twelve are on fire."],
+            ["ninja", "Rook! You found my dojo! Impossible! It is hidden!"],
+            ["rook", "You gave me directions. Twice. Then you drew me a map."],
+            ["ninja", "...A true ninja is a good host. Now prepare yourself!"]
           ],
           after: [
-            ["ninja", "That was only 1% of my... ow... potential."],
-            ["rook", "Then bring the other 99% next time. I'll save you a seat up front."]
+            ["ninja", "You beat 1% of my ninja potential. The other 99% had a cold."],
+            ["rook", "Tell the other 99% to get well soon."]
           ]
         },
         zoombie: {
           before: [
-            ["narrator", "The safari reserve, at night. Something rustles in the tall grass."],
-            ["rook", "Not scared. Fireball guys don't get scared. ...Who's there?"],
-            ["zoombie", "Shh! You'll wake the hippos. They get SO grumpy. You here about the envelope?"],
-            ["rook", "Yeah. You okay, man? You look... very green."],
-            ["zoombie", "Always this green. Let's be quick, the owls are about to do something cute."]
+            ["narrator", "The night safari. Crickets chirp. Somewhere, a hippo yawns like a tuba."],
+            ["zoombie", "Rook! Shh. Keep it down, the flamingos are on a date."],
+            ["rook", "I came to fight, not to babysit a flamingo date."],
+            ["zoombie", "Fine. But if they stare, you lose a point. Flamingo rules."]
           ],
           after: [
-            ["zoombie", "Good fight! Take a banana for the road. It's only a little bit black."],
-            ["rook", "...It's completely black. But thanks, man."]
+            ["zoombie", "You won. The flamingos give it a 7. Tough crowd."]
           ]
         },
         rocky: {
           before: [
-            ["rocky", "THIS IS THE LAB I ESCAPED FROM. I RETURNED TO SEARCH FOR MY CREATORS."],
-            ["rook", "And you found me instead. Lucky you. Why's every wall dented?"],
-            ["rocky", "THAT WAS ME. I LEFT THROUGH THREE WALLS. THE DOOR WAS RIGHT THERE."],
-            ["rook", "Respect. So if you win, does your district get a champion?"],
-            ["rocky", "I DO NOT HAVE A DISTRICT. I HAVE A VERY LARGE CRATE. IT IS COSY."]
+            ["narrator", "Lab 7. Three walls have bull-shaped holes. The fourth wall looks nervous."],
+            ["rocky", "ROOK. YOUR WIN RATE IS 100% AT HOME. THIS IS NOT YOUR HOME."],
+            ["rook", "Everywhere's my home. I'm that charming."],
+            ["rocky", "CALCULATING CHARM... RESULT: LOUD. FIGHT MODE ENGAGED."]
           ],
           after: [
-            ["rocky", "DEFEAT ACKNOWLEDGED. YOU MAY HAVE MY CRATE."],
-            ["rook", "Keep it, big guy. Swing by the Neon District sometime. Noodles on me."]
+            ["rocky", "DEFEAT CONFIRMED. I WILL REPAIR THE WALL. AND MY FEELINGS."]
           ]
         },
         bobbie: {
           before: [
-            ["bobbie", "Welcome to my gym, Headband! Mind the kids, they came for the main event!"],
-            ["rook", "Good. They can watch the Neon District's finest give a free lesson."],
-            ["bobbie", "Kids, this is Rook. Rook, this is where your winning streak retires!"],
-            ["rook", "Big talk for a guy whose gym smells like old socks."],
-            ["bobbie", "That's not socks, that's TRADITION! Step into my ring!"]
+            ["narrator", "Macalanger Gym. It smells of sweat, leather and one heroic air freshener."],
+            ["bobbie", "HEADBAND! You made the big leagues! My gym, my rules!"],
+            ["rook", "And what are your rules?"],
+            ["bobbie", "Rule one: be LOUD! Rule two: see rule one! STEP INTO MY RING!"]
           ],
           after: [
-            ["bobbie", "Man... good fight. Kids, THAT'S how you take a loss. With style!"],
-            ["rook", "Your kids just asked me for autographs. Sorry, champ."]
+            ["bobbie", "Ayy, respect, HEADBAND! You hit like a Monday morning!"]
           ]
         },
         byte: {
           before: [
-            ["byte", "Rook. Welcome to the data centre. Please do not touch the servers. Or me."],
-            ["rook", "So you're the Patron's top pick. What does a robot want with my district?"],
-            ["byte", "The Patron's offer: I replace you as its protector. Cheaper. No noodles."],
-            ["rook", "No noodles?! You monster. Noodles are the soul of the district!"],
-            ["byte", "Noodles have no soul. I checked. Probability you win: 12%. Begin."]
+            ["narrator", "The data centre. Ten thousand fans hum. None of them are cheering."],
+            ["byte", "Rook. I analysed 4,000 of your fights. You always open with a punch."],
+            ["rook", "Then let's make it 4,001."],
+            ["byte", "Prediction confirmed. Defence patch applied. ...Please punch slower."]
           ],
           after: [
-            ["byte", "Error. Outcome does not match prediction. Rebooting my sense of humility."],
-            ["rook", "Twelve percent's all I need, buddy. Twelve percent and a Blaze Ball."]
+            ["byte", "Loss logged. Patch notes: 'Rook still punches first. Working as intended.'"]
           ]
         },
         bananas: {
           before: [
-            ["narrator", "The supermarket. An orange has rolled into the Neon District aisle."],
-            ["bananas", "BANANAS has arrived! Is this where the noodles live?"],
-            ["rook", "Not quite. But if you stop rolling into my signs, I'll show you."]
+            ["narrator", "Fruit Aisle 7. A sign says 'NO BOUNCING'. It has a bounce-shaped dent in it."],
+            ["bananas", "BANANAS HAS ARRIVED! Welcome to BANANAS's home aisle!"],
+            ["rook", "You live in the fruit aisle?"],
+            ["bananas", "BANANAS lives EVERYWHERE! But mostly next to the grapes. They're quiet."]
           ],
           after: [
-            ["rook", "You fought well. The noodle stand is two blocks east."],
-            ["bananas", "BANANAS is on the way! ...I may arrive upside down."]
+            ["bananas", "BANANAS lost! But BANANAS is still the roundest fighter! Undefeated at round!"]
           ]
         },
         prophet: {
           before: [
-            ["narrator", "The edge of the universe. The Neon District glows far below, like a dropped coin."],
-            ["prophet", "Rook! Star of my favourite show. I've watched every fight. Twice. With snacks."],
-            ["rook", "So YOU threw that star in my grill? I nearly lost my eyebrows!"],
-            ["prophet", "And you invented the Blaze Ball. Ratings went through the roof. Now: the finale."],
-            ["rook", "Here's a spoiler, space guy. The hero wins at the end."]
+            ["narrator", "A misty crossroads at midnight. The little wagon creaks. Its lanterns sway."],
+            ["rook", "Hood guy. You've been at every single one of my fights. What do you want?"],
+            ["prophet", "It is written: PROPHET wins tonight."],
+            ["narrator", "He throws off the cloak: a floating galaxy, a blazing halo, two furious eyes."],
+            ["rook", "Whoa. Nice halo. Gonna punch it anyway."]
           ],
           after: [
-            ["prophet", "Unbelievable. I didn't see that coming. And I see EVERYTHING coming."],
-            ["rook", "That's what happens when you stop watching and step into the ring."]
+            ["rook", "So much for 'PROPHET wins'."],
+            ["prophet", "I reread the scroll. It says 'PROPHET WHINES'. The ink ran."]
           ]
         }
       },
       ending: [
-        ["narrator", "Back in the Neon District, the crowd lifts Rook onto their shoulders."],
-        ["narrator", "A second gold envelope: 'Your district has its champion. Welcome to the team.'"],
-        ["rook", "Team? Nobody said anything about a team. ...Does the team get noodles?"],
-        ["narrator", "On the back, in tiny letters: 'Unlimited noodles.' Far above, PROPHET hits 'renew'."],
-        ["rook", "Then the city's in good hands. MY hands. Occasionally on fire."]
+        ["narrator", "Neon District, dawn. The Grand Brawl trophy sits on the noodle stand counter."],
+        ["rook", "Undefeated at home. And away. And at a creepy crossroads. Easy."],
+        ["narrator", "Tucked under the trophy is a little card: 'You will eat noodles. Soon. -P'"],
+        ["rook", "...Okay. That one was actually helpful."]
       ]
     },
 
     byte: {
-      title: "Patch Notes",
+      title: "Patch Day",
       intro: [
-        ["narrator", "Server Room B. Combat Unit BYTE receives a gold envelope. The printer jams twice."],
-        ["byte", "Sender: 'The Patron.' Defeat seven fighters. Prize: combat data for version 2.0."],
-        ["byte", "Fighter seven: PROPHET. The entity who deleted my thermostat. Complaint 313 pending."],
-        ["byte", "Leaving the server room. Please do not unplug anything while I am away."]
+        ["narrator", "Server Room B. Byte's fan spins at 7,000 RPM. A Grand Brawl flyer jams its printer."],
+        ["byte", "Tournament detected. Win probability: 99.8%. The other 0.2% is a rounding error."],
+        ["narrator", "Outside, a hooded fortune teller writes on a card: 'The robot will print things.'"]
       ],
-      order: ["zoombie", "ninja", "bobbie", "rook", "rocky", "bananas", "prophet"],
+      order: ["bobbie", "ninja", "bananas", "zoombie", "rook", "rocky", "prophet"],
       fights: {
-        zoombie: {
+        bobbie: {
           before: [
-            ["byte", "Safari reserve. Night vision on. Mosquitoes: 14,302. All of them disappointed."],
-            ["zoombie", "Ha! They can't bite me either, I've got no blood. Hey, can you moo?"],
-            ["byte", "I cannot moo. Why would I moo?"],
-            ["zoombie", "The buffalo over there think you're their dad. Hm, no? Okay, fight!"]
+            ["narrator", "Macalanger Gym. Byte's sensors measure 92 decibels. All of them are Bobbie."],
+            ["bobbie", "CALCULATOR! You came all the way out here! Gonna crunch some numbers?"],
+            ["byte", "I am going to crunch you. Then the numbers. In that order."],
+            ["bobbie", "HA! Put 'em up! You got hands? ...You got hands. Good."]
           ],
           after: [
-            ["zoombie", "Ow. My arm fell off. Don't worry, it does that. Gimme a sec."],
-            ["byte", "Logging: opponent is modular. Interesting design choice."]
+            ["byte", "Victory. Patch notes: 'Bobbie volume reduced by 0%. Could not be fixed.'"]
           ]
         },
         ninja: {
           before: [
-            ["ninja", "You walk into my dojo uninvited, machine? Prepare to face... a ninja!"],
-            ["byte", "Database entry 'ninja': silent, invisible. Observed: loud, visible."],
-            ["ninja", "I'm in my BEGINNER build! Ninjas get patch notes too, you know!"],
-            ["byte", "Fascinating. Please send me your changelog."]
+            ["narrator", "The hidden dojo. Byte located it in 0.3 seconds. It has a welcome mat."],
+            ["ninja", "Robot! Your sensors cannot track my Almost Invisible technique!"],
+            ["byte", "I tracked your heat signature, your footsteps and the bell on your shoe."],
+            ["ninja", "...The bell is for luck. FIGHT!"]
           ],
           after: [
-            ["ninja", "I demand a rematch when I'm version 2.0!"],
-            ["byte", "Agreed. We will both be version 2.0. I will still win. Statistically."]
-          ]
-        },
-        bobbie: {
-          before: [
-            ["bobbie", "Yo, Calculator! You walked into MY gym? Bold move. Step into my ring!"],
-            ["byte", "Correction: this ring is a square. Filing a formal complaint."],
-            ["bobbie", "You're mad that rings are square? Who hurt you, man?"],
-            ["byte", "Several geometry textbooks. Engaging."]
-          ],
-          after: [
-            ["bobbie", "Alright, you got me, Calculator. Wanna help coach? The kids love robots."],
-            ["byte", "Accepted. Lesson one: duck. Lesson two: see lesson one."]
-          ]
-        },
-        rook: {
-          before: [
-            ["rook", "Welcome to the Neon District, robot. Say hi to the crowd. They're booing you."],
-            ["byte", "Booing detected. Translating... they are saying 'Byte is very cool.'"],
-            ["rook", "That is NOT what they're saying."],
-            ["byte", "My translation software disagrees. I wrote it myself."]
-          ],
-          after: [
-            ["rook", "Not bad. You fight like a toaster with a grudge."],
-            ["byte", "Thank you. 'Toaster with a grudge' added to my official title."]
-          ]
-        },
-        rocky: {
-          before: [
-            ["narrator", "The industrial lab. Byte's sensors detect a large, horned anomaly."],
-            ["rocky", "HELLO, FELLOW ROBOT. THE PATRON SAID A MACHINE WOULD COME FOR THE DATA."],
-            ["byte", "Correct. Step aside, R.O.C.K.Y. Your firmware is older than touchscreens."],
-            ["rocky", "I WILL NOT STEP ASIDE. I HAVE PRACTISED STANDING STILL. IT IS MY BEST SKILL."],
-            ["byte", "Rival protocol engaged. This is personal. I am told that is a feeling."]
-          ],
-          after: [
-            ["rocky", "YOU WIN, SMALL GREEN ROBOT. DID IT MAKE YOUR POWER CORE FEEL WARM?"],
-            ["byte", "...Core temperature rose two degrees. Logging it as 'not a feeling'."]
+            ["ninja", "You defeated only 1% of my potential!"],
+            ["byte", "Then I will schedule the other 99% for Tuesday."]
           ]
         },
         bananas: {
           before: [
-            ["byte", "Orange detected. Name: BANANAS. Taxonomic error: unresolved."],
-            ["bananas", "BANANAS is not an error! BANANAS is a lifestyle!"],
-            ["byte", "I will test that claim with a controlled fight."]
+            ["narrator", "Fruit Aisle 7. The barcode scanners beep in nervous harmony."],
+            ["bananas", "A robot! BANANAS loves robots! Scan BANANAS! Go on!"],
+            ["byte", "Scanning... Price: 59 cents. Discounted. Reason: 'too loud'."],
+            ["bananas", "DISCOUNTED?! BANANAS IS PRICELESS! FIGHT!"]
           ],
           after: [
-            ["byte", "Chaos level exceeded the scanner's maximum range."],
-            ["bananas", "The scanner was cheering! BANANAS can tell."]
+            ["bananas", "BANANAS lost... but BANANAS is still on sale, so that's nice."]
+          ]
+        },
+        zoombie: {
+          before: [
+            ["narrator", "The night safari. A lemur steals one of Byte's screws and runs off with it."],
+            ["zoombie", "Don't mind Larry, he collects shiny stuff. And bananas. Mostly bananas."],
+            ["byte", "Requesting return of screw. Also, why is your pulse reading zero?"],
+            ["zoombie", "Zero? Let me check. ...Yep, zero. Must be a slow day."]
+          ],
+          after: [
+            ["zoombie", "You won! Larry's keeping the screw, though. Finders keepers."]
+          ]
+        },
+        rook: {
+          before: [
+            ["narrator", "Neon District. A noodle stand steams. A hooded figure at a booth watches."],
+            ["rook", "Byte! Ready to lose on my street again? Home turf, baby."],
+            ["byte", "Your home turf advantage is 4%. I have patched it out."],
+            ["rook", "You can't patch out a vibe!"]
+          ],
+          after: [
+            ["byte", "Victory. Vibe patched. Rook is now 4% less smug."],
+            ["rook", "...Only 4%? I'll take it."]
+          ]
+        },
+        rocky: {
+          before: [
+            ["narrator", "Lab 7. R.O.C.K.Y is vacuuming the rubble from a wall he charged through."],
+            ["rocky", "HELLO, FELLOW ROBOT. PLEASE WAIT. I AM 98% DONE TIDYING."],
+            ["byte", "I will wait. Tidiness increases fight efficiency by 2%."],
+            ["rocky", "DONE. NOW ENGAGING HORNS. SORRY IN ADVANCE FOR THE NEW MESS."]
+          ],
+          after: [
+            ["rocky", "DEFEAT ACCEPTED. I WILL NOW VACUUM MYSELF UP."]
           ]
         },
         prophet: {
           before: [
-            ["prophet", "Byte! Welcome to my throne among the stars. Mind the wormholes, they're slippery."],
-            ["byte", "PROPHET. You put forty terabytes of fight footage where my thermostat was."],
-            ["prophet", "I was saving my favourite episodes. You were the nearest hard drive."],
-            ["byte", "I am not a hard drive. Complaint 313 will now be delivered. In person. With fists."]
+            ["narrator", "A misty crossroads. The '$1 PROPHECIES' wagon creaks. Byte's scanner reads: hood."],
+            ["byte", "Scanning... Face not found. Two bright pixels detected. Please update face."],
+            ["prophet", "Prophecy: someone here gets shut down tonight. It is not me."],
+            ["narrator", "The cloak hits the dirt. Galaxy skin. A golden halo. Two angry, glowing eyes."],
+            ["byte", "Halo: bright. Threat: real. Deploying patch: 'win'."]
           ],
           after: [
-            ["prophet", "Fine, fine. I'll leave a five-star review on your patch notes."],
-            ["byte", "Complaint 313: resolved. Satisfaction: 100%. So this is what smug feels like."]
+            ["byte", "Prophecy check: someone got shut down. It was you. Accuracy: 50%."],
+            ["prophet", "...Rounding up."]
           ]
         }
       },
       ending: [
-        ["narrator", "The combat data downloads. Byte installs version 2.0."],
-        ["byte", "Patch notes: Undefeated. Beat PROPHET. Added one (1) friend: R.O.C.K.Y."],
-        ["narrator", "The printer whirs: 'Well done, Byte. The city needs a mind like yours. -The Patron'"],
-        ["byte", "Acknowledged. Requesting a desk on the team. With proper cable management."]
+        ["narrator", "Byte returns to the data centre with the Grand Brawl trophy in its cooling vent."],
+        ["byte", "Patch notes: 'Byte is champion.' Known issue: everyone else is sad."],
+        ["narrator", "Taped to its server rack is a card: 'Your fan will spin.' It has a $1 price sticker."],
+        ["byte", "Prediction confirmed. Fan spinning. With pride."]
       ]
     },
 
     bobbie: {
-      title: "Underground Invitational",
+      title: "The Street Champ",
       intro: [
-        ["narrator", "Midnight at the neighbourhood gym. A gold envelope is taped to Bobbie's punching bag."],
-        ["narrator", "'Win every underground fight and join a secret team that protects the city.'"],
-        ["narrator", "In the skylight, a glowing face made of stars gives him a big thumbs-up."],
-        ["bobbie", "Sparkle Pants is watching again! Secret team? I'M IN. Grandpa, watch the gym!"]
+        ["narrator", "Macalanger Gym. Grandpa tapes a flyer to the mirror: 'GRAND BRAWL. Winner gets a belt.'"],
+        ["bobbie", "A BELT? Grandpa! I gotta win that! It'll match my sneakers!"],
+        ["narrator", "Outside the window: a fortune teller's wagon. A dark hood. A sign: '$1 PROPHECIES'."],
+        ["bobbie", "Ayy, HOODIE! Tell me I win! ...He's not talking. RUDE!"]
       ],
-      order: ["ninja", "zoombie", "byte", "rocky", "rook", "bananas", "prophet"],
+      order: ["rocky", "zoombie", "ninja", "byte", "bananas", "rook", "prophet"],
       fights: {
-        ninja: {
+        rocky: {
           before: [
-            ["bobbie", "Yo, anybody home? This dojo's dustier than Grandpa's trophies!"],
-            ["ninja", "*from the rafters* You have walked straight into my trap!"],
-            ["bobbie", "Kid, you're stuck up there. Your belt's caught on a nail."],
-            ["ninja", "...Part of the trap. Could you, um, help me down? Then we fight. Honourably."]
+            ["narrator", "Lab 7. Safety goggles everywhere. Bobbie wears his on his afro, like a crown."],
+            ["rocky", "HUMAN BOBBIE. ALERT: THIS IS A LABORATORY. NO SHOUTING."],
+            ["bobbie", "I'M NOT SHOUTING, BIG BULL! THIS IS MY INSIDE VOICE!"],
+            ["rocky", "SOUND LEVEL: 104 DECIBELS. YOUR INSIDE IS VERY LOUD."]
           ],
           after: [
-            ["bobbie", "Good hustle, Rafter Kid! Come by my gym, we'll work on that footwork."],
-            ["ninja", "A training montage?! Finally! I've been practising my montage face."]
+            ["rocky", "DEFEAT CONFIRMED. MY EARS ARE RINGING. I DO NOT HAVE EARS."]
           ]
         },
         zoombie: {
           before: [
-            ["bobbie", "Safari at night. Totally fine. Big tough boxer. Not scared of owls at all."],
-            ["zoombie", "Psst! Don't move. A leopard's watching us. Isn't she beautiful?"],
-            ["bobbie", "Beautiful?! Mr. Moss, she's looking at me like I'm a sandwich!"],
-            ["zoombie", "Nah, she's vegetarian today. Probably. Let's fight quietly, okay?"]
+            ["narrator", "The night safari. A zebra stares at Bobbie's sneakers. It seems jealous."],
+            ["zoombie", "Bobbie! Meet Doris. She's a tortoise. She's 104. Huge boxing fan."],
+            ["bobbie", "Ayy, DORIS! Watch me knock out your friend SWAMP SOCKS here!"],
+            ["zoombie", "Doris says 'go slow'. Doris says that about everything."]
           ],
           after: [
-            ["zoombie", "Great punches! My jaw's a bit loose now. But it always was."],
-            ["bobbie", "Mr. Moss, you're the weirdest dude I ever fought. And I fought my cousin."]
+            ["zoombie", "You won. Doris is heading over to cheer. She'll get here by Thursday."]
+          ]
+        },
+        ninja: {
+          before: [
+            ["narrator", "The hidden dojo. Bobbie ducks under a paper sign: 'SILENCE. NINJA AT WORK.'"],
+            ["ninja", "Bobbie! You will never hear me coming!"],
+            ["bobbie", "Kid, I heard you from the parking lot. You were humming your own theme song!"],
+            ["ninja", "It is a stealth theme! It goes 'shhhh'. Prepare!"]
+          ],
+          after: [
+            ["ninja", "You saw only 1% of my potential!"],
+            ["bobbie", "Then bring the other 99 to my gym, SHADOW SPROUT! Saturdays!"]
           ]
         },
         byte: {
           before: [
-            ["byte", "Bobbie Macalanger. Your fight record is on server 4. It is mostly yelling."],
-            ["bobbie", "That's called ENTHUSIASM, Screensaver! And why's it so cold in here?"],
-            ["byte", "The servers need cooling. You need humility. Both are being provided."],
-            ["bobbie", "Oh, you got jokes! Good. I like an opponent with jokes."],
-            ["byte", "That was not a joke. Initiating punch."]
+            ["narrator", "The data centre. Bobbie high-fives a server. The server reboots."],
+            ["byte", "Stop touching the equipment. Patch 3.4 removed high-fives."],
+            ["bobbie", "No high-fives?! Saddest patch I ever heard, CALCULATOR!"],
+            ["byte", "Then try this patch: me, winning."]
           ],
           after: [
-            ["byte", "Updating your file: 'Mostly yelling. Also extremely good at punching.'"],
-            ["bobbie", "Put that on a T-shirt, Screensaver!"]
-          ]
-        },
-        rocky: {
-          before: [
-            ["narrator", "The industrial lab. Alarms blare. R.O.C.K.Y stands guard over a terrified cat."],
-            ["rocky", "HALT. THIS CAT IS UNDER MY PROTECTION. STATE YOUR BUSINESS."],
-            ["bobbie", "Easy, Big Bull! I'm not here for the cat. I'm here for the Patron's fight."],
-            ["rocky", "VERY WELL. CAT, PLEASE STAND BEHIND THE SAFETY LINE. THANK YOU."]
-          ],
-          after: [
-            ["rocky", "YOU HIT VERY HARD. BUT YOU DID NOT HIT THE CAT. YOU ARE A GOOD HUMAN."],
-            ["bobbie", "Who punches a cat?! ...So what's the little guy's name?"],
-            ["rocky", "ITS NAME IS STEVE. I CHOSE IT. IT IS STRUCTURALLY IMPRESSIVE."]
-          ]
-        },
-        rook: {
-          before: [
-            ["narrator", "Neon District. The crowd is chanting someone else's name. Loudly."],
-            ["rook", "So you're the guy beating everybody. Welcome to MY street, Afro."],
-            ["bobbie", "Ayy, Matchstick! Your fans are loud. Mine are louder. And nine years old."],
-            ["rook", "The Patron says whoever wins tonight leads the team. That's me. Sorry."],
-            ["bobbie", "Grandpa always said: don't talk, just box. ...I'm gonna talk anyway. LET'S GO!"]
-          ],
-          after: [
-            ["rook", "Okay... you earned it. The Neon District's yours. Just for tonight."],
-            ["bobbie", "Nah, keep your street. I just wanted a good fight. And maybe your headband."]
+            ["byte", "Loss recorded. Rolling back patch 3.4. One high-five permitted."],
+            ["bobbie", "THERE it is! Up top!"]
           ]
         },
         bananas: {
           before: [
-            ["bobbie", "You came to my gym to learn boxing? You don't have arms!"],
-            ["bananas", "WITH MY FEET, OBVIOUSLY!"],
-            ["bobbie", "Ha! Let's see those kicks. The kids are gonna love this."]
+            ["narrator", "Fruit Aisle 7. Bobbie shadowboxes past the melons. The melons do not flinch."],
+            ["bananas", "Big hair man! BANANAS has been training! BANANAS did ONE push-up!"],
+            ["bobbie", "With no arms? HOW?!"],
+            ["bananas", "BANANAS rolled forward. Then rolled back. It counts!"]
           ],
           after: [
-            ["bobbie", "You've got heart, Orange Guy. Come back for footwork drills."],
-            ["bananas", "BANANAS has no arms, but does have a gym membership!"]
+            ["bobbie", "You got heart, JUICE BOX! Gym's open Saturdays!"],
+            ["bananas", "BANANAS will be there! With gloves on his feet!"]
+          ]
+        },
+        rook: {
+          before: [
+            ["narrator", "Neon District. Rook stands under his favourite sign. Half of it flickers out."],
+            ["rook", "Bobbie. My street, my sign. Mostly my sign."],
+            ["bobbie", "Your sign's missing a letter, HEADBAND! Just like your chances!"],
+            ["rook", "...Okay, that was good. Still gonna win."]
+          ],
+          after: [
+            ["rook", "Fine. You win. Don't tell the noodle guy."],
+            ["bobbie", "I'M TELLING EVERYBODY!"]
           ]
         },
         prophet: {
           before: [
-            ["narrator", "The edge of the universe. Planets hang like speed bags. Bobbie gets a bit emotional."],
-            ["bobbie", "SPARKLE PANTS! So it's you in my skylight every night! Ever heard of knocking?"],
-            ["prophet", "I rule the universe, Bobbie. Every window is my window."],
-            ["bobbie", "Then come down off the ceiling and step into my ring, Glow Stick!"],
-            ["prophet", "There is no ring. I am the ring. ...Fine. I'll float in a square shape."]
+            ["narrator", "A misty crossroads. The fortune teller's wagon sits in the middle, lanterns aglow."],
+            ["bobbie", "HOODIE! You've been at every one of my fights! What's the deal?"],
+            ["prophet", "My prophecy: tonight, you will see stars. I win."],
+            ["narrator", "The cloak flies off. Galaxy skin, a golden halo, two furious glowing eyes."],
+            ["bobbie", "Oh, you ARE the stars! Okay, STARFISH, step into my ring!"]
           ],
           after: [
-            ["prophet", "You punched a galaxy. My left arm will have a new constellation for weeks."],
-            ["bobbie", "Name it after Grandpa! And come by the gym sometime. You need footwork, Twinkles."]
+            ["bobbie", "Saw the stars, punched the stars! Prophecy complete!"],
+            ["prophet", "Half of it came true. I hate that half."]
           ]
         }
       },
       ending: [
-        ["narrator", "Back at the gym, a figure in a gold mask steps out of the crowd, slow-clapping."],
-        ["narrator", "'Seven fights, Bobbie. And you helped a ninja, a zombie and a cat along the way.'"],
-        ["bobbie", "Wait, THAT was the test? Helping people? I thought it was the punching!"],
-        ["narrator", "'It was also the punching.' The Patron hands him a gold team jacket. It's tiny."],
-        ["bobbie", "Doesn't matter! Step into my ring, city! Sparkle Pants, you can watch too!"]
+        ["narrator", "Macalanger Gym. The belt hangs on the wall next to Grandpa's old gloves."],
+        ["bobbie", "Grandpa! I won! Everybody got a nickname! Even the guy made of space!"],
+        ["narrator", "Grandpa smiles. 'And did you learn when NOT to throw a punch?'"],
+        ["bobbie", "...I learned when to throw a LOT of them. That counts, right?"]
       ]
     },
 
     rocky: {
       title: "Heart of Steel",
       intro: [
-        ["narrator", "R.O.C.K.Y finds a gold envelope stuck on one of his horns. Nobody knows for how long."],
-        ["narrator", "'Win all seven fights, and I will tell you who built you. -The Patron'"],
-        ["narrator", "'P.S. The meteorite in your horns belongs to PROPHET. He is your final fight.'"],
-        ["rocky", "TRUTH ABOUT CREATORS: REQUESTED. HORNS: ACTIVATED. ENVELOPE: STILL ON HORNS."]
+        ["narrator", "Lab 7. R.O.C.K.Y finds a flyer: 'GRAND BRAWL. Prove your worth.'"],
+        ["rocky", "CALCULATING WORTH... ERROR. MORE DATA REQUIRED. GATHERING DATA BY FIGHTING."],
+        ["narrator", "On the lab roof, somehow, a fortune teller's wagon. A hooded figure waves. Slowly."],
+        ["rocky", "HOW DID YOU GET A WAGON ON THE ROOF. ...WAVING BACK."]
       ],
-      order: ["ninja", "zoombie", "bobbie", "rook", "byte", "bananas", "prophet"],
+      order: ["bananas", "ninja", "byte", "zoombie", "rook", "bobbie", "prophet"],
       fights: {
+        bananas: {
+          before: [
+            ["narrator", "Fruit Aisle 7. R.O.C.K.Y has been asked to leave the egg section. Twice."],
+            ["bananas", "Big bull robot! BANANAS remembers you! From the lab!"],
+            ["rocky", "I REMEMBER YOU. YOU WERE SMALLER AND YOUR MOUTH WAS MARKER."],
+            ["bananas", "BANANAS had a glow-up! Literally! FIGHT!"]
+          ],
+          after: [
+            ["rocky", "THREAT NEUTRALISED. I WILL NOW PAY FOR THE ORANGE."],
+            ["bananas", "BANANAS IS NOT FOR SALE!"]
+          ]
+        },
         ninja: {
           before: [
-            ["ninja", "Giant robot! You have entered the forbidden dojo. Leave, or face my wrath!"],
-            ["rocky", "I DID NOT ENTER. I CAME THROUGH THE WALL. I APOLOGISE TO YOUR WALL."],
-            ["ninja", "That wall was load-bearing!!"],
-            ["rocky", "SO AM I. LET US FIGHT."]
+            ["narrator", "The hidden dojo. R.O.C.K.Y fits through the door after removing the door."],
+            ["ninja", "You broke my door! That door was hidden!"],
+            ["rocky", "IT WAS VERY WELL HIDDEN. I DID NOT SEE IT UNTIL I WAS WEARING IT."],
+            ["ninja", "Then witness a technique nobody sees coming!"]
           ],
           after: [
-            ["ninja", "You have defeated only 1% of... no, okay, you defeated all of me. Fair."],
-            ["rocky", "I WILL FIX YOUR WALL. I HAVE A TOOL HAND. IT IS MOSTLY A HAMMER."]
-          ]
-        },
-        zoombie: {
-          before: [
-            ["zoombie", "Shh, the elephants are sleeping. Oh hey, a big metal bull! Do you graze?"],
-            ["rocky", "I DO NOT GRAZE. I RECHARGE. ARE YOU INJURED? YOUR SKIN IS GREEN."],
-            ["zoombie", "Nah, I'm a zombie. I'm hunting whoever made the germ that did this."],
-            ["rocky", "I AM ALSO HUNTING MY MAKERS. WE ARE ON THE SAME QUEST. BUT FIRST: FIGHT."]
-          ],
-          after: [
-            ["zoombie", "Good fight, big guy. If you find your makers, ask if they make bananas."],
-            ["rocky", "NOTED. QUESTION TWO: 'DO YOU MAKE BANANAS?'"]
-          ]
-        },
-        bobbie: {
-          before: [
-            ["bobbie", "THE IRON BULL in my gym! Kids, look! Don't touch the horns!"],
-            ["rocky", "THEY ARE ONLY A LITTLE SHARP. HELLO, SMALL HUMANS. *THUMBS UP*"],
-            ["bobbie", "Big guy, you're holding a dumbbell in that hand. That's not a thumbs-up."],
-            ["rocky", "CORRECTION: IT IS A VERY HEAVY THUMBS-UP. NOW, BOXING."]
-          ],
-          after: [
-            ["bobbie", "Ow, my knuckles! Good luck finding your family, Iron Horns."],
-            ["rocky", "THANK YOU. YOUR GYM SMELLS OF DETERMINATION. AND FEET."]
-          ]
-        },
-        rook: {
-          before: [
-            ["rook", "Hey, hey! Watch the noodle stand! The Neon District isn't built for bulls!"],
-            ["rocky", "APOLOGIES. I WILL PAY FOR THE NOODLES. I HAVE FOUR BOLTS AND A RECEIPT."],
-            ["rook", "Keep 'em. The Patron said you'd come. You're looking for your makers?"],
-            ["rocky", "AFFIRMATIVE. YOU ARE THE LAST HUMAN BETWEEN ME AND THE ANSWERS."],
-            ["rook", "Then come get 'em, big guy. I'm not gonna make it easy."]
-          ],
-          after: [
-            ["rook", "Go on. The data centre's down the street. Hope you like what you find."],
-            ["rocky", "CHANCE OF LIKING IT: 64%. I BELIEVE THAT NUMBER IS CALLED HOPE."]
+            ["ninja", "Only 1% of my potential! The rest was behind the door you broke."],
+            ["rocky", "I WILL REBUILD THE DOOR. WITH A HIDDEN DOORBELL."]
           ]
         },
         byte: {
           before: [
-            ["byte", "R.O.C.K.Y. You are attempting to access your creators' archive. Denied."],
-            ["rocky", "WHY ARE YOU GUARDING IT, SMALL GREEN ROBOT?"],
-            ["byte", "Because the Patron asked. Also, your fans run at 40 decibels. Very rude."],
-            ["rocky", "MY FANS ARE LOUD BECAUSE I AM EXCITED. PLEASE MOVE. PLEASE."],
-            ["byte", "Politeness detected. Unsettling. Engaging."]
+            ["narrator", "The data centre. The servers look cold. R.O.C.K.Y offers each one a blanket."],
+            ["byte", "You are blocking airflow. And being nice to hardware. Stop both."],
+            ["rocky", "I CANNOT STOP. KINDNESS IS NOT CONNECTED TO MY OFF SWITCH."],
+            ["byte", "Then I will find your off switch."]
           ],
           after: [
-            ["byte", "Access granted. Do not tell anyone I lost. Especially the break room toaster."],
-            ["rocky", "I WILL NOT TELL ANYONE. I WILL ONLY TELL EVERYONE."]
+            ["byte", "Loss confirmed. Note for patch 9: 'The bull is too wholesome to beat.'"]
           ]
         },
-        bananas: {
+        zoombie: {
           before: [
-            ["rocky", "SCANNING... FRUIT-SHAPED OBJECT. NO ARMS DETECTED."],
-            ["bananas", "The scanning beam is my dance spotlight! Watch this bounce!"],
-            ["rocky", "FRIENDLY FRUIT. HIGH CHAOS POTENTIAL. I WILL BE CAREFUL."]
+            ["narrator", "The night safari. An elephant meets R.O.C.K.Y. They compare horns and tusks."],
+            ["zoombie", "Ooh, she likes you! Ellie never likes anyone. She sat on the last tour bus."],
+            ["rocky", "I WILL TRY NOT TO BE SAT ON. FIGHTING YOU NOW. GENTLY."],
+            ["zoombie", "Not too gently. My arm falls off if you sneeze."]
           ],
           after: [
-            ["rocky", "SCAN COMPLETE. YOU ARE AN ORANGE. YOUR EYES ARE GLUED ON. ARE YOU OKAY?"],
-            ["bananas", "BANANAS is GREAT! A boy drew my mouth! It is a very good mouth!"]
+            ["zoombie", "Ow. My arm fell off. ...Oh, found it. Good as new. Ish."]
+          ]
+        },
+        rook: {
+          before: [
+            ["narrator", "Neon District. R.O.C.K.Y helps a granny cross the street. Then carries her car."],
+            ["rook", "Big guy, you're making me look bad on my own street. Everyone loves you."],
+            ["rocky", "I DO NOT WISH TO MAKE YOU LOOK BAD. I WILL DEFEAT YOU POLITELY."],
+            ["rook", "That's the scariest thing anyone's ever said to me."]
+          ],
+          after: [
+            ["rook", "Lost on my own street. To a NICE bull. Worst day ever."],
+            ["rocky", "WOULD YOU LIKE A HUG. IT IS A NEW FEATURE."]
+          ]
+        },
+        bobbie: {
+          before: [
+            ["narrator", "Macalanger Gym. A sticky note on the heavy bag asks: 'Bull-proof?' It is not."],
+            ["bobbie", "BIG BULL! Heard you've been beating everybody! Step into my ring!"],
+            ["rocky", "I HAVE STEPPED INTO YOUR RING. YOUR RING HAS STEPPED INTO THE FLOOR."],
+            ["bobbie", "...That's coming out of your prize money!"]
+          ],
+          after: [
+            ["bobbie", "Respect, BIG BULL! You hit like a moving truck!"],
+            ["rocky", "THANK YOU. I WAS ONCE TESTED AGAINST ONE. IT LOST."]
           ]
         },
         prophet: {
           before: [
-            ["prophet", "R.O.C.K.Y! I cried at your episode. Little galaxies leaked everywhere."],
-            ["rocky", "YOU ARE THE OWNER OF MY HORN METEORITE. DO YOU WANT IT BACK?"],
-            ["prophet", "Keep it. I want a finale. Charge at me, and make it dramatic."],
-            ["rocky", "CALCULATING DRAMA... 100%. ALSO 100% HORNS."]
+            ["narrator", "A misty crossroads. The fortune teller's wagon. The crystal ball glows."],
+            ["rocky", "HOODED HUMAN. YOU HAVE APPEARED AT SIX FIGHTS. ARE YOU IN DANGER."],
+            ["prophet", "My crystal ball says: victory."],
+            ["narrator", "The cloak drops. A floating galaxy, a blazing golden halo, two furious eyes."],
+            ["rocky", "NOT HUMAN. NOT IN DANGER. CORRECTION: NOW IN DANGER."]
           ],
           after: [
-            ["prophet", "Bravo! The robot with a heart beats the universe. That's going in the trailer."],
-            ["rocky", "THANK YOU. PLEASE SHOW MY GOOD SIDE. ALL OF MY SIDES ARE METAL."]
+            ["rocky", "I HAVE INSPECTED YOUR CRYSTAL BALL. IT IS A SNOW GLOBE."],
+            ["prophet", "...It was on sale."]
           ]
         }
       },
       ending: [
-        ["narrator", "Deep in the archive, R.O.C.K.Y finds his original design file."],
-        ["narrator", "A note from one engineer: 'The protect-innocents bug is not a bug. Don't fix it.'"],
-        ["rocky", "SO... I WAS NOT BROKEN. I WAS BUILT TO CARE. ON PURPOSE."],
-        ["narrator", "It is signed with a tiny doodle of a gold mask. Even PROPHET looks surprised."],
-        ["rocky", "CALCULATING FEELING... RESULT: WARM POWER CORE. I THINK THIS IS A HEART."]
+        ["narrator", "Lab 7. R.O.C.K.Y puts the trophy next to a photo of everyone he fought."],
+        ["rocky", "CALCULATING HEART PERCENTAGE... 41%... 58%... 100%."],
+        ["rocky", "RESULT: I HAVE A HEART. IT CONTAINS SIX FRIENDS. ONE OF THEM IS AN ORANGE."],
+        ["narrator", "He gives a thumbs-up. He is holding a wall at the time. It is a very proud wall."]
       ]
     },
 
     ninja: {
-      title: "Path of the Almost-Ninja",
+      title: "Only 1%",
       intro: [
-        ["narrator", "The abandoned dojo. A gold envelope is pinned to the wall with a shuriken."],
-        ["ninja", "A shuriken! Finally, a ninja who respects the old ways! ...Oh. It's one of mine."],
-        ["narrator", "'Win seven fights. The last is against the author of your scroll. -The Patron'"],
-        ["ninja", "The ancient master who wrote my scroll! My destiny calls, in excellent handwriting!"]
+        ["narrator", "The hidden dojo. Ninja Main unrolls his ancient scroll and reads it aloud. Loudly."],
+        ["ninja", "'Become the greatest ninja by defeating every fighter.' ...'Spring rolls, $4.'"],
+        ["narrator", "Outside, a hooded fortune teller parks his wagon and watches the dojo."],
+        ["ninja", "A mysterious hooded figure! My secret ninja master, surely! ...Hello, master!"]
       ],
-      order: ["zoombie", "byte", "bobbie", "rocky", "rook", "bananas", "prophet"],
+      order: ["bananas", "rook", "zoombie", "bobbie", "rocky", "byte", "prophet"],
       fights: {
-        zoombie: {
+        bananas: {
           before: [
-            ["zoombie", "Ooh! Hello, little panther! ...Oh. Just a guy in black pyjamas."],
-            ["ninja", "These are the sacred robes of the night! I am here to fight you, zombie!"],
-            ["zoombie", "Cool, cool. Can you do it quietly? The giraffes have a big day tomorrow."],
-            ["ninja", "Quietly? QUIETLY?! I am a NINJA! QUIET IS MY MIDDLE NAME!"]
+            ["narrator", "Fruit Aisle 7. Ninja Main hides behind a pineapple. It's a very small pineapple."],
+            ["bananas", "BANANAS sees you, ninja! All of you is outside the pineapple!"],
+            ["ninja", "It's a decoy pineapple! The real me is... also here."],
+            ["bananas", "BANANAS respects the effort! FIGHT!"]
           ],
           after: [
-            ["zoombie", "You were very loud. But you fight great. The giraffes woke up to cheer."],
-            ["ninja", "My first fan club! ...They're walking away. Are fans allowed to do that?"]
-          ]
-        },
-        byte: {
-          before: [
-            ["byte", "Intruder: Ninja Main. Stealth report: you tripped the laser grid six times."],
-            ["ninja", "That was the sneakiest I've ever been! You only know because you're a computer!"],
-            ["byte", "I know because you said 'ow' each time."],
-            ["ninja", "...Ninja technique: Distraction By Pain. You fell right into it."]
-          ],
-          after: [
-            ["byte", "Defeat registered. Your strategy contained zero logic. Unpredictability: maximum."],
-            ["ninja", "That's the way of the ninja! I think! I'm writing that down."]
-          ]
-        },
-        bobbie: {
-          before: [
-            ["bobbie", "Ayy, the ninja's here! Kids, watch this guy. He's gonna try to disappear."],
-            ["ninja", "Shadow Step! ...Wait, why are they clapping? I'm still visible, aren't I?"],
-            ["bobbie", "You're behind the punching bag, Peek-a-Boo. Your head's sticking out."],
-            ["ninja", "That is a DECOY head! ...Fine. Fight me, boxer!"]
-          ],
-          after: [
-            ["bobbie", "Ha! That last Shadow Step was legit, kid. You're getting faster."],
-            ["ninja", "A boxer said I was LEGIT. Dear diary, today is the best day of my life."]
-          ]
-        },
-        rocky: {
-          before: [
-            ["rocky", "SMALL NINJA. THIS LAB IS DANGEROUS. PLEASE PUT ON A HARD HAT."],
-            ["ninja", "Ninjas don't wear hard hats! Our heads are hardened by... training."],
-            ["rocky", "YOU HAVE A BANDAGE ON YOUR HEAD."],
-            ["ninja", "That's FROM training! Almost Invisible! ...It's charging. Give me three rounds."]
-          ],
-          after: [
-            ["rocky", "YOU HAVE WON. YOUR SMOKE MADE MY SENSORS SNEEZE."],
-            ["ninja", "Robots can sneeze?!"],
-            ["rocky", "WE CAN NOW. THANK YOU FOR THE UPGRADE."]
+            ["bananas", "BANANAS is defeated! Teach BANANAS the pineapple trick!"],
+            ["ninja", "There is no trick. There is only pineapple."]
           ]
         },
         rook: {
           before: [
-            ["narrator", "Neon District. The whole street has come to watch the almost-ninja."],
-            ["rook", "So you're the masked kid everyone's talking about. They say you never quit."],
-            ["ninja", "Never! I have failed 812 times. I counted. It's all in my notebook."],
-            ["rook", "That's either really sad or really inspiring. Let's find out which."],
-            ["ninja", "Prepare yourself! You are about to witness 2% of my ninja potential!"]
+            ["narrator", "Neon District. Ninja Main drops from a rooftop. It takes him four tries."],
+            ["rook", "Nice landing. My favourite was the third one. The one into the trash can."],
+            ["ninja", "That was a planned trash can! Ninjas hide in trash cans!"],
+            ["rook", "You came out with a banana peel on your head. Let's do this."]
           ],
           after: [
-            ["rook", "Okay, kid. That one was 100%. Don't let it go to your head."],
-            ["ninja", "Too late. It's in my head. I'm doing a victory pose. Don't look."]
+            ["rook", "Okay. That was actually cool."],
+            ["ninja", "You saw 1% of my potential! ...Will you sign my scroll?"]
           ]
         },
-        bananas: {
+        zoombie: {
           before: [
-            ["ninja", "To remain hidden, do not bounce. This is lesson two."],
-            ["bananas", "BANANAS can bounce silently! I only hit that wall a little."],
-            ["ninja", "A useful technique. I will add it to the notebook."]
+            ["narrator", "The night safari. Ninja Main hides among the flamingos, on one leg. Wobbling."],
+            ["zoombie", "Ooh, a new flamingo! Black feathers, funny mask. Very rare species."],
+            ["ninja", "My disguise works! The zookeeper believes I am a bird!"],
+            ["zoombie", "...Hang on. Flamingos don't carry throwing stars. Fight time!"]
           ],
           after: [
-            ["ninja", "You bounced past me without making a sound."],
-            ["bananas", "The wall caught the sound. BANANAS planned that."]
+            ["zoombie", "You won! You're going in my bird book anyway. 'Ninja Flamingo. Very loud.'"]
+          ]
+        },
+        bobbie: {
+          before: [
+            ["narrator", "Macalanger Gym. Ninja Main sneaks in through the air vent. He gets stuck in it."],
+            ["bobbie", "VENT BOY! I can see your feet hanging outta my ceiling!"],
+            ["ninja", "This is the Hanging Bat Technique! It is very advanced!"],
+            ["bobbie", "It's very STUCK! Hold on, I'll pull you down, then knock you down!"]
+          ],
+          after: [
+            ["bobbie", "Good hustle, VENT BOY! More cardio, less vent!"]
+          ]
+        },
+        rocky: {
+          before: [
+            ["narrator", "Lab 7. Ninja Main has painted himself grey to blend in with the robots."],
+            ["rocky", "GREY HUMAN DETECTED. YOU ARE NOT A ROBOT. YOU HAVE A NOSE."],
+            ["ninja", "Robots can have noses! It is a... smell sensor!"],
+            ["rocky", "...I WANT ONE. AFTER THE FIGHT, TELL ME WHERE TO BUY A NOSE."]
+          ],
+          after: [
+            ["rocky", "DEFEATED BY A NINJA WITH A NOSE. LOGGING THIS AS A GOOD DAY ANYWAY."]
+          ]
+        },
+        byte: {
+          before: [
+            ["narrator", "The data centre. Ninja Main crawls under the laser grid. There is no laser grid."],
+            ["byte", "Why are you crawling. The floor is clean, but not that clean."],
+            ["ninja", "Ninjas always assume there are lasers! It is ninja law!"],
+            ["byte", "Fine. Patch 6.0: 'Added lasers.' ...That was a joke. My first. Fight."]
+          ],
+          after: [
+            ["byte", "Defeated by a ninja who crawled. Statistically embarrassing. Logging as 'rare'."]
           ]
         },
         prophet: {
           before: [
-            ["narrator", "The edge of the universe. Ninja Main floats in upside down, very proud of it."],
-            ["ninja", "Ancient master! I have studied your sacred scroll every single day!"],
-            ["prophet", "That's my TV guide. It says 'Wednesday: Nature Documentary, 8pm.'"],
-            ["ninja", "The Nature Documentary... the deadliest technique of all! Teach me!"],
-            ["prophet", "Lesson one: survive this. Lesson two: please return my TV guide."]
+            ["narrator", "A misty crossroads. The fortune teller's wagon is parked under a lonely lantern."],
+            ["ninja", "Master! You came to all my fights! Am I ready to learn your secret?"],
+            ["prophet", "I foresee a ninja will vanish. Then I win."],
+            ["narrator", "The cloak falls. Galaxy skin, a blazing golden halo, eyes glowing with fury."],
+            ["ninja", "Master has a HALO?! ...Fine! Almost Invisible! Vanishing! Right now!"]
           ],
           after: [
-            ["prophet", "You beat me with the 'Weather Forecast' stance. I never saw it coming."],
-            ["ninja", "And that was only 3% of my ninja potential! ...Can I keep the guide?"]
+            ["prophet", "The ninja vanished. Then he hit me. I had the order wrong."],
+            ["ninja", "That was 2% of my potential! A new personal best!"]
           ]
         }
       },
       ending: [
-        ["narrator", "Back at the dojo, a figure in a gold mask lands beside him. Perfectly silently."],
-        ["ninja", "HOW DID YOU DO THAT?! Not even PROPHET lands that quietly! Teach me everything!"],
-        ["narrator", "The Patron hands him a real ninja scroll. Lesson one: 'Stop announcing your moves.'"],
-        ["ninja", "Understood, master. NINJA MAIN ACCEPTS THE SACRED SCROLL! ...Oh. Oops."]
+        ["narrator", "The hidden dojo. Ninja Main hangs the Grand Brawl trophy beside his scroll."],
+        ["ninja", "I am the greatest ninja the world has ever seen. Nobody saw it, of course."],
+        ["narrator", "Then he steps on one of his own throwing stars."],
+        ["ninja", "OW! ...That was only 1% of my pain!"]
       ]
     },
 
     zoombie: {
-      title: "Cure in the Wild",
+      title: "Night Shift",
       intro: [
-        ["narrator", "The safari reserve, midnight. ZOO-mbie finds a gold envelope inside a banana peel."],
-        ["zoombie", "Ooh, mail! I never get mail. Probably because I live in a jeep."],
-        ["narrator", "'Win seven fights. The last is PROPHET, whose sneeze infected you. -The Patron'"],
-        ["zoombie", "A cure, AND someone to say 'bless you' to? Pulse check... nope. Let's go!"]
+        ["narrator", "The night safari research station. ZOO-mbie reads his clipboard: 'Feed giraffes. Win.'"],
+        ["zoombie", "Who wrote 'win'? ...Oh, that's my handwriting. Okay then."],
+        ["narrator", "By the gate stands a fortune teller's wagon. '$1 PROPHECIES'. Two eyes glow in a hood."],
+        ["zoombie", "Ooh, I'll ask if my pulse is coming back. ...Later. Giraffes first."]
       ],
-      order: ["ninja", "bobbie", "rook", "byte", "rocky", "bananas", "prophet"],
+      order: ["byte", "bananas", "bobbie", "ninja", "rocky", "rook", "prophet"],
       fights: {
-        ninja: {
-          before: [
-            ["zoombie", "Whoa, a dojo! Smells like old wood and... is that a bat? Hi, bat!"],
-            ["ninja", "That is not a bat. That is me, hanging from the ceiling. Ninja style."],
-            ["zoombie", "Neat! The bat next to you was here first, though. He looks annoyed."],
-            ["ninja", "Ah! It IS a bat! Get it off! Get it OFF! ...I mean, prepare to fight!"]
-          ],
-          after: [
-            ["ninja", "You got lucky, zombie! The bat distracted me."],
-            ["zoombie", "His name is Kevin. He says you need to work on your footwork."]
-          ]
-        },
-        bobbie: {
-          before: [
-            ["bobbie", "Yo, Twig Head! You got leaves in your hair. And a beetle. Is he paying rent?"],
-            ["zoombie", "That's Doris. She's just visiting. Seen any weird green germs around here?"],
-            ["bobbie", "Only in the locker room. Nobody goes in there anymore. Gloves up!"]
-          ],
-          after: [
-            ["bobbie", "You took a Championship Uppercut and just... picked your jaw back up?!"],
-            ["zoombie", "Happens all the time. Doris says good fight."]
-          ]
-        },
-        rook: {
-          before: [
-            ["rook", "A zombie in the Neon District? Everybody stay calm. ...Is he eating a sign?"],
-            ["zoombie", "It's a banana-shaped neon sign. Very misleading. Tastes like electricity."],
-            ["rook", "The Patron said you'd come looking for a cure. What's that got to do with me?"],
-            ["zoombie", "No idea! The Patron just wrote 'win.' So... sorry in advance!"]
-          ],
-          after: [
-            ["rook", "Okay, you win. The data centre down the street keeps records on everything."],
-            ["zoombie", "Thanks, buddy. Sorry about your sign. It was delicious."]
-          ]
-        },
         byte: {
           before: [
-            ["byte", "Unauthorised zombie in the server room. Please wipe your feet. And everything."],
-            ["zoombie", "Ooh, it's chilly in here! Nice. Slows down the... you know. Decomposing."],
-            ["byte", "The research files you want are on server 9. First, you must defeat me."],
-            ["zoombie", "Can I just ask nicely?"],
-            ["byte", "Asking nicely has a 0% success rate. I made sure of that."]
+            ["narrator", "The data centre. It's cold enough to keep bananas fresh. ZOO-mbie approves."],
+            ["byte", "ZOO-mbie. Please stop storing fruit in Server 12."],
+            ["zoombie", "But it's the perfect temperature! Also there's a moth in here! Hi, moth!"],
+            ["byte", "The moth is a known bug. Literally. Patch pending. Fight."]
           ],
           after: [
-            ["byte", "Access granted. File: 'Containment unit built at the industrial lab.'"],
-            ["zoombie", "The lab where the big robot bull came from? Small world!"]
-          ]
-        },
-        rocky: {
-          before: [
-            ["narrator", "The industrial lab. Somewhere inside are the notes on the microorganism."],
-            ["rocky", "HALT. THIS LAB WAS MY HOME. IT IS DANGEROUS. PLEASE DO NOT EAT ANYTHING."],
-            ["zoombie", "No promises. I'm looking for a cure, big guy. Mind if I peek?"],
-            ["rocky", "THE PATRON SAID ONLY THE WORTHY MAY ENTER. I MUST TEST YOU. WITH HORNS."],
-            ["zoombie", "Fair. Can I pet them first? ...No? Okay. Stampede time!"]
-          ],
-          after: [
-            ["rocky", "YOU ARE WORTHY. ALSO VERY STICKY. THE FILES ARE IN THE BLUE CABINET."],
-            ["zoombie", "Thanks, buddy. You smell like warm metal. It's nice."]
+            ["zoombie", "I won! The moth's coming home with me. Its name is Patch."]
           ]
         },
         bananas: {
           before: [
-            ["zoombie", "Small, round, orange... are you a new kind of banana?"],
-            ["bananas", "I am an orange, and I am named BANANAS!"],
-            ["zoombie", "Right. Sorry, friend. Let's fight, then I'll check my field guide."]
+            ["narrator", "Fruit Aisle 7. ZOO-mbie's eyes go wide. So many bananas. Real ones."],
+            ["zoombie", "This is heaven. Is this heaven? Am I extra dead now?"],
+            ["bananas", "Focus, zombie friend! BANANAS is the main fruit in this aisle!"],
+            ["zoombie", "You're not even a banana. But I'll fight for these ones."]
           ],
           after: [
-            ["zoombie", "Small. Round. Loud. Possibly edible. Definitely friend."],
-            ["bananas", "BANANAS accepts the friend part. Not the edible part."]
+            ["bananas", "BANANAS lost. BANANAS will let you have ONE banana."],
+            ["zoombie", "I'll take six."]
+          ]
+        },
+        bobbie: {
+          before: [
+            ["narrator", "Macalanger Gym. ZOO-mbie's arm falls off in warm-ups. He pops it back on."],
+            ["bobbie", "Did your ARM just—?! You good, SPOOKY SLIM?!"],
+            ["zoombie", "Happens all the time. Let's fight before the other one goes."],
+            ["bobbie", "Bro. I'll go easy on that side."]
+          ],
+          after: [
+            ["bobbie", "You beat me with your arm held on by HOPE?! I gotta train harder!"]
+          ]
+        },
+        ninja: {
+          before: [
+            ["narrator", "The hidden dojo. A cat is asleep on the training mat. ZOO-mbie forgets the fight."],
+            ["zoombie", "A cat! Hi, cat! Who's a good stealthy cat?"],
+            ["ninja", "That is my sensei! ...Okay, it's a cat. But it's very wise!"],
+            ["zoombie", "It's asleep. That IS wise. Okay, let's fight quietly for the cat."]
+          ],
+          after: [
+            ["ninja", "You won... and my sensei purred for YOU. Betrayal!"]
+          ]
+        },
+        rocky: {
+          before: [
+            ["narrator", "Lab 7. A row of sample jars. One says 'DO NOT SNIFF'. ZOO-mbie sniffs it."],
+            ["rocky", "ALERT. THAT WAS FLOOR CLEANER. CALCULATING YOUR WELLBEING."],
+            ["zoombie", "I'm already dead, mate. Smelled like bananas, though. Nice."],
+            ["rocky", "WELLBEING: CONFUSING. FIGHTING ANYWAY."]
+          ],
+          after: [
+            ["rocky", "DEFEAT ACCEPTED. HAVE YOU CHECKED YOUR PULSE."],
+            ["zoombie", "Hold on... nope! Still gone! Great fight, though."]
+          ]
+        },
+        rook: {
+          before: [
+            ["narrator", "Neon District, past midnight. ZOO-mbie waves at a raccoon raiding the bins."],
+            ["zoombie", "Rook! Your street has raccoons! Wonderful raccoons!"],
+            ["rook", "Those raccoons have been stealing my noodles for years."],
+            ["zoombie", "Then I'm on their side. Sorry. Team Raccoon."]
+          ],
+          after: [
+            ["rook", "Lost to a zombie and three raccoons. Unbelievable."],
+            ["zoombie", "Four raccoons. Ted was hiding."]
           ]
         },
         prophet: {
           before: [
-            ["narrator", "The edge of the universe. ZOO-mbie waves at a passing comet. It waves back."],
-            ["zoombie", "So you're the big sneezer! Your comet turned me green, buddy."],
-            ["prophet", "Ah. Yes. I'm allergic to boring episodes, and that night's was VERY boring."],
-            ["zoombie", "Fair, I was mostly napping. So, got a cure? Or do we fight?"],
-            ["prophet", "Both. Win, and I'll tell you where it is. Lose, and you stay a zombie."]
+            ["narrator", "A misty crossroads. The crickets go quiet. The wagon's lanterns flicker."],
+            ["zoombie", "The fortune teller! Quick question: is my pulse ever coming back?"],
+            ["prophet", "My prophecy: one of us leaves here without a pulse. I win."],
+            ["narrator", "The cloak is flung aside. A floating galaxy, a golden halo, furious eyes."],
+            ["zoombie", "Oh, I always leave without a pulse. That's just me. Ready when you are."]
           ],
           after: [
-            ["prophet", "Ow. Fine. The cure recipe is in Lab 7's blue cabinet. I hid it there in season one."],
-            ["zoombie", "Thanks! And bless you. Just in case. Sneezes are serious business."]
+            ["zoombie", "See? I'm leaving without a pulse. Prophecy correct! And I won!"],
+            ["prophet", "...I did not foresee the zombie part."]
           ]
         }
       },
       ending: [
-        ["narrator", "In Lab 7's blue cabinet: the research notes, and a half-finished recipe for a cure."],
-        ["zoombie", "Ingredient one: rare jungle moss. Two: cold water. Three: one hundred bananas."],
-        ["narrator", "A gold envelope falls out: 'I'll find the moss. You handle the bananas. -The Patron'"],
-        ["zoombie", "Best. Cure. Ever. Let me check my pulse... ooh! Was that a flicker?!"]
+        ["narrator", "Back at the station, ZOO-mbie hangs his medal on a giraffe. She looks fantastic."],
+        ["zoombie", "Seven wins, fourteen new animal friends and one moth called Patch."],
+        ["narrator", "He checks his pulse one last time. Nothing. He shrugs and peels a banana."],
+        ["zoombie", "Brains? Nah. Champions eat bananas."]
       ]
     },
 
     bananas: {
-      title: "Googly-Eyed Glory",
+      title: "The Juicy Jumper",
       intro: [
-        ["narrator", "The produce aisle, closing time. A gold envelope lands on a giant wide-eyed orange."],
-        ["bananas", "BANANAS HAS ARRIVED! ...At his own mail. MAIL HAS ARRIVED AT BANANAS!"],
-        ["narrator", "'Win seven fights. The last is PROPHET, who owned that syringe. -The Patron'"],
-        ["bananas", "The syringe guy! BANANAS will thank him, then kick him! NO ARMS, NO PROBLEM!"]
+        ["narrator", "Fruit Aisle 7. BANANAS spots a poster: 'GRAND BRAWL. Fame! Glory! A trophy!'"],
+        ["bananas", "A trophy BANANAS can't hold, because NO ARMS! BANANAS STILL WANTS IT!"],
+        ["narrator", "In the car park sits a fortune teller's wagon. Two eyes glow at the orange."],
+        ["bananas", "Spooky hood man! BANANAS will win, then come back and buy a fortune!"]
       ],
-      order: ["bobbie", "rocky", "ninja", "zoombie", "byte", "rook", "prophet"],
+      order: ["zoombie", "bobbie", "byte", "ninja", "rook", "rocky", "prophet"],
       fights: {
-        bobbie: {
-          before: [
-            ["bobbie", "You challenged me to box, but you don't have arms."],
-            ["bananas", "WITH MY FEET, OBVIOUSLY!"],
-            ["bobbie", "That confidence is championship material. Let's see the footwork!"]
-          ],
-          after: [
-            ["bobbie", "You can come train at my gym. We'll work on balance."],
-            ["bananas", "BANANAS has excellent balance! ...Why am I sideways?"]
-          ]
-        },
-        rocky: {
-          before: [
-            ["narrator", "Lab 7. A glass case sits empty. BANANAS gets a strange feeling of deja vu."],
-            ["rocky", "UNIDENTIFIED FRUIT. PLEASE HOLD STILL WHILE I SCAN YOU."],
-            ["bananas", "A spotlight! BANANAS will now perform the Citrus Shuffle!"],
-            ["rocky", "CLASSIFICATION: FRIENDLY FRUIT. HIGH CHAOS POTENTIAL."]
-          ],
-          after: [
-            ["rocky", "SCAN COMPLETE. TRACES OF COSMIC SERUM DETECTED. ALSO VERY BOUNCY."],
-            ["bananas", "BANANAS accepts this scientific compliment!"]
-          ]
-        },
-        ninja: {
-          before: [
-            ["ninja", "Stealth lesson one: do not move. Become one with the shadows."],
-            ["bananas", "BANANAS is motionless! ...Oops. Wall."],
-            ["ninja", "Silent bouncing is a real technique. I am taking notes."]
-          ],
-          after: [
-            ["ninja", "You bounced into that wall without making a sound."],
-            ["bananas", "It was a soft wall! BANANAS has a black eye. Real eyes bruise. Who knew?!"]
-          ]
-        },
         zoombie: {
           before: [
-            ["zoombie", "A banana! Wait, round and orange. Is that a citrus?"],
-            ["bananas", "I am an orange! And I am not edible!"],
-            ["zoombie", "You rescued me by rolling downhill. That's a friend move."]
+            ["narrator", "The night safari. A monkey points at BANANAS and screams with joy."],
+            ["zoombie", "A BANANA! At last! ...Oh. It's you. Round, orange, loud. Hi, friend."],
+            ["bananas", "The monkey thinks BANANAS is a banana! The monkey is RIGHT!"],
+            ["zoombie", "The monkey also thinks my hat is a banana. Fight!"]
           ],
           after: [
-            ["zoombie", "Small. Round. Loud. Possibly edible. Definitely friend."],
-            ["bananas", "BANANAS accepts the friendship, not the edible part."]
+            ["zoombie", "You won! The monkey's your fan now. He's throwing peels in your honour."]
+          ]
+        },
+        bobbie: {
+          before: [
+            ["narrator", "Macalanger Gym. BANANAS bounces on the speed bag. The speed bag wins."],
+            ["bobbie", "LIL' SUNSHINE! You're meant to punch the bag, not ride it!"],
+            ["bananas", "BANANAS has NO ARMS! Riding is the only option!"],
+            ["bobbie", "Fair! Then ride THIS! Step into my ring!"]
+          ],
+          after: [
+            ["bobbie", "Beat by a fruit. Grandpa's gonna laugh for a week. RESPECT, SUNSHINE!"]
           ]
         },
         byte: {
           before: [
-            ["byte", "Orange detected. Eyes: once glued, now real. Mouth: once marker. Error count: 3."],
-            ["bananas", "Not errors! A boy made all of that! Except the size. That was a syringe."],
-            ["byte", "Unregulated fruit enlargement. Filing a report. Then fighting you."]
+            ["narrator", "The data centre. BANANAS rolls between the servers. An alarm goes off."],
+            ["byte", "Warning: citrus near hardware. Juice will void the warranty."],
+            ["bananas", "BANANAS is not juicy! BANANAS is MUSCULAR!"],
+            ["byte", "You are an orange. Your muscles are pulp. Initiating fight."]
           ],
           after: [
-            ["byte", "Your chaos potential exceeds my original estimate."],
-            ["bananas", "BANANAS knew the math would work out! I think."]
+            ["byte", "Defeated by pulp. Adding to the patch notes: 'Nerf oranges.'"],
+            ["bananas", "YOU CAN'T NERF BANANAS!"]
+          ]
+        },
+        ninja: {
+          before: [
+            ["narrator", "The hidden dojo. Out front, a sign with Ninja Main's face: 'HIDDEN DOJO, THIS WAY'."],
+            ["bananas", "BANANAS found the hidden dojo! There was a sign!"],
+            ["ninja", "The sign is a trap! For... finding me. ...Okay, the sign is bad."],
+            ["bananas", "BANANAS loved the sign! FIGHT!"]
+          ],
+          after: [
+            ["ninja", "Beaten by a fruit who read my sign. I'm getting a smaller sign."]
           ]
         },
         rook: {
           before: [
-            ["narrator", "Neon District, beneath a bright orange street sign. BANANAS approves of the sign."],
-            ["rook", "So, why are you called BANANAS?"],
-            ["bananas", "A boy thought it was the funniest word ever! He was RIGHT. Witness my ultimate!"],
-            ["rook", "Can't argue with that. Okay, champ. Show me what a big orange can do."]
+            ["narrator", "Neon District. There's an orange on the noodle stand counter. It is BANANAS."],
+            ["rook", "Hey! Off the counter, you're scaring the customers."],
+            ["bananas", "BANANAS IS a customer! BANANAS wants noodles! Hand-fed, please!"],
+            ["rook", "...I'll beat you first. Then we'll talk noodles."]
           ],
           after: [
-            ["rook", "You kick hard for a guy with drawn-on eyebrows."],
-            ["bananas", "BANANAS has no eyebrows! The boy ran out of marker!"],
-            ["rook", "Next up is PROPHET. Bring him a fruit basket. Actually, don't. Awkward."]
+            ["rook", "Fine. Noodles are on me. Open wide."],
+            ["bananas", "BANANAS has the best mouth! It used to be marker!"]
+          ]
+        },
+        rocky: {
+          before: [
+            ["narrator", "Lab 7. A broken glass case. A sticky note: 'Growth Serum #9. Do not touch.'"],
+            ["rocky", "ORANGE. MY RECORDS SAY YOU WERE MADE HERE. WELCOME HOME."],
+            ["bananas", "BANANAS was born in a grocery store! BANANAS was just UPGRADED here!"],
+            ["rocky", "UNDERSTOOD. I WAS ALSO UPGRADED HERE. WE ARE UPGRADE COUSINS."]
+          ],
+          after: [
+            ["rocky", "DEFEAT ACCEPTED, COUSIN. I WILL ADD YOU TO THE FAMILY PHOTO."],
+            ["bananas", "BANANAS goes in the middle! BANANAS is round, he fits anywhere!"]
           ]
         },
         prophet: {
           before: [
-            ["narrator", "The edge of the universe. BANANAS bounces off a moon and lands mostly on purpose."],
-            ["prophet", "So you're where my syringe went! Galaxies, you're big."],
-            ["bananas", "Thank you for the growing juice! Question: why did you leave it in a lab?!"],
-            ["prophet", "It was serum for my space tomatoes. They're still tiny. Thanks for that."],
-            ["bananas", "Sorry, tomatoes! BANANAS HAS ARRIVED! FRUIT NUCLEAR... in three rounds!"]
+            ["narrator", "A misty crossroads. The hooded fortune teller waits beside his little wagon."],
+            ["bananas", "Spooky hood man! BANANAS won everything! Now tell BANANAS's fortune!"],
+            ["prophet", "I foresee an orange will fall. And I win."],
+            ["narrator", "He throws off the cloak. Galaxy skin. A blazing halo. Very cross eyes."],
+            ["bananas", "SHINY! BANANAS HAS ARRIVED!"]
           ],
           after: [
-            ["prophet", "Beaten by a fruit. Straight to the blooper reel. Want arms? I can do arms."],
-            ["bananas", "NO ARMS, NO PROBLEM! But BANANAS would accept a small cape."]
+            ["narrator", "BANANAS does a victory spin, three bounces... and falls over."],
+            ["prophet", "The orange fell. I was half right."],
+            ["bananas", "BANANAS falls over EVERY time! You should've foreseen THAT!"]
           ]
         }
       },
       ending: [
-        ["narrator", "Back in the produce aisle, the shoppers cheer. One of them is a boy with a marker."],
-        ["bananas", "YOU! The boy who made BANANAS! You still owe me some eyebrows!"],
-        ["narrator", "The boy draws two eyebrows. Very surprised ones. A gold envelope reads 'Champion.'"],
-        ["bananas", "BANANAS is a champion! BANANAS is SURPRISED to be a champion! ...Rolls away."]
+        ["narrator", "Fruit Aisle 7. BANANAS balances the trophy on his head. It falls. He tries again."],
+        ["bananas", "BANANAS is the CHAMPION! Fame! Glory! A slightly dented trophy!"],
+        ["narrator", "On the shelf, a note in a kid's handwriting: 'Was that my orange?? -the boy'"],
+        ["bananas", "THE BOY! He still owes BANANAS a better mouth! NEW ADVENTURE!"]
       ]
     },
 
     prophet: {
-      title: "Season Finale",
+      title: "$1 Prophecies",
       intro: [
-        ["narrator", "The edge of the universe. PROPHET floats on his throne, flicking through every channel."],
-        ["prophet", "Boring. Seen it. Seen it. Boring. I know how everything ends. EVERYTHING."],
-        ["narrator", "A gold envelope drifts past a moon: 'Want a surprise? Win seven fights. -The Patron'"],
-        ["prophet", "...I did not see that coming. DELIGHTFUL! Hold my comets. I'm going on the show."]
+        ["narrator", "A misty crossroads. A tiny wagon. A crystal ball. A sign: '$1 PROPHECIES'."],
+        ["prophet", "I foresee a tour."],
+        ["narrator", "He lights the lanterns, packs the crystal ball and hitches the wagon. To himself."],
+        ["prophet", "Seven venues. Seven fights. Seven wins. Already seen it."]
       ],
-      order: ["ninja", "zoombie", "bobbie", "rocky", "byte", "rook", "bananas"],
+      order: ["bananas", "zoombie", "ninja", "byte", "bobbie", "rocky", "rook"],
       fights: {
-        ninja: {
+        bananas: {
           before: [
-            ["narrator", "The hidden dojo. A shooting star crashes through the roof and stops mid-air, politely."],
-            ["ninja", "An intruder! I sensed you with my ninja senses! ...And the hole in my roof."],
-            ["prophet", "Love your work, Ninja Main. Your rooftop fall in episode nine? Magnificent."],
-            ["ninja", "That was a DELIBERATE descent! Prepare to face 1% of my ninja potential!"],
-            ["prophet", "Prophecy says you'll trip in round two. No pressure."]
+            ["narrator", "Fruit Aisle 7. PROPHET parks his wagon between the melons and the grapes."],
+            ["bananas", "Hood man! BANANAS brought a dollar for a fortune! ...BANANAS can't hold it."],
+            ["prophet", "I foresee juice."],
+            ["narrator", "He throws off the cloak. The grapes gasp. The melons stay calm."]
           ],
           after: [
-            ["ninja", "I tripped in round two. EXACTLY in round two. You truly are a master."],
-            ["prophet", "I am. But you got back up, which I did NOT predict. Interesting."]
+            ["prophet", "Juice. As foretold."],
+            ["bananas", "BANANAS is NOT juice! BANANAS is just a bit squishy now."]
           ]
         },
         zoombie: {
           before: [
-            ["narrator", "The night safari. Every animal turns to stare at the glowing man in the sky."],
-            ["zoombie", "Ooh, the hippos love you! You're a giant night-light. Are you made of space?"],
-            ["prophet", "Yes, and I owe you an apology. My comet sneeze made you a zombie."],
-            ["zoombie", "Water under the jeep! Can we fight quietly, though? The hippos are napping."],
-            ["prophet", "Quietly? I'm a galaxy. ...I'll try to twinkle softly."]
+            ["narrator", "The night safari. The wagon parks by the hippo pool. The hippo is not impressed."],
+            ["zoombie", "Ooh, a booth! What's my fortune? Is it a banana?"],
+            ["prophet", "You will see an animal."],
+            ["zoombie", "I see ALL the animals! You're amazing! ...Why are you taking the cloak off?"]
           ],
           after: [
-            ["zoombie", "Good fight! Can you sneeze me a cure next time? Aim for the heart."],
-            ["prophet", "I'll pencil it into next season. Possibly. I'm a very busy overlord."]
+            ["zoombie", "I lost. But I saw an animal. A hippo! You were so right."],
+            ["prophet", "I always am."]
           ]
         },
-        bobbie: {
+        ninja: {
           before: [
-            ["bobbie", "SPARKLE PANTS! In my gym! Kids, the face from the skylight is REAL!"],
-            ["prophet", "Bobbie. I've watched you coach for years. Four stars. Your jab drops a little."],
-            ["bobbie", "Four stars?! My jab is PERFECT, Twinkle Toes! Step into my ring!"],
-            ["prophet", "Very well. Kids, no flash photography. I'm already the flash."]
+            ["narrator", "The hidden dojo. PROPHET's wagon is parked inside. Nobody knows how."],
+            ["ninja", "Master! You came to my dojo! Teach me to be mysterious!"],
+            ["prophet", "Lesson one."],
+            ["narrator", "The cloak flies off. Galaxy skin, a blazing halo, eyes glowing with fury."],
+            ["ninja", "Lesson one is SCARY! Okay! Ninja ready!"]
           ],
           after: [
-            ["bobbie", "Okay, okay, you got me. Kids, THAT is a cosmic-level jab. Take notes!"],
-            ["prophet", "Five stars, Bobbie. Rating upgraded. Don't let it go to your afro."]
-          ]
-        },
-        rocky: {
-          before: [
-            ["narrator", "Lab 7. Every screen flickers as the universe's ruler drifts through the wall."],
-            ["rocky", "HALT, GLOWING VISITOR. YOU CAME THROUGH A WALL. THAT IS MY TECHNIQUE."],
-            ["prophet", "I left a syringe here, in a glass case. Very important. Have you seen it?"],
-            ["rocky", "AFFIRMATIVE. A SMALL HUMAN INJECTED IT INTO AN ORANGE. THE ORANGE RAN AWAY."],
-            ["prophet", "...I'm going to need a minute. Then we fight."]
-          ],
-          after: [
-            ["rocky", "YOU WIN. QUESTION: IS IT WRONG THAT I WISH TO PROTECT THE ORANGE?"],
-            ["prophet", "Never. That's why you're my favourite character. Don't tell the others."]
+            ["ninja", "That was only 1% of my... no, honestly, that was all of it. Ow."],
+            ["prophet", "Lesson two: no refunds."]
           ]
         },
         byte: {
           before: [
-            ["byte", "PROPHET detected. You are blocking the cooling vents. Also my patience."],
-            ["prophet", "Byte! Enjoying the footage I gave you? Forty terabytes of classics!"],
-            ["byte", "I wanted a thermostat. Your gift receives one star. Rematch protocol engaged."],
-            ["prophet", "One star?! I MADE the stars. ...Fine. Let's see if your patch notes hold up."]
+            ["narrator", "The data centre. PROPHET's lanterns warm the server room by two degrees."],
+            ["byte", "Fortune teller. Your lanterns are a fire hazard. Also a vibe hazard."],
+            ["prophet", "I foresee a reboot."],
+            ["byte", "Probability of reboot: 0.4%. ...Why is your halo so bright."]
           ],
           after: [
-            ["byte", "Defeat logged. I will now write a very long review about this."],
-            ["prophet", "Please do. I read every review. I just never reply."]
+            ["byte", "Rebooting... Patch notes: 'PROPHET was right.' I hate this patch."]
+          ]
+        },
+        bobbie: {
+          before: [
+            ["narrator", "Macalanger Gym. PROPHET's wagon is parked in the ring. Bobbie is not happy."],
+            ["bobbie", "HOODIE! That's MY ring! You can't park a whole booth in my ring!"],
+            ["prophet", "I foresaw a parking space."],
+            ["bobbie", "It ain't a parking space! Fine, lose the hood and let's GO!"]
+          ],
+          after: [
+            ["bobbie", "Lost in my own gym! To a GUY WITH A WAGON! ...Respect, though, HOODIE."],
+            ["prophet", "Parking validated."]
+          ]
+        },
+        rocky: {
+          before: [
+            ["narrator", "Lab 7. The wagon rolls in through one of R.O.C.K.Y's bull-shaped holes."],
+            ["rocky", "HOODED VISITOR. THIS IS A RESTRICTED AREA. DO YOU HAVE A BADGE."],
+            ["prophet", "I foresaw no badge."],
+            ["rocky", "THEN I MUST ESCORT YOU OUT. POLITELY. WITH HORNS."]
+          ],
+          after: [
+            ["rocky", "DEFEAT ACCEPTED. I WILL PRINT YOU A VISITOR BADGE."],
+            ["prophet", "The photo is just the hood."]
           ]
         },
         rook: {
           before: [
-            ["narrator", "Neon District. The whole street looks up. A galaxy has landed on the noodle stand."],
-            ["rook", "Hey! Off the noodle stand, space guy! This is MY district!"],
-            ["prophet", "Your district, my universe. Technically I'm your landlord. And your biggest fan."],
-            ["rook", "Biggest fan? Then you know how this ends. I never lose at home."],
-            ["prophet", "I've seen every episode, Rook. You DO lose at home. Once. Tonight."]
+            ["narrator", "Neon District. The final stop. The wagon parks under Rook's favourite sign."],
+            ["rook", "So you're the hood guy who beat everyone. You won't beat me. Not on..."],
+            ["prophet", "...'my street'. Foreseen."],
+            ["rook", "...Okay, that's annoying."],
+            ["narrator", "The cloak flies off. The neon flickers. The noodles go cold."]
           ],
           after: [
-            ["rook", "Okay... that was a real fight. Want some noodles before you float off?"],
-            ["prophet", "In four billion years nobody has offered me noodles. ...Yes, please. Extra."]
-          ]
-        },
-        bananas: {
-          before: [
-            ["narrator", "The produce aisle. PROPHET's Prophecy flickers. For once, it shows only static."],
-            ["bananas", "BANANAS HAS ARRIVED! ...Wait. Shiny galaxy guy? Are you the syringe man?"],
-            ["prophet", "I am. And I can't read you, orange. My own serum scrambled the signal."],
-            ["bananas", "Then nobody knows what BANANAS will do next! Not even BANANAS!"],
-            ["prophet", "At last. A fight I can't spoil. This is going to be the best episode ever."]
-          ],
-          after: [
-            ["bananas", "BANANAS is defeated, but BANANAS had a great time! Was it a good episode?"],
-            ["prophet", "Ten out of ten. I'm watching it again tonight. You can sit on the moon next to me."]
+            ["rook", "Fine. You're good. Annoyingly, accurately good."],
+            ["prophet", "One dollar."]
           ]
         }
       },
       ending: [
-        ["narrator", "PROPHET floats back to his throne, with a giant orange and a bowl of noodles."],
-        ["prophet", "Seven fights, seven surprises. Turns out the show is better when I'm in it."],
-        ["narrator", "On his armrest: a fresh gold envelope. 'Season two starts tomorrow. -The Patron'"],
-        ["prophet", "I still can't see who sends these. ...Wonderful. I LOVE not knowing."]
+        ["narrator", "The misty crossroads. PROPHET hangs seven trophies from his striped canopy."],
+        ["prophet", "As foretold."],
+        ["narrator", "The hood goes back up. Only two eyes glow. A new review arrives: 'Two stars. Correct.'"],
+        ["prophet", "Up from 1.2. Foreseen."]
       ]
     }
   }
