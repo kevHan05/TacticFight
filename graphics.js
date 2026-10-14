@@ -741,7 +741,8 @@ const Arena = (() => {
     nebula: ["#ff5fc8", "#5fe0ff"],
     star: "#ffffff",
     halo: ["#a8741a", "#f1c95a", "#fff6c8"],
-    eye: ["#5fe0ff", "#e8fdff"]
+    eye: ["#ff3b5c", "#ffffff"],
+    line: "#d6ccff"
   };
 
   // Twinkling stars across a limb from `a` to `b`, offset by `seed`.
@@ -758,13 +759,19 @@ const Arena = (() => {
 
   const prophetParts = {
     behind(j, time) {
-      // A golden halo ring floating behind the head.
-      const h = at(j.head, -1, -3);
-      for (let a = 0; a < Math.PI * 2; a += 0.2) {
-        const x = Math.cos(a) * 8;
-        const y = Math.sin(a) * 3;
-        const shine = Math.floor(time / 120 + a * 3) % 7 === 0;
-        px(h, x, y, shine ? PROPHET.halo[2] : a > Math.PI ? PROPHET.halo[1] : PROPHET.halo[0]);
+      // A blazing halo: a thick golden ring all the way around the head, with
+      // rays that pulse outward.
+      const h = at(j.head, -0.5, -0.5);
+      for (let a = 0; a < Math.PI * 2; a += 0.12) {
+        const shine = Math.floor(time / 90 + a * 4) % 9 === 0;
+        px(h, Math.cos(a) * 10, Math.sin(a) * 10, shine ? PROPHET.star : PROPHET.halo[1]);
+        px(h, Math.cos(a) * 9, Math.sin(a) * 9, PROPHET.halo[2]);
+        px(h, Math.cos(a) * 11, Math.sin(a) * 11, PROPHET.halo[0]);
+      }
+      const reach = 13 + Math.round((Math.sin(time / 160) + 1) * 1.5);
+      for (let k = 0; k < 12; k += 1) {
+        const a = (k * Math.PI) / 6 + time / 2400;
+        line(at(h, Math.cos(a) * 12, Math.sin(a) * 12), at(h, Math.cos(a) * (k % 2 ? reach - 2 : reach), Math.sin(a) * (k % 2 ? reach - 2 : reach)), k % 2 ? PROPHET.halo[1] : PROPHET.halo[2]);
       }
     },
     arm(shoulder, elbow, hand, back) {
@@ -779,7 +786,16 @@ const Arena = (() => {
       shaded(hand, at(hand, 0, 1.5), 1.9, 1.9, skin);
       [-1.5, -0.5, 0.5, 1.5].forEach((dx, k) => line(at(hand, dx, 3), at(hand, dx, k === 0 || k === 3 ? 4.5 : 5.5), k % 2 ? skin[2] : skin[1]));
       line(at(hand, back ? 2.5 : -2.5, 1), at(hand, back ? 3 : -3, 3), skin[2]);
-      if (!back) starfield(top, hand, 4, 0.3, performance.now());
+      if (!back) {
+        starfield(top, hand, 4, 0.3, performance.now());
+        // A small constellation running down the arm.
+        const a = mix(top, elbow, 0.4);
+        const b = mix(elbow, hand, 0.2);
+        const c = mix(elbow, hand, 0.7);
+        line(a, b, PROPHET.line);
+        line(b, c, PROPHET.line);
+        [a, b, c].forEach(point => px(point, 0, 0, PROPHET.star));
+      }
     },
     leg(hip, knee, foot, back) {
       const skin = back ? dim(PROPHET.void) : PROPHET.void;
@@ -790,7 +806,18 @@ const Arena = (() => {
       const side = back ? -1 : 1;
       shaded(at(foot, 0, -2), at(foot, side * 1.5, 1), 1.9, 1.5, skin);
       shaded(at(foot, side * 1.5, 1), at(foot, side * 2.5, 2.5), 1.5, 1.1, skin);
-      if (!back) starfield(hip, foot, 5, 0.7, performance.now());
+      if (!back) {
+        starfield(hip, foot, 5, 0.7, performance.now());
+        // A constellation down the thigh and a small galaxy swirl on the shin.
+        const a = mix(hip, knee, 0.2);
+        const b = mix(hip, knee, 0.7);
+        line(a, b, PROPHET.line);
+        [a, b].forEach(point => px(point, 0, 0, PROPHET.star));
+        const swirl = mix(knee, foot, 0.4);
+        px(swirl, 0, 0, PROPHET.star);
+        px(swirl, 1, 0, PROPHET.nebula[0]);
+        px(swirl, -1, 1, PROPHET.nebula[1]);
+      }
     },
     torso(j, time) {
       // A front-on athletic torso: broad shoulders tapering to a slim waist.
@@ -809,6 +836,19 @@ const Arena = (() => {
         if (Math.floor(time / 200 + k) % 3) px(point, (k % 2) * 2 - 1, 0, PROPHET.star);
       }
       starfield(j.hip, j.neck, 10, 0.11, time);
+      // A constellation across the chest: bright stars joined by faint lines.
+      const stars = [[-5, -1], [-2, -4], [2, -2], [5, -5], [3, 2]].map(([dx, dy]) => at(j.chest, dx, dy));
+      stars.slice(1).forEach((star, k) => line(stars[k], star, PROPHET.line));
+      stars.forEach((star, k) => px(star, 0, 0, Math.floor(time / 300 + k) % 4 ? PROPHET.star : PROPHET.nebula[1]));
+      // A tiny spiral galaxy on the stomach.
+      const spiral = at(j.hip, -2, -6);
+      [[0, 0, PROPHET.star], [1, 0, PROPHET.nebula[0]], [1, 1, PROPHET.line], [0, 1, PROPHET.nebula[0]], [-1, 1, PROPHET.line], [-1, 0, PROPHET.nebula[1]], [-1, -1, PROPHET.line], [0, -1, PROPHET.nebula[0]], [2, -1, PROPHET.line], [-2, 2, PROPHET.line]].forEach(([dx, dy, color]) => px(spiral, dx, dy, color));
+      // A glowing all-seeing triangle below the collarbone.
+      const eye = at(j.chest, 0, -6);
+      line(at(eye, -3, 2), at(eye, 0, -2), PROPHET.halo[1]);
+      line(at(eye, 0, -2), at(eye, 3, 2), PROPHET.halo[1]);
+      line(at(eye, -3, 2), at(eye, 3, 2), PROPHET.halo[1]);
+      px(eye, 0, 0, PROPHET.star);
       // A faint chest line for definition.
       line(at(j.chest, -4, -3), at(j.chest, 4, -3), PROPHET.muscle);
     },
@@ -825,10 +865,13 @@ const Arena = (() => {
       // Short swept-back hair.
       polygon(h, [[-5, -2], [-4, -6], [0, -7], [4, -6], [3, -4], [-2, -4]], PROPHET.void[0]);
       starfield(at(h, -3, -2), at(h, 1, 2), 3, 0.5, time);
-      // One bright eye facing forward. No mouth.
+      // A furious, slanted eye under a hard brow, burning white-hot with a red glow. No mouth.
+      line(at(h, -0.5, -3.5), at(h, 4, -1.5), PROPHET.muscle);
+      px(h, 1, -2, PROPHET.eye[1]);
       px(h, 2, -1, PROPHET.eye[1], 2);
-      px(h, 3, 0, PROPHET.eye[0]);
-      if (Math.floor(time / 500) % 2) px(h, 4, -1, PROPHET.eye[0]);
+      px(h, 4, -1, PROPHET.eye[0]);
+      px(h, 1, -1, PROPHET.eye[0]);
+      if (Math.floor(time / 300) % 2) px(h, 5, -2, PROPHET.eye[0]);
     }
   };
 
@@ -925,13 +968,13 @@ const Arena = (() => {
     glowG.globalCompositeOperation = "source-over";
     glowG.drawImage(sprite, 0, 0);
     glowG.globalCompositeOperation = "source-in";
-    glowG.fillStyle = "#e8e4ff";
+    glowG.fillStyle = "#f4f0ff";
     glowG.fillRect(0, 0, SPRITE_W, SPRITE_H);
     glowG.globalCompositeOperation = "source-over";
     const pulse = 0.5 + Math.sin(now / 300) * 0.5;
     const y = Math.round(floorY - frame.lift) - FOOT_Y;
     const x = Math.round(frame.x) + (frame.dir < 0 ? FOOT_X : -FOOT_X);
-    [[2, 0.18 + pulse * 0.1], [1, 0.5]].forEach(([reach, alpha]) => {
+    [[3, 0.12 + pulse * 0.1], [2, 0.3 + pulse * 0.12], [1, 0.7]].forEach(([reach, alpha]) => {
       g.save();
       g.globalAlpha = alpha * frame.alpha;
       [[-reach, 0], [reach, 0], [0, -reach], [0, reach]].forEach(([dx, dy]) => {
